@@ -165,28 +165,28 @@ const categoryIcons: Record<string, string> = {
     <div class="max-w-5xl mx-auto px-4">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">🔥</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">🔥</div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">Al Carbón</p>
             <p class="text-text-muted text-[11px]">Cocción tradicional</p>
           </div>
         </div>
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">⏱️</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">⏱️</div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">11:00 AM — 00:00</p>
             <p class="text-text-muted text-[11px]">Todos los días</p>
           </div>
         </div>
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">🛵</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">🛵</div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">Delivery</p>
             <p class="text-text-muted text-[11px]">Toda La Guaira</p>
           </div>
         </div>
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">💵</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">💵</div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">USD / Bs</p>
             <p class="text-text-muted text-[11px]">Zelle, Pago Movil</p>
@@ -351,29 +351,6 @@ const categoryIcons: Record<string, string> = {
     </div>
   </section>
 
-  <!-- Orbit Divider -->
-  <div class="orbit-divider mx-auto max-w-2xl overflow-hidden"></div>
-
-  <!-- ==================== NUESTRA TRADICION ==================== -->
-  <section class="py-16 sm:py-20 relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-[400px] h-[400px] nebula nebula-amber z-0"></div>
-
-    <div class="max-w-4xl mx-auto px-4 relative z-10">
-      <div class="space-card rounded-3xl p-8 sm:p-12 text-center">
-        <div class="text-4xl mb-4">🔥</div>
-        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary mb-4">
-          MÁS DE 40 AÑOS <span class="text-cosmic">AL CARBÓN</span>
-        </h2>
-        <p class="text-text-secondary font-heading text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-3">
-          Desde 1980, en Cabo Kenedy cocinamos nuestro pollo a la brasa sobre carbón natural, con una receta familiar que ha pasado de generación en generación. Cada pieza se marina con nuestro adobo secreto y se asa lentamente hasta quedar crujiente por fuera y jugosa por dentro.
-        </p>
-        <p class="text-text-muted font-heading text-sm">
-          Acompañado de arepitas, ensalada rallada de repollo y zanahoria, y todo el sabor de la tradición venezolana.
-        </p>
-      </div>
-    </div>
-  </section>
-
   <!-- Section Divider -->
   <div class="section-divider mx-auto max-w-2xl"></div>
 
@@ -413,12 +390,13 @@ const categoryIcons: Record<string, string> = {
       <div class="flex overflow-x-auto gap-2 sm:gap-3 mb-12 pb-2 -mx-4 px-4 scrollbar-hide" id="category-tabs">
         {menuCategories.map((cat, i) => (
           <button
-            class={`category-pill whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-heading font-medium flex items-center gap-2 ${
+            class={`category-pill whitespace-nowrap px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-heading font-medium flex items-center gap-1.5 sm:gap-2 ${
               i === 0 ? 'active bg-space-card text-white' : 'bg-space-card/40 text-text-secondary'
             }`}
             data-category={cat.id}
+            aria-label={cat.title}
           >
-            <span>{categoryIcons[cat.id] || cat.icon}</span>
+            <span class="text-sm sm:text-base">{categoryIcons[cat.id] || cat.icon}</span>
             <span>{cat.title.replace('Combos de Pollo Broaster', 'Combos').replace('Milanesas y Pasapalos', 'Pasapalos').replace('Raciones y Contornos', 'Raciones').replace('Pescados y Mariscos', 'Mariscos').replace('Carnes y Parrillas', 'Parrillas')}</span>
           </button>
         ))}
@@ -436,7 +414,7 @@ const categoryIcons: Record<string, string> = {
 
             <div class="space-y-1">
               {cat.items.map((item) => (
-                  <div class="menu-item-card rounded-xl px-4 sm:px-5 py-4 group" data-menu-item data-item-name={item.name.toLowerCase()}>
+                  <div class="menu-item-card rounded-xl px-4 sm:px-5 py-4 group" data-menu-item data-item-name={item.name.toLowerCase()} data-item-cat={cat.title.toLowerCase()}>
                     {/* Non-variant items */}
                     {!item.variants ? (
                       <div class="flex items-center justify-between gap-3">
@@ -528,6 +506,26 @@ const categoryIcons: Record<string, string> = {
   <!-- Orbit Divider -->
   <div class="orbit-divider mx-auto max-w-2xl overflow-hidden"></div>
 
+  <!-- ==================== NUESTRA TRADICION ==================== -->
+  <section class="py-16 sm:py-20 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-[400px] h-[400px] nebula nebula-amber z-0"></div>
+
+    <div class="max-w-4xl mx-auto px-4 relative z-10">
+      <div class="space-card rounded-3xl p-8 sm:p-12 text-center">
+        <div class="text-4xl mb-4">🔥</div>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary mb-4">
+          MÁS DE 40 AÑOS <span class="text-cosmic">AL CARBÓN</span>
+        </h2>
+        <p class="text-text-secondary font-heading text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-3">
+          Desde 1980, en Cabo Kenedy cocinamos nuestro pollo a la brasa sobre carbón natural, con una receta familiar que ha pasado de generación en generación. Cada pieza se marina con nuestro adobo secreto y se asa lentamente hasta quedar crujiente por fuera y jugosa por dentro.
+        </p>
+        <p class="text-text-muted font-heading text-sm">
+          Acompañado de arepitas, ensalada rallada de repollo y zanahoria, y todo el sabor de la tradición venezolana.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ==================== PEDIR CTA ==================== -->
   <section class="py-20 sm:py-28 relative overflow-hidden">
     <div class="absolute inset-0 z-0">
@@ -570,7 +568,7 @@ const categoryIcons: Record<string, string> = {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Delivery zones -->
         <div class="space-card rounded-2xl p-6">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl mb-4">🛵</div>
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4">🛵</div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">ZONAS DE DELIVERY</h3>
           <div class="grid grid-cols-2 gap-2">
             {["La Guaira", "Catia La Mar", "Macuto", "Maiquetia", "Caraballeda"].map((zona) => (
@@ -584,7 +582,7 @@ const categoryIcons: Record<string, string> = {
 
         <!-- Payment -->
         <div class="space-card rounded-2xl p-6">
-          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center text-xl mb-4">💳</div>
+          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center text-xl leading-none mb-4">💳</div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">FORMAS DE PAGO</h3>
           <div class="space-y-2.5">
             {["Efectivo (USD)", "Zelle", "Pago Movil", "Transferencia", "Efectivo (Bs.)"].map((pago) => (
@@ -598,7 +596,7 @@ const categoryIcons: Record<string, string> = {
 
         <!-- Location -->
         <div class="space-card rounded-2xl p-6">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl mb-4">📍</div>
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4">📍</div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">DONDE ESTAMOS</h3>
           <p class="text-text-secondary text-sm leading-relaxed mb-4 font-heading">
             Local 01, Av. Principal de Caribe,<br />
@@ -1228,12 +1226,17 @@ const categoryIcons: Record<string, string> = {
         // Show all sections during search
         sections.forEach(s => s.classList.add('active'));
 
+        // Normalize: strip trailing 's' for basic singular/plural
+        const qNorm = q.endsWith('s') ? q.slice(0, -1) : q;
+
         let found = 0;
         menuItems.forEach(item => {
-          const name = (item as HTMLElement).getAttribute('data-item-name') || '';
-          const text = (item as HTMLElement).textContent?.toLowerCase() || '';
-          const match = name.includes(q) || text.includes(q);
-          (item as HTMLElement).style.display = match ? '' : 'none';
+          const el = item as HTMLElement;
+          const name = el.getAttribute('data-item-name') || '';
+          const cat = el.getAttribute('data-item-cat') || '';
+          const text = el.textContent?.toLowerCase() || '';
+          const match = name.includes(q) || name.includes(qNorm) || text.includes(q) || text.includes(qNorm) || cat.includes(q) || cat.includes(qNorm);
+          el.style.display = match ? '' : 'none';
           if (match) found++;
         });
 
