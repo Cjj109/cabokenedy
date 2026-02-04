@@ -13,11 +13,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
   }
 
+  const isSecure = new URL(request.url).protocol === 'https:';
   return new Response(null, {
     status: 302,
     headers: {
       'Location': '/admin/login',
-      'Set-Cookie': clearSessionCookieHeader(),
+      'Set-Cookie': clearSessionCookieHeader(isSecure),
     },
   });
 };

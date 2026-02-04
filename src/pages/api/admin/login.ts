@@ -41,13 +41,14 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
 
   // Create session
   const sessionId = await createSession(db);
+  const isSecure = new URL(request.url).protocol === 'https:';
 
   // Redirect to dashboard with session cookie
   return new Response(null, {
     status: 302,
     headers: {
       'Location': '/admin/dashboard',
-      'Set-Cookie': sessionCookieHeader(sessionId),
+      'Set-Cookie': sessionCookieHeader(sessionId, isSecure),
     },
   });
 };

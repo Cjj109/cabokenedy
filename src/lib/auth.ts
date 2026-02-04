@@ -138,11 +138,13 @@ export function parseCookies(request: Request): Record<string, string> {
 }
 
 // Create Set-Cookie header for session
-export function sessionCookieHeader(sessionId: string): string {
-  return `admin_session=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400`;
+export function sessionCookieHeader(sessionId: string, isSecure = true): string {
+  const secure = isSecure ? ' Secure;' : '';
+  return `admin_session=${sessionId}; HttpOnly;${secure} SameSite=Strict; Path=/; Max-Age=86400`;
 }
 
 // Create Set-Cookie header to clear session
-export function clearSessionCookieHeader(): string {
-  return `admin_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0`;
+export function clearSessionCookieHeader(isSecure = true): string {
+  const secure = isSecure ? ' Secure;' : '';
+  return `admin_session=; HttpOnly;${secure} SameSite=Strict; Path=/; Max-Age=0`;
 }

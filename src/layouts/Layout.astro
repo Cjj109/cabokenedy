@@ -23,6 +23,13 @@ try {
     if (row?.value) activeTheme = row.value;
   }
 } catch {}
+
+const themeInfo: Record<string, { emoji: string; label: string; message: string }> = {
+  san_valentin: { emoji: '💕', label: 'San Valentín', message: 'Celebramos el amor con sabor' },
+  navidad: { emoji: '🎄', label: 'Navidad', message: 'Felices fiestas de parte de Cabo Kenedy' },
+  carnavales: { emoji: '🎭', label: 'Carnavales', message: 'Vive el carnaval con el mejor sabor' },
+};
+const currentThemeInfo = themeInfo[activeTheme];
 ---
 
 <!DOCTYPE html>
@@ -114,9 +121,9 @@ try {
       ]
     })} />
   </head>
-  <body class="min-h-screen bg-space-dark">
+  <body class="min-h-screen bg-space-dark overflow-x-hidden">
     <!-- Starfield Canvas -->
-    <canvas id="starfield" class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true"></canvas>
+    <canvas id="starfield" class="fixed inset-0 z-0 pointer-events-none will-change-transform" aria-hidden="true"></canvas>
 
     <!-- Theme particles (only for seasonal themes) -->
     {activeTheme !== 'default' && (
@@ -132,6 +139,18 @@ try {
 
     <!-- Page content -->
     <div class="relative z-10">
+      <!-- Theme banner (seasonal) -->
+      {currentThemeInfo && (
+        <div class="theme-banner" role="status">
+          <div class="theme-banner-inner">
+            <span class="theme-banner-emoji">{currentThemeInfo.emoji}</span>
+            <span class="theme-banner-text">
+              <strong>{currentThemeInfo.label}</strong> — {currentThemeInfo.message}
+            </span>
+            <span class="theme-banner-emoji">{currentThemeInfo.emoji}</span>
+          </div>
+        </div>
+      )}
       <slot />
     </div>
   </body>

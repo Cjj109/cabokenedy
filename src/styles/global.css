@@ -685,7 +685,12 @@ body {
 }
 
 #cart-footer {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+}
+
+/* Prevent body scroll without layout shift */
+body[style*="position: fixed"] {
+  overflow: hidden !important;
 }
 
 .cta-secondary {
@@ -737,6 +742,84 @@ body {
   --color-nebula-orange: rgba(255, 107, 53, 0.08);
   --color-nebula-amber: rgba(255, 210, 63, 0.06);
   --color-nebula-purple: rgba(139, 92, 246, 0.06);
+}
+
+/* Theme seasonal banner */
+.theme-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 55;
+  background: linear-gradient(90deg,
+    rgba(8, 7, 14, 0.97),
+    rgba(22, 20, 42, 0.92),
+    rgba(8, 7, 14, 0.97)
+  );
+  border-bottom: 1px solid var(--color-primary-glow);
+  backdrop-filter: blur(16px);
+  animation: bannerSlideIn 0.6s ease-out;
+}
+
+.theme-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 7px 16px;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.theme-banner-inner strong {
+  color: var(--color-primary-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.theme-banner-emoji {
+  font-size: 0.9rem;
+  animation: bannerEmojiBounce 2.5s ease-in-out infinite;
+}
+
+.theme-banner-emoji:last-child {
+  animation-delay: 0.4s;
+}
+
+/* Push the fixed nav down when theme banner is active */
+[data-theme] nav.fixed {
+  top: 32px !important;
+}
+
+/* Push body content so it's not hidden behind banner + nav */
+[data-theme] body {
+  padding-top: 32px;
+}
+
+@keyframes bannerSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bannerEmojiBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@media (max-width: 480px) {
+  .theme-banner-inner {
+    font-size: 0.7rem;
+    gap: 6px;
+    padding: 6px 12px;
+  }
+  .theme-banner-inner strong { font-size: 0.65rem; }
+  .theme-banner-emoji { font-size: 0.8rem; }
+  [data-theme] nav.fixed { top: 28px !important; }
+  [data-theme] body { padding-top: 28px; }
 }
 
 /* Theme decorative particles */
