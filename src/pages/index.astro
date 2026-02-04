@@ -7,15 +7,19 @@ const waGeneral = getWhatsAppLink(getGeneralWhatsAppMessage());
 const waIcon = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
 
 const categoryIcons: Record<string, string> = {
-  combos: "🍗",
-  pollo: "🔥",
-  hamburguesas: "🍔",
-  pasapalos: "🍟",
-  raciones: "🥔",
-  ensaladas: "🥗",
-  carnes: "🥩",
-  mariscos: "🐟",
+  combos: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 2.5c2 1 3.5 3.5 3 6.5-.5 2.5-2 4-3.5 5l-1 2h-4l-1-2C7.5 13 6 11.5 5.5 9c-.5-3 1-5.5 3-6.5"/><circle cx="12" cy="8" r="3" fill="currentColor" opacity="0.15"/><path d="M10 16h4"/><path d="M10.5 18h3"/><path d="M11 20h2"/></svg>`,
+  pollo: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="currentColor" opacity="0.15"/><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+  hamburguesas: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11c0-4 3-7 7-7s7 3 7 7" fill="currentColor" opacity="0.15"/><path d="M5 11c0-4 3-7 7-7s7 3 7 7"/><path d="M4 11h16"/><path d="M4 15h16"/><path d="M6 19c0 1 1 2 2 2h8c1 0 2-1 2-2"/><path d="M4 15v2c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2v-2" fill="currentColor" opacity="0.1"/><path d="M7 13c1 0 1.5-.5 2.5-.5s1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5" opacity="0.6"/></svg>`,
+  pasapalos: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 7l8 5 8-5-8-5z" fill="currentColor" opacity="0.1"/><path d="M12 2L4 7l8 5 8-5-8-5z"/><path d="M4 12l8 5 8-5"/><path d="M4 17l8 5 8-5"/></svg>`,
+  raciones: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M20 12c0-4.4-3.6-8-8-8s-8 3.6-8 8" fill="currentColor" opacity="0.1"/><path d="M20 12c0-4.4-3.6-8-8-8s-8 3.6-8 8"/><path d="M4 12v1c0 3.9 3.6 7 8 7s8-3.1 8-7v-1" fill="currentColor" opacity="0.08"/><path d="M4 12v1c0 3.9 3.6 7 8 7s8-3.1 8-7v-1"/></svg>`,
+  ensaladas: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10"/><path d="M5 17h14c0 0 1-4-7-4S5 17 5 17z" fill="currentColor" opacity="0.1"/><path d="M5 17h14"/><path d="M12 3c-1 3-1 6 0 9" opacity="0.7"/><path d="M8 6c0 3 1 6 3 8" opacity="0.6"/><path d="M16 5c0 3-1 7-3 9" opacity="0.6"/><path d="M5 17c1 2 3 3 7 3s6-1 7-3"/></svg>`,
+  carnes: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 11c3-1 5-3 6-6-3 1-5 3-6 6zm0 0c-1 3-3 5-6 6 1-3 3-5 6-6z" fill="currentColor" opacity="0.1"/><path d="M15 11c3-1 5-3 6-6-3 1-5 3-6 6zm0 0c-1 3-3 5-6 6 1-3 3-5 6-6z"/><path d="M3 21l6-6"/><path d="M9 15l-3 3"/><circle cx="6" cy="18" r="2" fill="currentColor" opacity="0.1"/></svg>`,
+  mariscos: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 5 2.54 5 5 0 .88-.28 1.7-.76 2.38" /><path d="M3 19.5c1-2 3-3.5 6-3.5 4 0 6 2 8 2s3.5-1 4.5-2.5"/><path d="M2 22c1-2 3-3 5.5-3 4 0 5.5 2 8 2s4-1.5 5.5-3" opacity="0.5"/><circle cx="16" cy="9.5" r="0.8" fill="currentColor"/></svg>`,
 };
+
+const sectionIcons: Record<string, string> = Object.fromEntries(
+  Object.entries(categoryIcons).map(([k, v]) => [k, v.replace(/w-4 h-4/g, 'w-7 h-7')])
+);
 ---
 
 <Layout>
@@ -28,8 +32,8 @@ const categoryIcons: Record<string, string> = {
   <nav class="fixed top-0 left-0 right-0 z-50 bg-space-dark/80 backdrop-blur-2xl border-b border-primary/[0.06]">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3 group">
-        <div class="h-10 w-10 rounded-full border border-primary/20 transition-all group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(232,122,30,0.3)] bg-space-dark flex items-center justify-center overflow-hidden flex-shrink-0 p-1.5">
-          <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-contain" loading="eager" width="40" height="40" />
+        <div class="h-10 w-10 rounded-full border border-primary/20 transition-all group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(232,122,30,0.3)] overflow-hidden flex-shrink-0">
+          <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-contain translate-x-[3%] -translate-y-[1%]" loading="eager" width="40" height="40" />
         </div>
         <div class="hidden sm:block">
           <span class="font-display text-sm font-bold text-primary tracking-[0.15em]">CABO KENEDY</span>
@@ -68,15 +72,17 @@ const categoryIcons: Record<string, string> = {
       <div class="mb-8 relative inline-block">
         <div class="logo-float">
           <div class="logo-glow inline-block p-1 relative">
-            <img
-              src="/logo.webp"
-              alt="Cabo Kenedy - Pollo a la Brasa"
-              width="240"
-              height="240"
-              class="w-44 h-44 sm:w-60 sm:h-60 rounded-full object-contain border-2 border-primary/25 bg-space-dark p-4"
-              loading="eager"
-              fetchpriority="high"
-            />
+            <div class="w-44 h-44 sm:w-60 sm:h-60 rounded-full border-2 border-primary/25 overflow-hidden">
+              <img
+                src="/logo.webp"
+                alt="Cabo Kenedy - Pollo a la Brasa"
+                width="240"
+                height="240"
+                class="w-full h-full object-contain translate-x-[3%] -translate-y-[1%]"
+                loading="eager"
+                fetchpriority="high"
+              />
+            </div>
             <!-- Decorative stars matching original logo -->
             <span class="logo-star" style="top: 5%; left: -8%; font-size: 14px;">✦</span>
             <span class="logo-star" style="top: -5%; left: 25%; font-size: 10px;">✦</span>
@@ -112,23 +118,23 @@ const categoryIcons: Record<string, string> = {
       <!-- Trust badges - food-centric -->
       <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 mb-10 text-text-muted text-sm font-heading">
         <span class="flex items-center gap-1.5">
-          <span class="fire-icon text-xs">🔥</span>
+          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
           <span>Al carbón</span>
         </span>
         <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
         <span class="flex items-center gap-1.5">
-          <span class="text-xs">🍗</span>
-          <span>Receta familiar</span>
+          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span>Todos los días</span>
         </span>
         <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
         <span class="flex items-center gap-1.5">
-          <span class="text-xs">🛵</span>
+          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L8 8h8l-4-6z"/><rect x="9" y="8" width="6" height="7" rx="1"/><path d="M8 15l-2 4h12l-2-4"/></svg>
           <span>Delivery</span>
         </span>
         <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
         <span class="flex items-center gap-1.5">
-          <span class="text-xs">📍</span>
-          <span>Caraballeda</span>
+          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="5"/><circle cx="15" cy="15" r="5"/></svg>
+          <span>USD / Bs</span>
         </span>
       </div>
 
@@ -147,7 +153,7 @@ const categoryIcons: Record<string, string> = {
           href="#combos"
           class="cta-secondary border border-primary/15 hover:border-primary/35 text-primary/90 hover:text-primary hover:bg-primary/5 font-semibold text-lg px-10 py-4 rounded-full transition-all w-full sm:w-auto text-center backdrop-blur-sm"
         >
-          Ver Promos 🔥
+          Ver Promos <svg class="w-5 h-5 inline-block ml-1 -mt-0.5" viewBox="0 0 24 24" fill="currentColor" opacity="0.9"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
         </a>
       </div>
 
@@ -165,28 +171,64 @@ const categoryIcons: Record<string, string> = {
     <div class="max-w-5xl mx-auto px-4">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">🔥</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+            </svg>
+          </div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">Al Carbón</p>
             <p class="text-text-muted text-[11px]">Cocción tradicional</p>
           </div>
         </div>
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">⏱️</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" opacity="0.2" fill="currentColor"/>
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 6v6l4 2"/>
+              <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+              <circle cx="19" cy="5" r="1" fill="currentColor" opacity="0.4"/>
+              <circle cx="5" cy="19" r="0.7" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">11:00 AM — 00:00</p>
             <p class="text-text-muted text-[11px]">Todos los días</p>
           </div>
         </div>
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">🛵</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L8 8h8l-4-6z" fill="currentColor" opacity="0.2"/>
+              <path d="M12 2L8 8h8l-4-6z"/>
+              <rect x="9" y="8" width="6" height="8" rx="1" fill="currentColor" opacity="0.15"/>
+              <rect x="9" y="8" width="6" height="8" rx="1"/>
+              <path d="M8 16l-2 4h12l-2-4"/>
+              <path d="M10 20l-1 2"/>
+              <path d="M14 20l1 2"/>
+              <circle cx="4" cy="6" r="0.7" fill="currentColor" opacity="0.4"/>
+              <circle cx="20" cy="10" r="0.5" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">Delivery</p>
             <p class="text-text-muted text-[11px]">Toda La Guaira</p>
           </div>
         </div>
         <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm leading-none">💵</div>
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="9" r="6" fill="currentColor" opacity="0.15"/>
+              <circle cx="9" cy="9" r="6"/>
+              <text x="9" y="11.5" text-anchor="middle" font-size="7" font-weight="bold" fill="currentColor" stroke="none" font-family="sans-serif">$</text>
+              <circle cx="15" cy="15" r="6" fill="currentColor" opacity="0.1"/>
+              <circle cx="15" cy="15" r="6"/>
+              <text x="15" y="17.5" text-anchor="middle" font-size="6" font-weight="bold" fill="currentColor" stroke="none" font-family="sans-serif">Bs</text>
+              <path d="M13.5 7.5l3-3" opacity="0.4"/>
+              <circle cx="17.5" cy="3.5" r="0.7" fill="currentColor" opacity="0.4"/>
+            </svg>
+          </div>
           <div>
             <p class="text-text-primary font-heading font-semibold text-sm">USD / Bs</p>
             <p class="text-text-muted text-[11px]">Zelle, Pago Movil</p>
@@ -269,7 +311,7 @@ const categoryIcons: Record<string, string> = {
     <div class="max-w-6xl mx-auto px-4 relative z-10">
       <div class="text-center mb-14">
         <div class="inline-flex items-center gap-2 bg-primary/8 border border-primary/12 rounded-full px-5 py-2 mb-5">
-          <span class="fire-icon text-sm">🔥</span>
+          <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
           <span class="text-primary text-xs font-heading font-semibold tracking-[0.15em] uppercase">Lo Más Pedido</span>
         </div>
         <h2 class="font-display text-3xl sm:text-5xl md:text-6xl font-black tracking-wider">
@@ -353,7 +395,7 @@ const categoryIcons: Record<string, string> = {
     <div class="max-w-6xl mx-auto px-4 relative z-10">
       <div class="text-center mb-12">
         <div class="inline-flex items-center gap-2 bg-primary/8 border border-primary/12 rounded-full px-5 py-2 mb-5">
-          <span class="text-sm">📋</span>
+          <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" fill="currentColor" opacity="0.15"/><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
           <span class="text-primary text-xs font-heading font-semibold tracking-[0.15em] uppercase">Toda Nuestra Carta</span>
         </div>
         <h2 class="font-display text-3xl sm:text-5xl md:text-6xl font-black tracking-wider">
@@ -379,7 +421,7 @@ const categoryIcons: Record<string, string> = {
       </div>
 
       <!-- Category Pills -->
-      <div class="flex overflow-x-auto gap-2 sm:gap-3 mb-12 pb-2 -mx-4 px-4 scrollbar-hide" id="category-tabs">
+      <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 pb-2" id="category-tabs">
         {menuCategories.map((cat, i) => (
           <button
             class={`category-pill whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-heading font-medium flex items-center gap-1.5 sm:gap-2 ${
@@ -388,7 +430,7 @@ const categoryIcons: Record<string, string> = {
             data-category={cat.id}
             aria-label={cat.title}
           >
-            <span class="hidden sm:inline">{categoryIcons[cat.id] || cat.icon}</span>
+            <span class="hidden sm:inline" set:html={categoryIcons[cat.id] || cat.icon} />
             <span>{cat.title.replace('Combos de Pollo Broaster', 'Combos').replace('Milanesas y Pasapalos', 'Pasapalos').replace('Raciones y Contornos', 'Raciones').replace('Pescados y Mariscos', 'Mariscos').replace('Carnes y Parrillas', 'Parrillas')}</span>
           </button>
         ))}
@@ -399,7 +441,7 @@ const categoryIcons: Record<string, string> = {
         {menuCategories.map((cat, catIndex) => (
           <div class={`menu-section ${catIndex === 0 ? 'active' : ''}`} data-section={cat.id}>
             <div class="flex items-center gap-3 mb-6">
-              <span class="text-2xl">{cat.icon}</span>
+              <span class="text-primary" set:html={sectionIcons[cat.id] || cat.icon} />
               <h3 class="font-display text-base sm:text-lg font-bold text-text-primary tracking-wider">{cat.title}</h3>
               <div class="flex-grow h-px bg-gradient-to-r from-primary/10 to-transparent"></div>
             </div>
@@ -504,7 +546,11 @@ const categoryIcons: Record<string, string> = {
 
     <div class="max-w-4xl mx-auto px-4 relative z-10">
       <div class="space-card rounded-3xl p-8 sm:p-12 text-center">
-        <div class="text-4xl mb-4">🔥</div>
+        <div class="mb-4 flex justify-center">
+          <svg class="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" opacity="0.9"/>
+          </svg>
+        </div>
         <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary mb-4">
           MÁS DE 40 AÑOS <span class="text-cosmic">AL CARBÓN</span>
         </h2>
@@ -525,7 +571,16 @@ const categoryIcons: Record<string, string> = {
     </div>
 
     <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
-      <div class="text-5xl mb-5">🍗</div>
+      <div class="mb-5 flex justify-center">
+        <svg class="w-14 h-14 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15.5 2.5c2 1 3.5 3.5 3 6.5-.5 2.5-2 4-3.5 5l-1 2h-4l-1-2C7.5 13 6 11.5 5.5 9c-.5-3 1-5.5 3-6.5" fill="currentColor" opacity="0.15"/>
+          <path d="M15.5 2.5c2 1 3.5 3.5 3 6.5-.5 2.5-2 4-3.5 5l-1 2h-4l-1-2C7.5 13 6 11.5 5.5 9c-.5-3 1-5.5 3-6.5"/>
+          <circle cx="12" cy="8" r="3" fill="currentColor" opacity="0.15"/>
+          <path d="M10 16h4"/>
+          <path d="M10.5 18h3"/>
+          <path d="M11 20h2"/>
+        </svg>
+      </div>
       <h2 class="font-display text-2xl sm:text-4xl md:text-5xl font-black tracking-wider mb-4">
         ¿SE TE ANTOJA <span class="text-cosmic">UN POLLO?</span>
       </h2>
@@ -560,7 +615,19 @@ const categoryIcons: Record<string, string> = {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Delivery zones -->
         <div class="space-card rounded-2xl p-6 text-center md:text-left">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4 mx-auto md:mx-0">🛵</div>
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
+            <svg class="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L8 8h8l-4-6z" fill="currentColor" opacity="0.2"/>
+              <path d="M12 2L8 8h8l-4-6z"/>
+              <rect x="9" y="8" width="6" height="8" rx="1" fill="currentColor" opacity="0.15"/>
+              <rect x="9" y="8" width="6" height="8" rx="1"/>
+              <path d="M8 16l-2 4h12l-2-4"/>
+              <path d="M10 20l-1 2"/>
+              <path d="M14 20l1 2"/>
+              <circle cx="4" cy="6" r="0.7" fill="currentColor" opacity="0.4"/>
+              <circle cx="20" cy="10" r="0.5" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">ZONAS DE DELIVERY</h3>
           <div class="grid grid-cols-2 gap-2">
             {["La Guaira", "Catia La Mar", "Macuto", "Maiquetia", "Caraballeda"].map((zona) => (
@@ -574,10 +641,20 @@ const categoryIcons: Record<string, string> = {
 
         <!-- Payment -->
         <div class="space-card rounded-2xl p-6 text-center md:text-left">
-          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center text-xl leading-none mb-4 mx-auto md:mx-0">💳</div>
+          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
+            <svg class="w-6 h-6 text-whatsapp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2.5" fill="currentColor" opacity="0.12"/>
+              <rect x="2" y="5" width="20" height="14" rx="2.5"/>
+              <path d="M2 10h20" stroke-width="2"/>
+              <path d="M6 15h4"/>
+              <path d="M14 15h4"/>
+              <circle cx="20" cy="7" r="0.6" fill="currentColor" opacity="0.4"/>
+              <circle cx="3" cy="18" r="0.5" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">FORMAS DE PAGO</h3>
           <div class="space-y-2.5">
-            {["Efectivo (USD)", "Zelle", "Pago Movil", "Transferencia", "Efectivo (Bs.)"].map((pago) => (
+            {["Efectivo (USD)", "Zelle", "Pago Movil", "Transferencia", "Efectivo (Bs.)", "Punto de Venta"].map((pago) => (
               <span class="flex items-center gap-2 text-text-secondary text-sm font-heading justify-center md:justify-start">
                 <span class="w-1.5 h-1.5 bg-whatsapp rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(37,211,102,0.5)]"></span>
                 {pago}
@@ -588,7 +665,16 @@ const categoryIcons: Record<string, string> = {
 
         <!-- Location -->
         <div class="space-card rounded-2xl p-6 text-center md:text-left">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4 mx-auto md:mx-0">📍</div>
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
+            <svg class="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor" opacity="0.15"/>
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+              <circle cx="12" cy="9" r="1" fill="currentColor" opacity="0.4"/>
+              <circle cx="18" cy="4" r="0.6" fill="currentColor" opacity="0.4"/>
+              <circle cx="6" cy="17" r="0.5" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">DONDE ESTAMOS</h3>
           <p class="text-text-secondary text-sm leading-relaxed mb-4 font-heading">
             Local 01, Av. Principal de Caribe,<br />
@@ -616,7 +702,7 @@ const categoryIcons: Record<string, string> = {
   <section class="py-14 sm:py-18 relative overflow-hidden">
     <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
       <div class="inline-flex items-center gap-2 bg-[#1DB954]/8 border border-[#1DB954]/15 rounded-full px-5 py-2 mb-5">
-        <span class="text-sm">🎵</span>
+        <svg class="w-4 h-4 text-[#1DB954]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="3" fill="currentColor" opacity="0.2"/><circle cx="6" cy="18" r="3"/><path d="M9 18V4l12-2v14"/><circle cx="18" cy="16" r="3" fill="currentColor" opacity="0.2"/><circle cx="18" cy="16" r="3"/><path d="M9 10l12-2"/></svg>
         <span class="text-[#1DB954] text-xs font-heading font-semibold tracking-[0.15em] uppercase">Ambiente Cabo Kenedy</span>
       </div>
       <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wider text-text-primary mb-3">
@@ -647,7 +733,9 @@ const categoryIcons: Record<string, string> = {
       <div class="flex flex-col md:flex-row items-center justify-between gap-8">
         <div class="text-center md:text-left">
           <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
-            <img src="/logo.webp" alt="Cabo Kenedy" class="h-12 w-12 rounded-full object-contain border border-primary/15 bg-space-dark p-1" loading="lazy" />
+            <div class="h-12 w-12 rounded-full border border-primary/15 overflow-hidden flex-shrink-0">
+              <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-contain translate-x-[3%] -translate-y-[1%]" loading="lazy" width="48" height="48" />
+            </div>
             <div>
               <span class="font-display text-lg font-bold text-primary tracking-[0.1em]">CABO KENEDY</span>
               <p class="text-[10px] text-text-muted tracking-[0.2em] font-heading">POLLO A LA BRASA</p>
@@ -1026,6 +1114,7 @@ const categoryIcons: Record<string, string> = {
           cartEmpty.classList.remove('hidden');
           cartFooter.classList.add('hidden');
           cartNotesSection.classList.add('hidden');
+          closeCart();
         }
 
         updateInlineButtons();
