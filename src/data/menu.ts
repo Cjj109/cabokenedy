@@ -42,7 +42,7 @@ export const promos = [
     priceUSD: 15,
     icon: "🍗",
     badge: "Promo",
-    image: "/promos/resuelve.webp",
+    image: "/promos/resuelve.png",
   },
   {
     id: "asado",
@@ -51,7 +51,7 @@ export const promos = [
     priceUSD: 16,
     icon: "🔥",
     badge: "Asado",
-    image: "/promos/asado.webp",
+    image: "/promos/asado.png",
   },
   {
     id: "broaster",
@@ -60,7 +60,7 @@ export const promos = [
     priceUSD: 18,
     icon: "🍗",
     badge: "Broaster",
-    image: "/promos/broaster.webp",
+    image: "/promos/broaster.png",
   },
   {
     id: "familiar",

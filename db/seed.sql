@@ -12,9 +12,9 @@ VALUES (1, 'Estrella Fugaz', 'Promo Flash', 'Pollo Asado + 7 Hallaquitas + Refre
 
 -- Regular promos
 INSERT INTO promos (id, name, description, price_usd, icon, badge, image, sort_order) VALUES
-('resuelve', 'Resuelve de Pollo', 'Pollo Asado + 5 Hallaquitas + Ensalada + Refresco 1.5 LTS', 15, '🍗', 'Promo', '/promos/resuelve.webp', 1),
-('asado', 'Combo Pollo Asado', 'Pollo Asado + Ens. Rallada o Mixta + Yuca Sancochada + Refresco 1.5 LTS', 16, '🔥', 'Asado', '/promos/asado.webp', 2),
-('broaster', 'Combo Pollo Broaster', '8 piezas de pollo frito + Ensalada Rallada + 8 Arepitas + Refresco 1.5 LTS', 18, '🍗', 'Broaster', '/promos/broaster.webp', 3),
+('resuelve', 'Resuelve de Pollo', 'Pollo Asado + 5 Hallaquitas + Ensalada + Refresco 1.5 LTS', 15, '🍗', 'Promo', '/promos/resuelve.png', 1),
+('asado', 'Combo Pollo Asado', 'Pollo Asado + Ens. Rallada o Mixta + Yuca Sancochada + Refresco 1.5 LTS', 16, '🔥', 'Asado', '/promos/asado.png', 2),
+('broaster', 'Combo Pollo Broaster', '8 piezas de pollo frito + Ensalada Rallada + 8 Arepitas + Refresco 1.5 LTS', 18, '🍗', 'Broaster', '/promos/broaster.png', 3),
 ('familiar', 'Combo Familiar', '2 Pollos Asados + Contorno (ensalada/hallaquitas) + Contorno (papas/yuca/tostones) + Refresco 1.5 LTS', 25, '👨‍👩‍👧‍👦', 'Familiar', '/promos/familiar.webp', 4),
 ('hamburguesa-familiar', 'Promo Familiar Hamburguesa', '4 Hamburguesas de Carne + Ración de Papas Fritas + Refresco 1 LTS', 23, '🍔', 'Familiar', '/promos/hamburguesa-familiar.webp', 5),
 ('2hamburguesas', '2 Hamburguesas de Carne', '2 Hamburguesas de Carne + Refresco 1 LTS', 10, '🍔', 'Oferta', '/promos/2hamburguesas.webp', 6);
