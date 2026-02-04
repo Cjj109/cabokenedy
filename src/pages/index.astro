@@ -292,7 +292,7 @@ const categoryIcons: Record<string, string> = {
                   alt={promo.name}
                   width="400"
                   height="267"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  class="promo-photo w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                   decoding="async"
                 />
@@ -311,7 +311,7 @@ const categoryIcons: Record<string, string> = {
               <!-- Content -->
               <div class="p-5 flex flex-col flex-grow">
                 <h3 class="font-display text-base sm:text-lg font-bold text-text-primary tracking-wider leading-tight mb-2">{promo.name}</h3>
-                <p class="text-text-secondary text-sm leading-relaxed flex-grow mb-4 font-heading">{promo.description}</p>
+                <p class="promo-desc text-text-secondary text-sm leading-relaxed flex-grow mb-4 font-heading">{promo.description}</p>
 
                 <div class="flex gap-2">
                   <button

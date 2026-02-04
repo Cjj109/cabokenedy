@@ -16,8 +16,8 @@
   --color-space-card-hover: #1E1A36;
   --color-space-elevated: #1A1830;
   --color-text-primary: #F5F0E8;
-  --color-text-secondary: #B0A898;
-  --color-text-muted: #9A8F83;
+  --color-text-secondary: #C1B8A8;
+  --color-text-muted: #8A7F74;
   --color-whatsapp: #25D366;
   --color-whatsapp-dark: #1DA851;
   --color-gold: #FFD700;
@@ -60,17 +60,17 @@ body {
 }
 
 .nebula-orange {
-  background: radial-gradient(circle, rgba(232, 122, 30, 0.12), transparent 70%);
+  background: radial-gradient(circle, rgba(232, 122, 30, 0.08), transparent 70%);
   animation: nebulaPulse 12s ease-in-out infinite;
 }
 
 .nebula-amber {
-  background: radial-gradient(circle, rgba(255, 170, 50, 0.10), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 170, 50, 0.07), transparent 70%);
   animation: nebulaPulse 14s ease-in-out infinite reverse;
 }
 
 .nebula-purple {
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.06), transparent 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.045), transparent 70%);
   animation: nebulaPulse 18s ease-in-out infinite;
 }
 
@@ -613,6 +613,18 @@ body {
 
 .promo-card:hover::before { opacity: 1; }
 
+.promo-photo {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.35));
+}
+
+.promo-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  min-height: 3.6em;
+}
+
 /* ==================== ROCKET BUTTON ==================== */
 .rocket-btn {
   position: relative;
@@ -674,4 +686,14 @@ body {
 
 #cart-footer {
   padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.cta-secondary {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .animate-bounce { animation-duration: 1.8s; }
+  .logo-float { animation-duration: 10s; }
+  .whatsapp-float { animation-duration: 2.5s; }
 }
