@@ -18,7 +18,7 @@ export interface MenuCategory {
 }
 
 // Tasa BCV manual fallback (actualizar en Google Sheets en Fase 2)
-export const TASA_BCV = 372.11;
+export const TASA_BCV = 375.08;
 
 // Promo Estrella Fugaz (Flash) - Solo Lunes a Jueves
 export const promoFlash = {

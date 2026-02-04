@@ -1048,23 +1048,39 @@ const sectionIcons: Record<string, string> = Object.fromEntries(
 
     // ============ BCV RATE API ============
     (function() {
-      let currentRate = 52; // fallback
+      let currentRate = {tasaBcvFallback}; // fallback from D1/static
 
       async function fetchBcvRate() {
+        // API 1 (primaria): exchangedyn - más rápida en actualizar
         try {
-          const res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
-          if (!res.ok) return;
-          const data = await res.json();
-          if (data && data.promedio && data.promedio > 0) {
-            currentRate = data.promedio;
-            updateAllBsPrices();
-            // Update BCV note
-            const rateEl = document.getElementById('bcv-rate');
-            if (rateEl) rateEl.textContent = currentRate.toFixed(2);
+          const res = await fetch('https://api.exchangedyn.com/markets/quotes/usdves/bcv');
+          if (res.ok) {
+            const data = await res.json();
+            const quote = parseFloat(data?.sources?.BCV?.quote);
+            if (quote > 0) {
+              currentRate = quote;
+              updateAllBsPrices();
+              const rateEl = document.getElementById('bcv-rate');
+              if (rateEl) rateEl.textContent = currentRate.toFixed(2);
+              return;
+            }
           }
-        } catch (e) {
-          // Use fallback rate silently
-        }
+        } catch {}
+        // API 2 (fallback): bcvapi.tech
+        try {
+          const res = await fetch('https://bcvapi.tech/api/v1/dolar/public');
+          if (res.ok) {
+            const data = await res.json();
+            const tasa = parseFloat(data?.tasa);
+            if (tasa > 0) {
+              currentRate = tasa;
+              updateAllBsPrices();
+              const rateEl = document.getElementById('bcv-rate');
+              if (rateEl) rateEl.textContent = currentRate.toFixed(2);
+              return;
+            }
+          }
+        } catch {}
       }
 
       function updateAllBsPrices() {
@@ -1085,7 +1101,7 @@ const sectionIcons: Record<string, string> = Object.fromEntries(
     // ============ CART SYSTEM ============
     (function() {
       const WA_NUMBER = '584142920785';
-      const getBcvRate = () => (window as any).__bcvRate || 52;
+      const getBcvRate = () => (window as any).__bcvRate || {tasaBcvFallback};
 
       type CartItem = { name: string; price: number; qty: number; category: string; desc: string };
       let cart: CartItem[] = [];
