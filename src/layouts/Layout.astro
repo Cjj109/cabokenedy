@@ -1,0 +1,114 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Cabo Kenedy | Pollo a la Brasa - La Guaira, Venezuela",
+  description = "Más de 40 años de tradición. Pollo a la brasa y broaster, combos familiares, parrillas y más. Pide por WhatsApp. Delivery en La Guaira, Catia La Mar, Macuto y Maiquetía."
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#08070E" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="restaurant" />
+    <meta property="og:locale" content="es_VE" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="Cabo Kenedy" />
+    <meta property="og:image" content="/logo.webp" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/logo.webp" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/logo.webp" />
+
+    <!-- Preconnect fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
+    </noscript>
+
+    <!-- Preconnect BCV API -->
+    <link rel="preconnect" href="https://ve.dolarapi.com" />
+
+    <!-- DNS prefetch WhatsApp -->
+    <link rel="dns-prefetch" href="https://wa.me" />
+
+    <title>{title}</title>
+
+    <!-- Restaurant Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "Cabo Kenedy",
+      "description": description,
+      "url": "https://cabokenedy.com",
+      "telephone": "+584142920785",
+      "servesCuisine": ["Pollo a la Brasa", "Pollo Broaster", "Comida Venezolana", "Parrilla"],
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Local 01, Av. Principal de Caribe, C.C. Houston PB",
+        "addressLocality": "Caraballeda",
+        "addressRegion": "La Guaira",
+        "postalCode": "1165",
+        "addressCountry": "VE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 10.6134,
+        "longitude": -66.8600
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "11:00",
+        "closes": "22:00"
+      },
+      "image": "https://cabokenedy.com/logo.webp",
+      "sameAs": [
+        "https://www.instagram.com/cabokenedy"
+      ]
+    })} />
+  </head>
+  <body class="min-h-screen bg-space-dark">
+    <!-- Starfield Canvas -->
+    <canvas id="starfield" class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true"></canvas>
+
+    <!-- Page content -->
+    <div class="relative z-10">
+      <slot />
+    </div>
+  </body>
+</html>

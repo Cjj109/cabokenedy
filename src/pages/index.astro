@@ -1,0 +1,1264 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { promoFlash, promos, menuCategories, TASA_BCV, getWhatsAppLink, getGeneralWhatsAppMessage, formatBs } from '../data/menu';
+
+const waGeneral = getWhatsAppLink(getGeneralWhatsAppMessage());
+
+const waIcon = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
+const categoryIcons: Record<string, string> = {
+  combos: "🍗",
+  pollo: "🔥",
+  hamburguesas: "🍔",
+  pasapalos: "🍟",
+  raciones: "🥔",
+  ensaladas: "🥗",
+  carnes: "🥩",
+  mariscos: "🐟",
+};
+---
+
+<Layout>
+  <!-- ==================== AMBIENT NEBULAS ==================== -->
+  <div class="nebula nebula-orange fixed top-[5%] left-[-10%] w-[600px] h-[600px] z-0"></div>
+  <div class="nebula nebula-amber fixed top-[45%] right-[-5%] w-[500px] h-[500px] z-0"></div>
+  <div class="nebula nebula-purple fixed bottom-[15%] left-[15%] w-[350px] h-[350px] z-0"></div>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-space-dark/80 backdrop-blur-2xl border-b border-primary/[0.06]">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <img src="/logo.webp" alt="Cabo Kenedy" class="h-10 w-10 rounded-full object-contain border border-primary/20 transition-all group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(232,122,30,0.3)] bg-space-dark" loading="eager" />
+        <div class="hidden sm:block">
+          <span class="font-display text-sm font-bold text-primary tracking-[0.15em]">CABO KENEDY</span>
+          <span class="block text-[9px] text-text-muted tracking-[0.2em] font-heading">POLLO A LA BRASA</span>
+        </div>
+      </a>
+      <div class="flex items-center gap-5">
+        <a href="#combos" class="text-text-secondary hover:text-primary transition-colors text-sm font-medium hidden sm:block font-heading">Promos</a>
+        <a href="#menu" class="text-text-secondary hover:text-primary transition-colors text-sm font-medium font-heading">Menu</a>
+        <a
+          href={waGeneral}
+          target="_blank"
+          rel="noopener"
+          class="rocket-btn bg-whatsapp hover:bg-whatsapp-dark text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-whatsapp/20"
+        >
+          <Fragment set:html={waIcon.replace('w-5 h-5', 'w-4 h-4')} />
+          <span class="hidden sm:inline">Pedir Ahora</span>
+          <span class="sm:hidden">Pedir</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="relative min-h-[100svh] flex items-center justify-center pt-16 overflow-hidden">
+    <!-- Warm nebula glow -->
+    <div class="absolute top-1/4 left-1/3 w-[500px] h-[500px] nebula nebula-orange z-0"></div>
+    <div class="absolute bottom-1/3 right-1/4 w-[350px] h-[350px] nebula nebula-amber z-0"></div>
+
+    <!-- Orbit decoration (subtle) -->
+    <div class="orbit-ring orbit-slow absolute w-[500px] h-[500px] sm:w-[650px] sm:h-[650px] opacity-20"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <!-- Logo floating with decorative stars -->
+      <div class="mb-8 relative inline-block">
+        <div class="logo-float">
+          <div class="logo-glow inline-block p-1 relative">
+            <img
+              src="/logo.webp"
+              alt="Cabo Kenedy - Pollo a la Brasa"
+              width="240"
+              height="240"
+              class="w-44 h-44 sm:w-60 sm:h-60 rounded-full object-contain border-2 border-primary/25 bg-space-dark p-4"
+              loading="eager"
+              fetchpriority="high"
+            />
+            <!-- Decorative stars matching original logo -->
+            <span class="logo-star" style="top: 5%; left: -8%; font-size: 14px;">✦</span>
+            <span class="logo-star" style="top: -5%; left: 25%; font-size: 10px;">✦</span>
+            <span class="logo-star" style="top: 15%; right: -12%; font-size: 18px;">✦</span>
+            <span class="logo-star" style="bottom: 20%; right: -6%; font-size: 8px;">✦</span>
+            <span class="logo-star" style="bottom: 5%; left: -5%; font-size: 12px;">✦</span>
+            <span class="logo-star-dot" style="top: 30%; right: -3%;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brand name -->
+      <h1 class="font-display text-4xl sm:text-6xl md:text-7xl font-black mb-2 tracking-[0.08em] leading-none">
+        <span class="text-cosmic-wide">CABO</span>
+        <span class="text-text-primary"> KENEDY</span>
+      </h1>
+
+      <!-- THE key identity: Pollo a la Brasa -->
+      <p class="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-primary-light/90 mb-3 tracking-wide">
+        Pollo a la Brasa
+      </p>
+
+      <p class="font-display text-[9px] sm:text-[10px] text-text-muted tracking-[0.5em] uppercase mb-8">
+        Un Espacio Para Ti
+      </p>
+
+      <!-- Warm description -->
+      <p class="font-heading text-base sm:text-lg text-text-secondary max-w-lg mx-auto mb-4 leading-relaxed">
+        Más de <span class="text-primary font-semibold">40 años</span> cocinando al carbón con receta familiar.
+        El sabor de siempre en La Guaira.
+      </p>
+
+      <!-- Trust badges - food-centric -->
+      <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 mb-10 text-text-muted text-sm font-heading">
+        <span class="flex items-center gap-1.5">
+          <span class="fire-icon text-xs">🔥</span>
+          <span>Al carbón</span>
+        </span>
+        <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
+        <span class="flex items-center gap-1.5">
+          <span class="text-xs">🍗</span>
+          <span>Receta familiar</span>
+        </span>
+        <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
+        <span class="flex items-center gap-1.5">
+          <span class="text-xs">🛵</span>
+          <span>Delivery</span>
+        </span>
+        <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
+        <span class="flex items-center gap-1.5">
+          <span class="text-xs">📍</span>
+          <span>Caraballeda</span>
+        </span>
+      </div>
+
+      <!-- CTA buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a
+          href={waGeneral}
+          target="_blank"
+          rel="noopener"
+          class="rocket-btn glow-green bg-whatsapp hover:bg-whatsapp-dark text-white font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105 flex items-center gap-3 w-full sm:w-auto justify-center shadow-2xl shadow-whatsapp/30"
+        >
+          <Fragment set:html={waIcon.replace('w-5 h-5', 'w-6 h-6')} />
+          Pedir por WhatsApp
+        </a>
+        <a
+          href="#combos"
+          class="border border-primary/20 hover:border-primary/40 text-primary hover:bg-primary/5 font-semibold text-lg px-10 py-4 rounded-full transition-all w-full sm:w-auto text-center backdrop-blur-sm hover:shadow-[0_0_30px_rgba(232,122,30,0.08)]"
+        >
+          Ver Promos 🔥
+        </a>
+      </div>
+
+      <!-- Scroll -->
+      <div class="mt-14 animate-bounce opacity-25">
+        <svg class="w-5 h-5 mx-auto text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== LA TRADICION BAR ==================== -->
+  <section class="py-5 border-y border-primary/[0.06] bg-space-deep/60 backdrop-blur-lg relative scanlines">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="flex items-center gap-3 justify-center py-2">
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">🔥</div>
+          <div>
+            <p class="text-text-primary font-heading font-semibold text-sm">Al Carbón</p>
+            <p class="text-text-muted text-[11px]">Cocción tradicional</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 justify-center py-2">
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">⏱️</div>
+          <div>
+            <p class="text-text-primary font-heading font-semibold text-sm">11:00 AM — 00:00</p>
+            <p class="text-text-muted text-[11px]">Todos los días</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 justify-center py-2">
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">🛵</div>
+          <div>
+            <p class="text-text-primary font-heading font-semibold text-sm">Delivery</p>
+            <p class="text-text-muted text-[11px]">Toda La Guaira</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 justify-center py-2">
+          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-sm">💵</div>
+          <div>
+            <p class="text-text-primary font-heading font-semibold text-sm">USD / Bs</p>
+            <p class="text-text-muted text-[11px]">Zelle, Pago Movil</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PROMO ESTRELLA FUGAZ (FLASH) ==================== -->
+  <section id="promo-flash" class="py-10 sm:py-14 relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 relative z-10">
+      <div class="flash-banner rounded-3xl overflow-hidden">
+        <div class="flex flex-col md:flex-row">
+          <!-- Food image -->
+          <div class="relative md:w-2/5 h-48 md:h-auto flex-shrink-0">
+            <img
+              src={promoFlash.image}
+              alt="Promo Estrella Fugaz"
+              width="800"
+              height="533"
+              class="w-full h-full object-cover"
+              loading="eager"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-space-dark/90 hidden md:block"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-space-dark/90 md:hidden"></div>
+            <div class="absolute top-3 left-3">
+              <div class="availability-badge inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                <span class="text-primary text-[11px] font-heading font-bold tracking-wider uppercase">{promoFlash.availability}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="flex-grow p-6 sm:p-8 flex flex-col md:flex-row items-center gap-5 md:gap-8">
+            <div class="flex-grow text-center md:text-left">
+              <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                <span class="text-2xl">☄️</span>
+                <p class="text-primary text-[10px] font-heading font-bold tracking-[0.25em] uppercase">Promo Especial</p>
+              </div>
+              <h2 class="font-display text-2xl sm:text-3xl font-black tracking-wider text-text-primary mb-2">
+                ESTRELLA <span class="text-cosmic">FUGAZ</span>
+              </h2>
+              <p class="text-text-secondary font-heading text-sm leading-relaxed mb-1">
+                {promoFlash.description}
+              </p>
+              <p class="text-text-muted text-xs font-heading">
+                {promoFlash.channels}
+              </p>
+            </div>
+
+            <div class="flex flex-col items-center flex-shrink-0 gap-3">
+              <div class="text-center">
+                <span class="flash-price font-display text-4xl sm:text-5xl font-black">${promoFlash.priceUSD}</span>
+                <span class="block text-primary-light/70 text-sm mt-1 font-heading bs-price" data-usd={promoFlash.priceUSD}>{formatBs(promoFlash.priceUSD)}</span>
+              </div>
+              <button
+                data-cart-add
+                data-name={promoFlash.name}
+                data-price={promoFlash.priceUSD}
+                data-item-category="promos"
+                class="rocket-btn bg-primary hover:bg-primary-dark text-white font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-primary/25 font-heading whitespace-nowrap"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PROMOCIONES ==================== -->
+  <section id="combos" class="py-20 sm:py-28 relative overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] nebula nebula-orange z-0"></div>
+
+    <div class="max-w-6xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-2 bg-primary/8 border border-primary/12 rounded-full px-5 py-2 mb-5">
+          <span class="fire-icon text-sm">🔥</span>
+          <span class="text-primary text-xs font-heading font-semibold tracking-[0.15em] uppercase">Lo Más Pedido</span>
+        </div>
+        <h2 class="font-display text-3xl sm:text-5xl md:text-6xl font-black tracking-wider">
+          NUESTRAS <span class="text-cosmic">PROMOS</span>
+        </h2>
+        <p class="text-text-secondary mt-4 max-w-lg mx-auto font-heading text-base sm:text-lg">
+          Los combos que más pide La Guaira. Pollo asado, broaster, hamburguesas y más.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 stagger-children">
+        {promos.map((promo) => {
+          const bsPrice = formatBs(promo.priceUSD);
+          return (
+            <div class="promo-card rounded-2xl overflow-hidden flex flex-col group">
+              <!-- Food photo -->
+              <div class="relative h-44 sm:h-48 overflow-hidden">
+                <img
+                  src={promo.image}
+                  alt={promo.name}
+                  width="400"
+                  height="267"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-space-dark via-space-dark/30 to-transparent"></div>
+                <div class="absolute top-3 left-3">
+                  <span class="badge-shimmer text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider font-heading">
+                    {promo.badge}
+                  </span>
+                </div>
+                <div class="absolute top-3 right-3 text-right">
+                  <span class="font-display text-3xl font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">${promo.priceUSD}</span>
+                  <span class="block text-white/90 text-xs font-heading font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)] bs-price" data-usd={promo.priceUSD}>{bsPrice}</span>
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="p-5 flex flex-col flex-grow">
+                <h3 class="font-display text-base sm:text-lg font-bold text-text-primary tracking-wider leading-tight mb-2">{promo.name}</h3>
+                <p class="text-text-secondary text-sm leading-relaxed flex-grow mb-4 font-heading">{promo.description}</p>
+
+                <div class="flex gap-2">
+                  <button
+                    class="cart-add-btn flex-grow bg-primary/90 hover:bg-primary text-white font-bold py-3 rounded-xl text-center transition-all hover:scale-[1.03] flex items-center justify-center gap-2 text-sm font-heading"
+                    data-cart-add
+                    data-name={promo.name}
+                    data-price={promo.priceUSD}
+                    data-item-category="promos"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    Agregar
+                  </button>
+                  <a
+                    class="wa-item-btn w-12 flex items-center justify-center bg-whatsapp/90 hover:bg-whatsapp text-white rounded-xl transition-all hover:scale-[1.03] flex-shrink-0"
+                    data-wa-item={promo.name}
+                    href="#"
+                    aria-label={`Pedir ${promo.name} por WhatsApp`}
+                  >
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="#menu" class="inline-flex items-center gap-2 text-primary hover:text-primary-light font-medium transition-colors group font-heading">
+          Ver menú completo
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Orbit Divider -->
+  <div class="orbit-divider mx-auto max-w-2xl overflow-hidden"></div>
+
+  <!-- ==================== NUESTRA TRADICION ==================== -->
+  <section class="py-16 sm:py-20 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-[400px] h-[400px] nebula nebula-amber z-0"></div>
+
+    <div class="max-w-4xl mx-auto px-4 relative z-10">
+      <div class="space-card rounded-3xl p-8 sm:p-12 text-center">
+        <div class="text-4xl mb-4">🔥</div>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary mb-4">
+          MÁS DE 40 AÑOS <span class="text-cosmic">AL CARBÓN</span>
+        </h2>
+        <p class="text-text-secondary font-heading text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-3">
+          Desde 1980, en Cabo Kenedy cocinamos nuestro pollo a la brasa sobre carbón natural, con una receta familiar que ha pasado de generación en generación. Cada pieza se marina con nuestro adobo secreto y se asa lentamente hasta quedar crujiente por fuera y jugosa por dentro.
+        </p>
+        <p class="text-text-muted font-heading text-sm">
+          Acompañado de arepitas, ensalada rallada de repollo y zanahoria, y todo el sabor de la tradición venezolana.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider mx-auto max-w-2xl"></div>
+
+  <!-- ==================== MENU COMPLETO ==================== -->
+  <section id="menu" class="py-24 sm:py-32 relative">
+    <div class="absolute top-1/3 right-0 w-[400px] h-[400px] nebula nebula-purple z-0"></div>
+
+    <div class="max-w-6xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 bg-primary/8 border border-primary/12 rounded-full px-5 py-2 mb-5">
+          <span class="text-sm">📋</span>
+          <span class="text-primary text-xs font-heading font-semibold tracking-[0.15em] uppercase">Toda Nuestra Carta</span>
+        </div>
+        <h2 class="font-display text-3xl sm:text-5xl md:text-6xl font-black tracking-wider">
+          MENU <span class="text-cosmic">COMPLETO</span>
+        </h2>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="max-w-xl mx-auto mb-8">
+        <div class="relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input
+            type="text"
+            id="menu-search"
+            placeholder="Buscar en el menú... (papas, pollo, ensalada...)"
+            class="w-full bg-space-card/60 border border-white/10 rounded-2xl pl-12 pr-10 py-3.5 text-text-primary text-sm font-heading placeholder:text-text-muted/50 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
+          />
+          <button id="menu-search-clear" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-text-muted hover:text-text-primary rounded-full hover:bg-white/5 transition-all hidden">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <p id="search-results-count" class="text-text-muted text-xs font-heading mt-2 text-center hidden"></p>
+      </div>
+
+      <!-- Category Pills -->
+      <div class="flex overflow-x-auto gap-2 sm:gap-3 mb-12 pb-2 -mx-4 px-4 scrollbar-hide" id="category-tabs">
+        {menuCategories.map((cat, i) => (
+          <button
+            class={`category-pill whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-heading font-medium flex items-center gap-2 ${
+              i === 0 ? 'active bg-space-card text-white' : 'bg-space-card/40 text-text-secondary'
+            }`}
+            data-category={cat.id}
+          >
+            <span>{categoryIcons[cat.id] || cat.icon}</span>
+            <span>{cat.title.replace('Combos de Pollo Broaster', 'Combos').replace('Milanesas y Pasapalos', 'Pasapalos').replace('Raciones y Contornos', 'Raciones').replace('Pescados y Mariscos', 'Mariscos').replace('Carnes y Parrillas', 'Parrillas')}</span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Menu Sections -->
+      <div id="menu-content">
+        {menuCategories.map((cat, catIndex) => (
+          <div class={`menu-section ${catIndex === 0 ? 'active' : ''}`} data-section={cat.id}>
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-2xl">{cat.icon}</span>
+              <h3 class="font-display text-base sm:text-lg font-bold text-text-primary tracking-wider">{cat.title}</h3>
+              <div class="flex-grow h-px bg-gradient-to-r from-primary/10 to-transparent"></div>
+            </div>
+
+            <div class="space-y-1">
+              {cat.items.map((item) => (
+                  <div class="menu-item-card rounded-xl px-4 sm:px-5 py-4 group" data-menu-item data-item-name={item.name.toLowerCase()}>
+                    {/* Non-variant items */}
+                    {!item.variants ? (
+                      <div class="flex items-center justify-between gap-3">
+                        <div class="flex-grow min-w-0">
+                          <div class="flex items-center gap-2">
+                            <h4 class="font-heading font-semibold text-text-primary text-base sm:text-lg leading-tight">{item.name}</h4>
+                            {item.popular && (
+                              <span class="text-[9px] bg-primary/12 text-primary-light px-2 py-0.5 rounded-full font-bold font-heading uppercase tracking-wider flex-shrink-0">Popular</span>
+                            )}
+                          </div>
+                          {item.description && (
+                            <p class="text-text-secondary text-sm leading-relaxed mt-1">{item.description}</p>
+                          )}
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                          <div class="text-right">
+                            <span class="font-display text-xl sm:text-2xl font-bold text-primary leading-none">${item.priceUSD}</span>
+                            <span class="block text-xs text-primary-light/70 mt-0.5 font-heading bs-price" data-usd={item.priceUSD}>{formatBs(item.priceUSD)}</span>
+                          </div>
+                          <button
+                            class="cart-add-circle w-10 h-10 flex items-center justify-center bg-primary/15 hover:bg-primary text-primary hover:text-white rounded-full transition-all hover:scale-110 flex-shrink-0 border border-primary/20 hover:border-primary"
+                            data-cart-add
+                            data-name={item.name}
+                            data-price={item.priceUSD}
+                            data-item-category={cat.id}
+                            aria-label={`Agregar ${item.name}`}
+                          >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                          </button>
+                          <a
+                            class="wa-item-btn w-10 h-10 flex items-center justify-center bg-whatsapp/15 hover:bg-whatsapp text-whatsapp hover:text-white rounded-full transition-all hover:scale-110 flex-shrink-0 border border-whatsapp/20 hover:border-whatsapp"
+                            data-wa-item={item.name}
+                            href="#"
+                            aria-label={`Pedir ${item.name} por WhatsApp`}
+                          >
+                            <svg class="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Variant items: name + description top, variant rows below */
+                      <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          <h4 class="font-heading font-semibold text-text-primary text-base sm:text-lg leading-tight">{item.name}</h4>
+                        </div>
+                        {item.description && (
+                          <p class="text-text-secondary text-sm leading-relaxed mb-2">{item.description}</p>
+                        )}
+                        <div class="mt-2 rounded-xl border border-white/8 overflow-hidden divide-y divide-white/5">
+                          {item.variants.map((v) => (
+                            <div class="flex items-center justify-between px-4 py-3 hover:bg-primary/5 transition-colors">
+                              <span class="text-sm text-text-primary font-heading font-medium">{v.label}</span>
+                              <div class="flex items-center gap-3">
+                                <div class="text-right">
+                                  <span class="font-display text-lg sm:text-xl font-bold text-primary">${v.priceUSD}</span>
+                                  <span class="block text-[11px] text-primary-light/60 font-heading bs-price" data-usd={v.priceUSD}>{formatBs(v.priceUSD)}</span>
+                                </div>
+                                <button
+                                  class="cart-add-circle w-9 h-9 flex items-center justify-center bg-primary/15 hover:bg-primary text-primary hover:text-white rounded-full transition-all hover:scale-110 flex-shrink-0 border border-primary/20 hover:border-primary"
+                                  data-cart-add
+                                  data-name={`${item.name} (${v.label})`}
+                                  data-price={v.priceUSD}
+                                  data-item-category={cat.id}
+                                  aria-label={`Agregar ${item.name} ${v.label}`}
+                                >
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="text-center text-text-muted text-xs mt-10 font-heading" id="bcv-note">
+        Precios en USD. Equivalente en Bs. a tasa BCV (<span id="bcv-rate">{TASA_BCV}</span> Bs/$).
+      </p>
+    </div>
+  </section>
+
+  <!-- Orbit Divider -->
+  <div class="orbit-divider mx-auto max-w-2xl overflow-hidden"></div>
+
+  <!-- ==================== PEDIR CTA ==================== -->
+  <section class="py-20 sm:py-28 relative overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] nebula nebula-orange"></div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
+      <div class="text-5xl mb-5">🍗</div>
+      <h2 class="font-display text-2xl sm:text-4xl md:text-5xl font-black tracking-wider mb-4">
+        ¿SE TE ANTOJA <span class="text-cosmic">UN POLLO?</span>
+      </h2>
+      <p class="text-text-secondary mb-10 max-w-md mx-auto font-heading text-base sm:text-lg">
+        Escríbenos por WhatsApp y te lo llevamos a tu puerta. Pollo a la brasa recién salido del carbón.
+      </p>
+      <a
+        href={waGeneral}
+        target="_blank"
+        rel="noopener"
+        class="rocket-btn glow-green inline-flex items-center gap-3 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold text-lg px-12 py-5 rounded-full transition-all hover:scale-105 shadow-2xl shadow-whatsapp/25 font-heading"
+      >
+        <Fragment set:html={waIcon.replace('w-5 h-5', 'w-6 h-6')} />
+        Pedir por WhatsApp
+      </a>
+      <p class="text-text-muted text-xs mt-5 font-heading">+58 414-292-0785</p>
+    </div>
+  </section>
+
+  <!-- ==================== INFO ==================== -->
+  <section class="py-20 sm:py-28 bg-space-deep/40 border-t border-primary/[0.06] relative">
+    <div class="absolute top-0 right-0 w-[300px] h-[300px] nebula nebula-amber z-0"></div>
+
+    <div class="max-w-6xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-14">
+        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary">
+          VISITA <span class="text-cosmic">CABO KENEDY</span>
+        </h2>
+        <p class="text-text-muted text-sm mt-2 font-heading">Tu pollera de confianza en La Guaira</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Delivery zones -->
+        <div class="space-card rounded-2xl p-6">
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl mb-4">🛵</div>
+          <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">ZONAS DE DELIVERY</h3>
+          <div class="grid grid-cols-2 gap-2">
+            {["La Guaira", "Catia La Mar", "Macuto", "Maiquetia", "Caraballeda"].map((zona) => (
+              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(232,122,30,0.5)]"></span>
+                {zona}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="space-card rounded-2xl p-6">
+          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center text-xl mb-4">💳</div>
+          <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">FORMAS DE PAGO</h3>
+          <div class="space-y-2.5">
+            {["Efectivo (USD)", "Zelle", "Pago Movil", "Transferencia", "Efectivo (Bs.)"].map((pago) => (
+              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading">
+                <span class="w-1.5 h-1.5 bg-whatsapp rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(37,211,102,0.5)]"></span>
+                {pago}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="space-card rounded-2xl p-6">
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl mb-4">📍</div>
+          <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">DONDE ESTAMOS</h3>
+          <p class="text-text-secondary text-sm leading-relaxed mb-4 font-heading">
+            Local 01, Av. Principal de Caribe,<br />
+            C.C. Houston PB, Caraballeda 1165,<br />
+            La Guaira, Venezuela
+          </p>
+          <a
+            href="https://share.google/hEQdUiEhcmu9OOFcC"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 bg-space-dark/60 hover:bg-primary/10 border border-white/8 hover:border-primary/25 text-primary text-sm font-medium px-4 py-2 rounded-xl transition-all font-heading"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Ver en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SPOTIFY ==================== -->
+  <section class="py-14 sm:py-18 relative overflow-hidden">
+    <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 bg-[#1DB954]/8 border border-[#1DB954]/15 rounded-full px-5 py-2 mb-5">
+        <span class="text-sm">🎵</span>
+        <span class="text-[#1DB954] text-xs font-heading font-semibold tracking-[0.15em] uppercase">Ambiente Cabo Kenedy</span>
+      </div>
+      <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wider text-text-primary mb-3">
+        SIENTE EL <span class="text-cosmic">AMBIENTE</span>
+      </h2>
+      <p class="text-text-secondary font-heading text-sm mb-6">
+        Escucha nuestra playlist y siéntete como en el local.
+      </p>
+      <div class="rounded-2xl overflow-hidden max-w-md mx-auto">
+        <iframe
+          style="border-radius:12px"
+          src="https://open.spotify.com/embed/playlist/0CqLFEwbmP2LC67YormORK?utm_source=generator&theme=0"
+          width="100%"
+          height="152"
+          frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-primary/[0.06] bg-space-dark py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="text-center md:text-left">
+          <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+            <img src="/logo.webp" alt="Cabo Kenedy" class="h-12 w-12 rounded-full object-contain border border-primary/15 bg-space-dark p-1" loading="lazy" />
+            <div>
+              <span class="font-display text-lg font-bold text-primary tracking-[0.1em]">CABO KENEDY</span>
+              <p class="text-[10px] text-text-muted tracking-[0.2em] font-heading">POLLO A LA BRASA</p>
+            </div>
+          </div>
+          <p class="text-text-muted text-xs font-heading">Tradición de más de 40 años en La Guaira</p>
+
+          <!-- Social Media Links -->
+          <div class="flex items-center justify-center md:justify-start gap-3 mt-3">
+            <a href="https://www.instagram.com/restaurantcabokenedyoficial/" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-space-card border border-white/8 hover:border-primary/30 flex items-center justify-center text-text-secondary hover:text-primary transition-all hover:scale-110" aria-label="Instagram">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@restaurantcabokenedy" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-space-card border border-white/8 hover:border-primary/30 flex items-center justify-center text-text-secondary hover:text-primary transition-all hover:scale-110" aria-label="TikTok">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.16 8.16 0 004.77 1.52V6.84a4.85 4.85 0 01-1-.15z"/></svg>
+            </a>
+            <a href="https://open.spotify.com/playlist/0CqLFEwbmP2LC67YormORK" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-space-card border border-white/8 hover:border-[#1DB954]/30 flex items-center justify-center text-text-secondary hover:text-[#1DB954] transition-all hover:scale-110" aria-label="Spotify">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <p class="font-display text-[10px] text-text-muted tracking-[0.2em] uppercase mb-1">Horario</p>
+          <p class="text-text-primary font-display font-bold text-xl tracking-wider">11:00 AM — 00:00</p>
+          <p class="text-text-muted text-xs font-heading mt-1">Todos los días</p>
+        </div>
+
+        <div class="text-center md:text-right">
+          <a
+            href={waGeneral}
+            target="_blank"
+            rel="noopener"
+            class="rocket-btn inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-semibold text-sm px-6 py-3 rounded-full transition-all hover:scale-105 shadow-lg shadow-whatsapp/20 font-heading"
+          >
+            <Fragment set:html={waIcon.replace('w-5 h-5', 'w-4 h-4')} />
+            Haz tu pedido
+          </a>
+          <p class="text-text-muted text-xs mt-2 font-heading">+58 414-292-0785</p>
+        </div>
+      </div>
+
+      <div class="mt-10 pt-6 border-t border-primary/[0.04] text-center">
+        <p class="text-text-muted/40 text-xs font-heading">&copy; {new Date().getFullYear()} Cabo Kenedy. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== FLOATING WHATSAPP ==================== -->
+  <a
+    href={waGeneral}
+    target="_blank"
+    rel="noopener"
+    class="whatsapp-float fixed bottom-6 right-6 z-50 bg-whatsapp hover:bg-whatsapp-dark text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl shadow-whatsapp/30 transition-all hover:scale-110"
+    aria-label="Pedir por WhatsApp"
+  >
+    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- ==================== CART BAR ==================== -->
+  <div id="cart-bar" class="cart-bar fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300">
+    <div class="max-w-2xl mx-auto px-4 py-3">
+      <button id="cart-bar-btn" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-between shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] font-heading">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+            <span id="cart-bar-count" class="text-sm font-bold">0</span>
+          </div>
+          <span class="text-sm sm:text-base">Ver Pedido</span>
+        </div>
+        <span id="cart-bar-total" class="font-display text-lg font-bold">$0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== CART DRAWER ==================== -->
+  <div id="cart-drawer" class="fixed inset-0 z-[60] pointer-events-none opacity-0 transition-opacity duration-300">
+    <div id="cart-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div id="cart-panel" class="absolute bottom-0 left-0 right-0 max-h-[85vh] bg-space-deep border-t border-primary/20 rounded-t-3xl overflow-hidden translate-y-full transition-transform duration-300">
+      <div class="overflow-y-auto max-h-[calc(85vh-120px)] p-6">
+        <div class="w-12 h-1.5 bg-white/15 rounded-full mx-auto mb-5"></div>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-display text-lg font-bold text-text-primary tracking-wider">TU PEDIDO</h3>
+          <button id="cart-close" class="w-8 h-8 flex items-center justify-center text-text-muted hover:text-text-primary rounded-full hover:bg-white/5 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div id="cart-items-list" class="space-y-3 mb-4"></div>
+        <div id="cart-notes-section" class="hidden mb-4">
+          <label for="cart-notes" class="text-text-muted text-xs font-heading font-semibold tracking-wider uppercase mb-2 flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Notas del pedido
+          </label>
+          <textarea id="cart-notes" rows="2" placeholder="Ej: Sin aguacate en la ensalada, extra salsa, sin picante..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-text-primary text-sm font-heading placeholder:text-text-muted/40 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 resize-none transition-all"></textarea>
+        </div>
+        <div id="cart-empty" class="text-center py-10">
+          <span class="text-4xl mb-3 block">🛒</span>
+          <p class="text-text-muted font-heading">Tu pedido esta vacio</p>
+          <p class="text-text-muted/60 text-sm font-heading mt-1">Agrega productos del menu</p>
+        </div>
+        <div id="cart-suggestions" class="hidden mb-4">
+          <p class="text-text-muted text-xs font-heading font-semibold tracking-wider uppercase mb-3">¿Quieres agregar algo mas?</p>
+          <div id="suggestion-chips" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div class="h-32"></div>
+      </div>
+      <div id="cart-footer" class="absolute bottom-0 left-0 right-0 bg-space-deep/95 backdrop-blur-xl border-t border-white/8 p-5 hidden">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-text-secondary font-heading">Total</span>
+          <div class="text-right">
+            <span id="cart-total-usd" class="font-display text-2xl font-bold text-primary">$0</span>
+            <span id="cart-total-bs" class="block text-text-muted text-xs font-heading">Bs. 0</span>
+          </div>
+        </div>
+        <button id="cart-send" class="w-full bg-whatsapp hover:bg-whatsapp-dark text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all hover:scale-[1.02] shadow-lg shadow-whatsapp/20 font-heading text-base">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Enviar Pedido por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script>
+    // ============ STARFIELD CANVAS ============
+    (function() {
+      const canvas = document.getElementById('starfield') as HTMLCanvasElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let W: number, H: number;
+      let stars: { x: number; y: number; r: number; a: number; s: number; o: number }[] = [];
+      let shoots: { x: number; y: number; l: number; v: number; a: number; angle: number }[] = [];
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = Math.max(document.body.scrollHeight, window.innerHeight);
+        initStars();
+      }
+
+      function initStars() {
+        const count = Math.min(250, Math.floor((W * H) / 10000));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.5 + 0.3,
+          a: Math.random() * 0.6 + 0.2,
+          s: Math.random() * 0.01 + 0.002,
+          o: Math.random() * Math.PI * 2,
+        }));
+      }
+
+      function frame(t: number) {
+        ctx!.clearRect(0, 0, W, H);
+
+        for (const s of stars) {
+          const twinkle = (Math.sin(t * s.s + s.o) + 1) / 2;
+          const alpha = 0.1 + twinkle * s.a * 0.7;
+          ctx!.beginPath();
+          ctx!.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          // Warmer star colors - slight amber tint for some
+          const warmth = s.o > Math.PI ? 0.95 : 1;
+          ctx!.fillStyle = `rgba(255,${Math.floor(245 * warmth)},${Math.floor(220 * warmth)},${alpha})`;
+          ctx!.fill();
+
+          if (s.r > 1.2) {
+            ctx!.beginPath();
+            ctx!.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
+            ctx!.fillStyle = `rgba(255,${Math.floor(240 * warmth)},${Math.floor(210 * warmth)},${alpha * 0.06})`;
+            ctx!.fill();
+          }
+        }
+
+        // Shooting stars with warm orange trail
+        if (Math.random() < 0.002 && shoots.length < 2) {
+          shoots.push({
+            x: Math.random() * W * 0.8 + W * 0.1,
+            y: Math.random() * H * 0.4,
+            l: 50 + Math.random() * 80,
+            v: 5 + Math.random() * 4,
+            a: 1,
+            angle: Math.PI / 5 + Math.random() * 0.4,
+          });
+        }
+
+        shoots = shoots.filter(s => s.a > 0);
+        for (const s of shoots) {
+          const ex = s.x + Math.cos(s.angle) * s.l;
+          const ey = s.y - Math.sin(s.angle) * s.l;
+          const grad = ctx!.createLinearGradient(s.x, s.y, ex, ey);
+          grad.addColorStop(0, `rgba(255,220,180,${s.a})`);
+          grad.addColorStop(0.4, `rgba(232,122,30,${s.a * 0.5})`);
+          grad.addColorStop(1, 'rgba(232,122,30,0)');
+          ctx!.beginPath();
+          ctx!.moveTo(s.x, s.y);
+          ctx!.lineTo(ex, ey);
+          ctx!.strokeStyle = grad;
+          ctx!.lineWidth = 1.5;
+          ctx!.stroke();
+          s.x -= Math.cos(s.angle) * s.v;
+          s.y += Math.sin(s.angle) * s.v;
+          s.a -= 0.018;
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      requestAnimationFrame(frame);
+    })();
+
+    // ============ MENU TAB SWITCHING ============
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('#category-tabs [data-category]');
+      const sections = document.querySelectorAll('[data-section]');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const category = tab.getAttribute('data-category');
+
+          tabs.forEach(t => {
+            t.classList.remove('active', 'text-white', 'bg-space-card');
+            t.classList.add('text-text-secondary', 'bg-space-card/40');
+          });
+          tab.classList.add('active', 'text-white', 'bg-space-card');
+          tab.classList.remove('text-text-secondary', 'bg-space-card/40');
+
+          sections.forEach(s => {
+            if (s.getAttribute('data-section') === category) {
+              s.classList.add('active');
+            } else {
+              s.classList.remove('active');
+            }
+          });
+        });
+      });
+    });
+
+    // ============ BCV RATE API ============
+    (function() {
+      let currentRate = 52; // fallback
+
+      async function fetchBcvRate() {
+        try {
+          const res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.promedio && data.promedio > 0) {
+            currentRate = data.promedio;
+            updateAllBsPrices();
+            // Update BCV note
+            const rateEl = document.getElementById('bcv-rate');
+            if (rateEl) rateEl.textContent = currentRate.toFixed(2);
+          }
+        } catch (e) {
+          // Use fallback rate silently
+        }
+      }
+
+      function updateAllBsPrices() {
+        document.querySelectorAll('.bs-price[data-usd]').forEach(el => {
+          const usd = parseFloat(el.getAttribute('data-usd') || '0');
+          const bs = usd * currentRate;
+          el.textContent = 'Bs. ' + bs.toLocaleString('es-VE', { maximumFractionDigits: 0 });
+        });
+      }
+
+      // Expose rate for cart system
+      (window as any).__bcvRate = currentRate;
+      fetchBcvRate().then(() => {
+        (window as any).__bcvRate = currentRate;
+      });
+    })();
+
+    // ============ CART SYSTEM ============
+    (function() {
+      const WA_NUMBER = '584142920785';
+      const getBcvRate = () => (window as any).__bcvRate || 52;
+
+      type CartItem = { name: string; price: number; qty: number; category: string };
+      let cart: CartItem[] = [];
+
+      const SUGGESTIONS = [
+        { name: 'Papas Fritas', price: 5, category: 'raciones' },
+        { name: 'Yuca Frita', price: 5, category: 'raciones' },
+        { name: 'Tostones', price: 5, category: 'raciones' },
+        { name: 'Arepitas', price: 3, category: 'raciones' },
+        { name: 'Tequeños (5 unidades)', price: 5, category: 'pasapalos' },
+        { name: 'Ensalada Mixta', price: 6, category: 'ensaladas' },
+        { name: 'Hallaquitas (por unidad)', price: 0.50, category: 'raciones' },
+        { name: 'Pan con Ajo', price: 4, category: 'raciones' },
+      ];
+
+      // DOM refs
+      const cartBar = document.getElementById('cart-bar')!;
+      const cartBarCount = document.getElementById('cart-bar-count')!;
+      const cartBarTotal = document.getElementById('cart-bar-total')!;
+      const cartBarBtn = document.getElementById('cart-bar-btn')!;
+      const cartDrawer = document.getElementById('cart-drawer')!;
+      const cartBackdrop = document.getElementById('cart-backdrop')!;
+      const cartPanel = document.getElementById('cart-panel')!;
+      const cartClose = document.getElementById('cart-close')!;
+      const cartItemsList = document.getElementById('cart-items-list')!;
+      const cartEmpty = document.getElementById('cart-empty')!;
+      const cartSuggestions = document.getElementById('cart-suggestions')!;
+      const suggestionChips = document.getElementById('suggestion-chips')!;
+      const cartFooter = document.getElementById('cart-footer')!;
+      const cartTotalUsd = document.getElementById('cart-total-usd')!;
+      const cartTotalBs = document.getElementById('cart-total-bs')!;
+      const cartSend = document.getElementById('cart-send')!;
+      const cartNotesSection = document.getElementById('cart-notes-section')!;
+      const cartNotes = document.getElementById('cart-notes') as HTMLTextAreaElement;
+      const waFloat = document.querySelector('.whatsapp-float') as HTMLElement | null;
+
+      function getCount() { return cart.reduce((s, i) => s + i.qty, 0); }
+      function getTotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
+
+      function escHtml(s: string) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      function addToCart(name: string, price: number, category: string) {
+        const existing = cart.find(i => i.name === name);
+        if (existing) existing.qty++;
+        else cart.push({ name, price, qty: 1, category });
+        updateUI();
+        showToast();
+      }
+
+      function removeFromCart(name: string) {
+        const idx = cart.findIndex(i => i.name === name);
+        if (idx === -1) return;
+        if (cart[idx].qty > 1) cart[idx].qty--;
+        else cart.splice(idx, 1);
+        updateUI();
+      }
+
+      function showToast() {
+        const old = document.querySelector('.cart-toast');
+        if (old) old.remove();
+        const t = document.createElement('div');
+        t.className = 'cart-toast fixed top-20 left-1/2 -translate-x-1/2 z-[70] bg-space-card border border-primary/20 text-text-primary text-sm px-4 py-2.5 rounded-xl shadow-2xl font-heading flex items-center gap-2';
+        t.innerHTML = '<span class="text-primary">✓</span> Agregado al pedido';
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%, -10px)'; }, 1200);
+        setTimeout(() => t.remove(), 1600);
+      }
+
+      function updateUI() {
+        const count = getCount();
+        const total = getTotal();
+
+        // Cart bar visibility
+        if (count > 0) {
+          cartBar.classList.remove('translate-y-full');
+          cartBarCount.textContent = String(count);
+          cartBarTotal.textContent = '$' + total.toFixed(2);
+          if (waFloat) waFloat.style.bottom = '90px';
+        } else {
+          cartBar.classList.add('translate-y-full');
+          if (waFloat) waFloat.style.bottom = '';
+        }
+
+        // Drawer content
+        renderCartItems();
+        renderSuggestions();
+
+        if (count > 0) {
+          cartEmpty.classList.add('hidden');
+          cartFooter.classList.remove('hidden');
+          cartNotesSection.classList.remove('hidden');
+          cartTotalUsd.textContent = '$' + total.toFixed(2);
+          cartTotalBs.textContent = 'Bs. ' + (total * getBcvRate()).toFixed(0);
+        } else {
+          cartEmpty.classList.remove('hidden');
+          cartFooter.classList.add('hidden');
+          cartNotesSection.classList.add('hidden');
+        }
+
+        updateInlineButtons();
+      }
+
+      function renderCartItems() {
+        cartItemsList.innerHTML = cart.map(item => `
+          <div class="flex items-center gap-3 bg-space-card/60 rounded-xl p-3 border border-white/5">
+            <div class="flex-grow min-w-0">
+              <p class="text-text-primary text-sm font-heading font-medium truncate">${escHtml(item.name)}</p>
+              <p class="text-primary text-xs font-display font-bold">$${item.price} c/u</p>
+            </div>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <button class="w-7 h-7 flex items-center justify-center rounded-full bg-white/8 hover:bg-primary/20 text-text-secondary hover:text-primary transition-all" data-cart-minus="${escHtml(item.name)}">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
+              </button>
+              <span class="w-8 text-center text-text-primary font-heading font-bold text-sm">${item.qty}</span>
+              <button class="w-7 h-7 flex items-center justify-center rounded-full bg-primary/15 hover:bg-primary/30 text-primary transition-all" data-cart-plus="${escHtml(item.name)}">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              </button>
+            </div>
+            <span class="text-text-primary font-display font-bold text-sm min-w-[50px] text-right">$${(item.price * item.qty).toFixed(2)}</span>
+          </div>
+        `).join('');
+      }
+
+      function renderSuggestions() {
+        const names = new Set(cart.map(i => i.name));
+        const available = SUGGESTIONS.filter(s => !names.has(s.name));
+        if (cart.length > 0 && available.length > 0) {
+          cartSuggestions.classList.remove('hidden');
+          suggestionChips.innerHTML = available.slice(0, 4).map(s => `
+            <button class="flex items-center gap-2 bg-space-card/60 border border-white/8 hover:border-primary/25 rounded-xl px-3 py-2 text-sm font-heading text-text-secondary hover:text-text-primary transition-all" data-suggest-name="${escHtml(s.name)}" data-suggest-price="${s.price}" data-suggest-cat="${s.category}">
+              <span class="text-primary/60">+</span>
+              <span>${escHtml(s.name)}</span>
+              <span class="text-primary font-display font-bold">$${s.price}</span>
+            </button>
+          `).join('');
+        } else {
+          cartSuggestions.classList.add('hidden');
+        }
+      }
+
+      function updateInlineButtons() {
+        document.querySelectorAll('.cart-add-circle[data-cart-add]').forEach(btn => {
+          const name = btn.getAttribute('data-name') || '';
+          const item = cart.find(i => i.name === name);
+          let badge = btn.querySelector('.inline-qty') as HTMLElement | null;
+          if (item) {
+            if (!badge) {
+              badge = document.createElement('span');
+              badge.className = 'inline-qty absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center font-heading';
+              (btn as HTMLElement).style.position = 'relative';
+              btn.appendChild(badge);
+            }
+            badge.textContent = String(item.qty);
+            btn.classList.add('bg-primary', 'text-white', 'border-primary');
+            btn.classList.remove('bg-primary/15', 'text-primary', 'border-primary/20');
+          } else {
+            if (badge) badge.remove();
+            btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+            btn.classList.add('bg-primary/15', 'text-primary', 'border-primary/20');
+          }
+        });
+      }
+
+      function openCart() {
+        cartDrawer.classList.remove('pointer-events-none', 'opacity-0');
+        cartDrawer.classList.add('pointer-events-auto', 'opacity-100');
+        setTimeout(() => cartPanel.classList.remove('translate-y-full'), 10);
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeCart() {
+        cartPanel.classList.add('translate-y-full');
+        setTimeout(() => {
+          cartDrawer.classList.add('pointer-events-none', 'opacity-0');
+          cartDrawer.classList.remove('pointer-events-auto', 'opacity-100');
+          document.body.style.overflow = '';
+        }, 300);
+      }
+
+      function sendOrder() {
+        if (cart.length === 0) return;
+        let msg = '¡Hola! 🍗 Quiero hacer un pedido en Cabo Kenedy:\n\n';
+        for (const item of cart) {
+          msg += '• ' + item.qty + 'x ' + item.name + ' — $' + (item.price * item.qty).toFixed(2) + '\n';
+        }
+        const total = getTotal();
+        msg += '\n*Total: $' + total.toFixed(2) + '* (Bs. ' + (total * getBcvRate()).toFixed(0) + ')\n';
+        const notes = cartNotes.value.trim();
+        if (notes) {
+          msg += '\n*Notas:* ' + notes + '\n';
+        }
+        msg += '\n*Mis datos:*\n• Cedula:\n• Nombre y Apellido:\n• Telefono:\n• Correo electronico:\n• Zona donde vivo:\n• Ubicacion Google Maps: ';
+        window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+      }
+
+      // Event delegation
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+
+        const addBtn = target.closest('[data-cart-add]') as HTMLElement | null;
+        if (addBtn) {
+          addToCart(
+            addBtn.dataset.name || '',
+            parseFloat(addBtn.dataset.price || '0'),
+            addBtn.dataset.itemCategory || ''
+          );
+          e.preventDefault();
+          return;
+        }
+
+        const minusBtn = target.closest('[data-cart-minus]') as HTMLElement | null;
+        if (minusBtn) {
+          removeFromCart(minusBtn.getAttribute('data-cart-minus') || '');
+          return;
+        }
+
+        const plusBtn = target.closest('[data-cart-plus]') as HTMLElement | null;
+        if (plusBtn) {
+          const name = plusBtn.getAttribute('data-cart-plus') || '';
+          const item = cart.find(i => i.name === name);
+          if (item) addToCart(item.name, item.price, item.category);
+          return;
+        }
+
+        const suggestBtn = target.closest('[data-suggest-name]') as HTMLElement | null;
+        if (suggestBtn) {
+          addToCart(
+            suggestBtn.dataset.suggestName || '',
+            parseFloat(suggestBtn.dataset.suggestPrice || '0'),
+            suggestBtn.dataset.suggestCat || ''
+          );
+          return;
+        }
+
+        const waBtn = target.closest('[data-wa-item]') as HTMLElement | null;
+        if (waBtn) {
+          e.preventDefault();
+          const itemName = waBtn.getAttribute('data-wa-item') || '';
+          const msg = '¡Hola! 🍗 Me interesa pedir *' + itemName + '* de Cabo Kenedy.\n\n*Mis datos:*\n• Cedula:\n• Nombre y Apellido:\n• Telefono:\n• Correo electronico:\n• Zona donde vivo:\n• Ubicacion Google Maps: ';
+          window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+          return;
+        }
+      });
+
+      cartBarBtn.addEventListener('click', openCart);
+      cartClose.addEventListener('click', closeCart);
+      cartBackdrop.addEventListener('click', closeCart);
+      cartSend.addEventListener('click', sendOrder);
+
+      updateUI();
+    })();
+
+    // ============ MENU SEARCH ============
+    (function() {
+      const searchInput = document.getElementById('menu-search') as HTMLInputElement;
+      const searchClear = document.getElementById('menu-search-clear')!;
+      const searchCount = document.getElementById('search-results-count')!;
+      const tabs = document.querySelectorAll('#category-tabs [data-category]');
+      const sections = document.querySelectorAll('[data-section]');
+      const menuItems = document.querySelectorAll('[data-menu-item]');
+
+      if (!searchInput) return;
+
+      function doSearch(query: string) {
+        const q = query.toLowerCase().trim();
+        searchClear.classList.toggle('hidden', !q);
+
+        if (!q) {
+          // Reset: show active tab's section, show all items
+          menuItems.forEach(item => (item as HTMLElement).style.display = '');
+          searchCount.classList.add('hidden');
+          // Restore tab view
+          const activeTab = document.querySelector('#category-tabs [data-category].active');
+          const activeCat = activeTab?.getAttribute('data-category');
+          sections.forEach(s => {
+            if (s.getAttribute('data-section') === activeCat) {
+              s.classList.add('active');
+            } else {
+              s.classList.remove('active');
+            }
+          });
+          return;
+        }
+
+        // Show all sections during search
+        sections.forEach(s => s.classList.add('active'));
+
+        let found = 0;
+        menuItems.forEach(item => {
+          const name = (item as HTMLElement).getAttribute('data-item-name') || '';
+          const text = (item as HTMLElement).textContent?.toLowerCase() || '';
+          const match = name.includes(q) || text.includes(q);
+          (item as HTMLElement).style.display = match ? '' : 'none';
+          if (match) found++;
+        });
+
+        // Hide empty sections
+        sections.forEach(s => {
+          const visibleItems = s.querySelectorAll('[data-menu-item]');
+          let hasVisible = false;
+          visibleItems.forEach(item => {
+            if ((item as HTMLElement).style.display !== 'none') hasVisible = true;
+          });
+          if (!hasVisible) s.classList.remove('active');
+        });
+
+        searchCount.classList.remove('hidden');
+        searchCount.textContent = found > 0
+          ? found + ' resultado' + (found !== 1 ? 's' : '') + ' encontrado' + (found !== 1 ? 's' : '')
+          : 'No se encontraron resultados';
+      }
+
+      searchInput.addEventListener('input', () => doSearch(searchInput.value));
+
+      searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        doSearch('');
+        searchInput.focus();
+      });
+
+      // When clicking a tab while searching, clear search
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          if (searchInput.value) {
+            searchInput.value = '';
+            doSearch('');
+          }
+        });
+      });
+    })();
+  </script>
+</Layout>
