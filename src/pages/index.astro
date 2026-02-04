@@ -28,7 +28,9 @@ const categoryIcons: Record<string, string> = {
   <nav class="fixed top-0 left-0 right-0 z-50 bg-space-dark/80 backdrop-blur-2xl border-b border-primary/[0.06]">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3 group">
-        <img src="/logo.webp" alt="Cabo Kenedy" class="h-10 w-10 rounded-full object-contain border border-primary/20 transition-all group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(232,122,30,0.3)] bg-space-dark" loading="eager" />
+        <div class="h-10 w-10 rounded-full border border-primary/20 transition-all group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(232,122,30,0.3)] bg-space-dark flex items-center justify-center overflow-hidden flex-shrink-0 p-1.5">
+          <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-contain" loading="eager" width="40" height="40" />
+        </div>
         <div class="hidden sm:block">
           <span class="font-display text-sm font-bold text-primary tracking-[0.15em]">CABO KENEDY</span>
           <span class="block text-[9px] text-text-muted tracking-[0.2em] font-heading">POLLO A LA BRASA</span>
@@ -245,6 +247,7 @@ const categoryIcons: Record<string, string> = {
                 data-cart-add
                 data-name={promoFlash.name}
                 data-price={promoFlash.priceUSD}
+                data-desc={promoFlash.description}
                 data-item-category="promos"
                 class="rocket-btn bg-primary hover:bg-primary-dark text-white font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-primary/25 font-heading whitespace-nowrap"
               >
@@ -315,6 +318,7 @@ const categoryIcons: Record<string, string> = {
                     data-cart-add
                     data-name={promo.name}
                     data-price={promo.priceUSD}
+                    data-desc={promo.description}
                     data-item-category="promos"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -456,6 +460,7 @@ const categoryIcons: Record<string, string> = {
                             data-cart-add
                             data-name={item.name}
                             data-price={item.priceUSD}
+                            data-desc={item.description || ''}
                             data-item-category={cat.id}
                             aria-label={`Agregar ${item.name}`}
                           >
@@ -494,6 +499,7 @@ const categoryIcons: Record<string, string> = {
                                   data-cart-add
                                   data-name={`${item.name} (${v.label})`}
                                   data-price={v.priceUSD}
+                                  data-desc={item.description || ''}
                                   data-item-category={cat.id}
                                   aria-label={`Agregar ${item.name} ${v.label}`}
                                 >
@@ -929,7 +935,7 @@ const categoryIcons: Record<string, string> = {
       const WA_NUMBER = '584142920785';
       const getBcvRate = () => (window as any).__bcvRate || 52;
 
-      type CartItem = { name: string; price: number; qty: number; category: string };
+      type CartItem = { name: string; price: number; qty: number; category: string; desc: string };
       let cart: CartItem[] = [];
 
       const SUGGESTIONS = [
@@ -971,10 +977,10 @@ const categoryIcons: Record<string, string> = {
         return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
 
-      function addToCart(name: string, price: number, category: string) {
+      function addToCart(name: string, price: number, category: string, desc: string = '') {
         const existing = cart.find(i => i.name === name);
         if (existing) existing.qty++;
-        else cart.push({ name, price, qty: 1, category });
+        else cart.push({ name, price, qty: 1, category, desc });
         updateUI();
         showToast();
       }
@@ -1037,7 +1043,8 @@ const categoryIcons: Record<string, string> = {
           <div class="flex items-center gap-3 bg-space-card/60 rounded-xl p-3 border border-white/5">
             <div class="flex-grow min-w-0">
               <p class="text-text-primary text-sm font-heading font-medium truncate">${escHtml(item.name)}</p>
-              <p class="text-primary text-xs font-display font-bold">$${item.price} c/u</p>
+              ${item.desc ? `<p class="text-text-muted text-[11px] font-heading leading-snug mt-0.5 line-clamp-2">${escHtml(item.desc)}</p>` : ''}
+              <p class="text-primary text-xs font-display font-bold mt-0.5">$${item.price} c/u</p>
             </div>
             <div class="flex items-center gap-1 flex-shrink-0">
               <button class="w-7 h-7 flex items-center justify-center rounded-full bg-white/8 hover:bg-primary/20 text-text-secondary hover:text-primary transition-all" data-cart-minus="${escHtml(item.name)}">
@@ -1134,7 +1141,8 @@ const categoryIcons: Record<string, string> = {
           addToCart(
             addBtn.dataset.name || '',
             parseFloat(addBtn.dataset.price || '0'),
-            addBtn.dataset.itemCategory || ''
+            addBtn.dataset.itemCategory || '',
+            addBtn.dataset.desc || ''
           );
           e.preventDefault();
           return;
@@ -1150,7 +1158,7 @@ const categoryIcons: Record<string, string> = {
         if (plusBtn) {
           const name = plusBtn.getAttribute('data-cart-plus') || '';
           const item = cart.find(i => i.name === name);
-          if (item) addToCart(item.name, item.price, item.category);
+          if (item) addToCart(item.name, item.price, item.category, item.desc);
           return;
         }
 
