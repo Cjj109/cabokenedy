@@ -2,7 +2,7 @@
 
 -- Site configuration
 INSERT INTO site_config (key, value) VALUES ('active_theme', 'default');
-INSERT INTO site_config (key, value) VALUES ('tasa_bcv_fallback', '52.0');
+INSERT INTO site_config (key, value) VALUES ('tasa_bcv_fallback', '372.11');
 INSERT INTO site_config (key, value) VALUES ('whatsapp_number', '584142920785');
 INSERT INTO site_config (key, value) VALUES ('business_hours', '11:00 AM — 00:00');
 
