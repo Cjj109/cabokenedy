@@ -1,0 +1,421 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getAllCategories, getAllMenuItems, getItemVariants, getCategoryItemCounts } from '../../lib/db';
+
+const runtime = (Astro.locals as any).runtime;
+const db = runtime?.env?.DB as D1Database;
+
+const categories = await getAllCategories(db);
+const itemCounts = await getCategoryItemCounts(db);
+
+// Load items for all categories
+const categoryItems: Record<string, any[]> = {};
+for (const cat of categories) {
+  const items = await getAllMenuItems(db, cat.id);
+  const itemsWithVariants = await Promise.all(items.map(async (item) => {
+    const variants = await getItemVariants(db, item.id);
+    return { ...item, variants };
+  }));
+  categoryItems[cat.id] = itemsWithVariants;
+}
+---
+
+<AdminLayout title="Gestión de Menú" activeSection="menu">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-heading font-bold">Gestión de Menú</h1>
+      <p class="text-text-muted text-sm mt-1">Administra categorías, platos y precios</p>
+    </div>
+    <button id="btn-add-item" class="admin-btn admin-btn-primary">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+      Agregar Plato
+    </button>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="flex gap-2 overflow-x-auto pb-3 mb-6 -mx-4 px-4 sm:mx-0 sm:px-0" id="cat-tabs">
+    {categories.map((cat, i) => (
+      <button
+        data-cat={cat.id}
+        class={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] ${i === 0 ? 'bg-primary text-white' : 'bg-white/5 text-text-secondary hover:bg-white/10'}`}
+      >
+        {cat.icon} {cat.title}
+        <span class="ml-1.5 text-xs opacity-70">({itemCounts[cat.id] || 0})</span>
+        {!cat.visible && <span class="ml-1 text-xs opacity-50">👁️‍🗨️</span>}
+      </button>
+    ))}
+  </div>
+
+  <!-- Category Sections -->
+  {categories.map((cat, i) => (
+    <div data-section={cat.id} class={`category-section ${i !== 0 ? 'hidden' : ''}`}>
+      <!-- Category Header -->
+      <div class="admin-card p-4 mb-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">{cat.icon}</span>
+          <span class="font-bold text-sm">{cat.title}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-2 text-xs text-text-muted cursor-pointer">
+            Visible
+            <div class={`admin-toggle ${cat.visible ? 'active' : ''}`}
+                 data-toggle-cat={cat.id}
+                 data-visible={cat.visible}></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Items List -->
+      <div class="space-y-1 sm:space-y-0">
+        {(categoryItems[cat.id] || []).map((item: any) => (
+          <div class="admin-item-row" data-item-id={item.id}>
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-sm">{item.name}</span>
+                {item.popular ? <span class="text-xs text-gold">★ Popular</span> : null}
+                {!item.visible ? <span class="text-xs text-text-muted opacity-50">Oculto</span> : null}
+              </div>
+              {item.description && <span class="text-text-muted text-xs">{item.description}</span>}
+              {item.variants.length > 0 && (
+                <div class="flex flex-wrap gap-1.5 mt-1">
+                  {item.variants.map((v: any) => (
+                    <span class="text-xs px-2 py-0.5 rounded bg-white/5 text-text-secondary">
+                      {v.label}: ${v.price_usd}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div class="flex items-center gap-1 sm:gap-0">
+              <span class="font-bold text-primary text-sm tabular-nums">${item.price_usd}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class={`admin-toggle ${item.visible ? 'active' : ''}`}
+                   data-toggle-item={item.id}
+                   data-visible={item.visible}></div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button class="p-2 rounded-lg hover:bg-white/5 text-text-muted hover:text-primary transition-colors"
+                      data-edit-item={item.id}
+                      data-item-json={JSON.stringify(item)}
+                      aria-label="Editar">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+              </button>
+              <button class="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-colors"
+                      data-delete-item={item.id}
+                      data-item-name={item.name}
+                      aria-label="Eliminar">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+
+  <!-- Edit/Add Modal -->
+  <div id="item-modal" class="admin-modal-backdrop hidden">
+    <div class="admin-modal p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 id="modal-title" class="font-heading font-bold text-lg">Editar Plato</h3>
+        <button id="modal-close" class="p-2 rounded-lg hover:bg-white/5 text-text-muted">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <form id="item-form" class="space-y-4">
+        <input type="hidden" id="form-item-id" />
+        <div>
+          <label class="block text-text-secondary text-xs font-medium mb-1.5">Categoría</label>
+          <select id="form-category" class="admin-input">
+            {categories.map(cat => (
+              <option value={cat.id}>{cat.title}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="block text-text-secondary text-xs font-medium mb-1.5">Nombre *</label>
+          <input type="text" id="form-name" class="admin-input" required maxlength="200" placeholder="Nombre del plato" />
+        </div>
+        <div>
+          <label class="block text-text-secondary text-xs font-medium mb-1.5">Descripción</label>
+          <input type="text" id="form-desc" class="admin-input" maxlength="500" placeholder="Descripción opcional" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-text-secondary text-xs font-medium mb-1.5">Precio USD *</label>
+            <input type="number" id="form-price" class="admin-input" required min="0" max="9999" step="0.01" placeholder="0.00" />
+          </div>
+          <div>
+            <label class="block text-text-secondary text-xs font-medium mb-1.5">Badge</label>
+            <input type="text" id="form-badge" class="admin-input" maxlength="50" placeholder="Ej: Nuevo" />
+          </div>
+        </div>
+        <label class="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" id="form-popular" class="w-5 h-5 rounded accent-primary" />
+          <span class="text-sm">Marcar como Popular ★</span>
+        </label>
+
+        <!-- Variants Section -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-text-secondary text-xs font-medium">Variantes</label>
+            <button type="button" id="add-variant" class="text-xs text-primary hover:text-primary-light transition-colors">
+              + Agregar variante
+            </button>
+          </div>
+          <div id="variants-container" class="space-y-2"></div>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="admin-btn admin-btn-primary flex-1">Guardar</button>
+          <button type="button" id="modal-cancel" class="admin-btn admin-btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="admin-modal-backdrop hidden">
+    <div class="admin-modal p-6 text-center">
+      <div class="text-4xl mb-3">🗑️</div>
+      <h3 class="font-heading font-bold text-lg mb-2">Eliminar Plato</h3>
+      <p class="text-text-muted text-sm mb-5">
+        ¿Estás seguro de eliminar <strong id="delete-item-name" class="text-text-primary"></strong>?
+        Esta acción no se puede deshacer.
+      </p>
+      <div class="flex gap-3 justify-center">
+        <button id="delete-confirm" class="admin-btn admin-btn-danger">Eliminar</button>
+        <button id="delete-cancel" class="admin-btn admin-btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('#cat-tabs button');
+    const sections = document.querySelectorAll('.category-section');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const catId = tab.getAttribute('data-cat');
+        tabs.forEach(t => {
+          t.classList.remove('bg-primary', 'text-white');
+          t.classList.add('bg-white/5', 'text-text-secondary');
+        });
+        tab.classList.remove('bg-white/5', 'text-text-secondary');
+        tab.classList.add('bg-primary', 'text-white');
+        sections.forEach(s => {
+          (s as HTMLElement).classList.toggle('hidden', s.getAttribute('data-section') !== catId);
+        });
+      });
+    });
+
+    // Toggle visibility (items)
+    document.querySelectorAll('[data-toggle-item]').forEach(toggle => {
+      toggle.addEventListener('click', async () => {
+        const itemId = toggle.getAttribute('data-toggle-item');
+        const isVisible = toggle.getAttribute('data-visible') === '1';
+        const newVisible = isVisible ? 0 : 1;
+
+        try {
+          const res = await fetch(`/api/admin/items/${itemId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ visible: newVisible }),
+          });
+
+          if (res.ok) {
+            toggle.setAttribute('data-visible', String(newVisible));
+            toggle.classList.toggle('active', !!newVisible);
+          }
+        } catch (e) {
+          console.error('Error toggling visibility', e);
+        }
+      });
+    });
+
+    // Toggle visibility (categories)
+    document.querySelectorAll('[data-toggle-cat]').forEach(toggle => {
+      toggle.addEventListener('click', async () => {
+        const catId = toggle.getAttribute('data-toggle-cat');
+        const isVisible = toggle.getAttribute('data-visible') === '1';
+        const newVisible = isVisible ? 0 : 1;
+
+        try {
+          const res = await fetch('/api/admin/categories', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: catId, visible: newVisible }),
+          });
+
+          if (res.ok) {
+            toggle.setAttribute('data-visible', String(newVisible));
+            toggle.classList.toggle('active', !!newVisible);
+          }
+        } catch (e) {
+          console.error('Error toggling category', e);
+        }
+      });
+    });
+
+    // Modal handling
+    const modal = document.getElementById('item-modal')!;
+    const deleteModal = document.getElementById('delete-modal')!;
+    const form = document.getElementById('item-form') as HTMLFormElement;
+    let currentEditId: number | null = null;
+    let pendingDeleteId: number | null = null;
+
+    function openModal(isNew = false) {
+      modal.classList.remove('hidden');
+      (document.getElementById('modal-title') as HTMLElement).textContent = isNew ? 'Agregar Plato' : 'Editar Plato';
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      form.reset();
+      currentEditId = null;
+      document.getElementById('variants-container')!.innerHTML = '';
+    }
+
+    document.getElementById('modal-close')?.addEventListener('click', closeModal);
+    document.getElementById('modal-cancel')?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // Add new item button
+    document.getElementById('btn-add-item')?.addEventListener('click', () => {
+      currentEditId = null;
+      form.reset();
+      document.getElementById('variants-container')!.innerHTML = '';
+      // Set category to currently active tab
+      const activeTab = document.querySelector('#cat-tabs button.bg-primary');
+      if (activeTab) {
+        (document.getElementById('form-category') as HTMLSelectElement).value = activeTab.getAttribute('data-cat') || '';
+      }
+      openModal(true);
+    });
+
+    // Edit item buttons
+    document.querySelectorAll('[data-edit-item]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const itemData = JSON.parse(btn.getAttribute('data-item-json') || '{}');
+        currentEditId = itemData.id;
+        (document.getElementById('form-item-id') as HTMLInputElement).value = itemData.id;
+        (document.getElementById('form-category') as HTMLSelectElement).value = itemData.category_id;
+        (document.getElementById('form-name') as HTMLInputElement).value = itemData.name;
+        (document.getElementById('form-desc') as HTMLInputElement).value = itemData.description || '';
+        (document.getElementById('form-price') as HTMLInputElement).value = itemData.price_usd;
+        (document.getElementById('form-badge') as HTMLInputElement).value = itemData.badge || '';
+        (document.getElementById('form-popular') as HTMLInputElement).checked = !!itemData.popular;
+
+        // Load variants
+        const container = document.getElementById('variants-container')!;
+        container.innerHTML = '';
+        if (itemData.variants?.length) {
+          itemData.variants.forEach((v: any) => addVariantRow(v.label, v.price_usd));
+        }
+
+        openModal(false);
+      });
+    });
+
+    // Variant management
+    function addVariantRow(label = '', price = '') {
+      const container = document.getElementById('variants-container')!;
+      const row = document.createElement('div');
+      row.className = 'flex gap-2 items-center';
+      row.innerHTML = `
+        <input type="text" class="admin-input flex-1 variant-label" placeholder="Nombre variante" value="${label}" maxlength="100" />
+        <input type="number" class="admin-input w-24 variant-price" placeholder="$" value="${price}" min="0" max="9999" step="0.01" />
+        <button type="button" class="p-2 text-red-400 hover:text-red-300 remove-variant" aria-label="Eliminar variante">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      `;
+      row.querySelector('.remove-variant')?.addEventListener('click', () => row.remove());
+      container.appendChild(row);
+    }
+
+    document.getElementById('add-variant')?.addEventListener('click', () => addVariantRow());
+
+    // Form submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const variantRows = document.querySelectorAll('#variants-container > div');
+      const variants: any[] = [];
+      variantRows.forEach(row => {
+        const label = (row.querySelector('.variant-label') as HTMLInputElement)?.value?.trim();
+        const price = parseFloat((row.querySelector('.variant-price') as HTMLInputElement)?.value);
+        if (label && !isNaN(price)) {
+          variants.push({ label, price_usd: price });
+        }
+      });
+
+      const data: any = {
+        category_id: (document.getElementById('form-category') as HTMLSelectElement).value,
+        name: (document.getElementById('form-name') as HTMLInputElement).value.trim(),
+        description: (document.getElementById('form-desc') as HTMLInputElement).value.trim(),
+        price_usd: parseFloat((document.getElementById('form-price') as HTMLInputElement).value),
+        badge: (document.getElementById('form-badge') as HTMLInputElement).value.trim(),
+        popular: (document.getElementById('form-popular') as HTMLInputElement).checked,
+        variants: variants.length > 0 ? variants : undefined,
+      };
+
+      try {
+        let res;
+        if (currentEditId) {
+          res = await fetch(`/api/admin/items/${currentEditId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        } else {
+          res = await fetch('/api/admin/items', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        }
+
+        if (res.ok) {
+          closeModal();
+          location.reload();
+        }
+      } catch (e) {
+        console.error('Error saving item', e);
+      }
+    });
+
+    // Delete
+    document.querySelectorAll('[data-delete-item]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pendingDeleteId = Number(btn.getAttribute('data-delete-item'));
+        const name = btn.getAttribute('data-item-name') || '';
+        document.getElementById('delete-item-name')!.textContent = name;
+        deleteModal.classList.remove('hidden');
+      });
+    });
+
+    document.getElementById('delete-cancel')?.addEventListener('click', () => {
+      deleteModal.classList.add('hidden');
+      pendingDeleteId = null;
+    });
+
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) { deleteModal.classList.add('hidden'); pendingDeleteId = null; }
+    });
+
+    document.getElementById('delete-confirm')?.addEventListener('click', async () => {
+      if (!pendingDeleteId) return;
+      try {
+        const res = await fetch(`/api/admin/items/${pendingDeleteId}`, { method: 'DELETE' });
+        if (res.ok) {
+          deleteModal.classList.add('hidden');
+          location.reload();
+        }
+      } catch (e) {
+        console.error('Error deleting item', e);
+      }
+    });
+  </script>
+</AdminLayout>

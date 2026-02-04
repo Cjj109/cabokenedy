@@ -1,0 +1,7 @@
+name = "cabokenedy"
+compatibility_date = "2024-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cabokenedy-db"
+database_id = "23717d21-6a23-4216-952f-be582f9c906d"

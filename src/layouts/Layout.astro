@@ -12,10 +12,21 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Read active theme from D1
+let activeTheme = 'default';
+try {
+  const runtime = (Astro.locals as any).runtime;
+  const db = runtime?.env?.DB as D1Database | undefined;
+  if (db) {
+    const row = await db.prepare("SELECT value FROM site_config WHERE key = 'active_theme'").first<{ value: string }>();
+    if (row?.value) activeTheme = row.value;
+  }
+} catch {}
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme={activeTheme !== 'default' ? activeTheme : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -105,6 +116,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <body class="min-h-screen bg-space-dark">
     <!-- Starfield Canvas -->
     <canvas id="starfield" class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true"></canvas>
+
+    <!-- Theme particles (only for seasonal themes) -->
+    {activeTheme !== 'default' && (
+      <div class="fixed inset-0 z-[1] pointer-events-none overflow-hidden" aria-hidden="true">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            class="theme-particle"
+            style={`left: ${8 + (i * 7.5)}%; animation-delay: ${i * 1.2}s; animation-duration: ${6 + (i % 4) * 2}s;`}
+          />
+        ))}
+      </div>
+    )}
 
     <!-- Page content -->
     <div class="relative z-10">

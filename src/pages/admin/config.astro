@@ -1,0 +1,97 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getSiteConfig } from '../../lib/db';
+
+const runtime = (Astro.locals as any).runtime;
+const db = runtime?.env?.DB as D1Database;
+
+const config = await getSiteConfig(db);
+---
+
+<AdminLayout title="Configuración" activeSection="config">
+  <div class="mb-6">
+    <h1 class="text-2xl font-heading font-bold">Configuración</h1>
+    <p class="text-text-muted text-sm mt-1">Ajustes generales del sitio</p>
+  </div>
+
+  <div class="max-w-xl space-y-6">
+    <!-- WhatsApp -->
+    <div class="admin-card p-5">
+      <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+        <span class="text-lg">📱</span> WhatsApp
+      </h3>
+      <div>
+        <label class="block text-text-secondary text-xs font-medium mb-1.5">Número (sin +)</label>
+        <input type="text" id="cfg-whatsapp" class="admin-input"
+               value={config['whatsapp_number'] || '584142920785'}
+               placeholder="584142920785" />
+        <p class="text-text-muted text-xs mt-1">Formato: código país + número sin espacios ni guiones</p>
+      </div>
+    </div>
+
+    <!-- Horario -->
+    <div class="admin-card p-5">
+      <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+        <span class="text-lg">🕐</span> Horario
+      </h3>
+      <div>
+        <label class="block text-text-secondary text-xs font-medium mb-1.5">Horario de atención</label>
+        <input type="text" id="cfg-hours" class="admin-input"
+               value={config['business_hours'] || '11:00 AM — 00:00'}
+               placeholder="11:00 AM — 00:00" />
+      </div>
+    </div>
+
+    <!-- Tasa BCV -->
+    <div class="admin-card p-5">
+      <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+        <span class="text-lg">💱</span> Tasa BCV (Fallback)
+      </h3>
+      <div>
+        <label class="block text-text-secondary text-xs font-medium mb-1.5">Tasa USD/Bs de respaldo</label>
+        <input type="number" id="cfg-bcv" class="admin-input"
+               value={config['tasa_bcv_fallback'] || '52.0'}
+               min="0" max="99999" step="0.01" />
+        <p class="text-text-muted text-xs mt-1">Se usa solo si la API de DolarAPI no responde. Normalmente se actualiza automáticamente.</p>
+      </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="admin-card p-5">
+      <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+        <span class="text-lg">🔒</span> Contraseña
+      </h3>
+      <p class="text-text-muted text-xs mb-3">
+        Para cambiar la contraseña del admin, ejecuta en terminal:<br>
+        <code class="text-primary font-mono text-xs">npx wrangler secret put ADMIN_PASSWORD_HASH</code>
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button id="save-config" class="admin-btn admin-btn-primary">Guardar Configuración</button>
+      <span class="save-indicator" id="config-saved">Guardado</span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('save-config')?.addEventListener('click', async () => {
+      const data = {
+        whatsapp_number: (document.getElementById('cfg-whatsapp') as HTMLInputElement).value.trim(),
+        business_hours: (document.getElementById('cfg-hours') as HTMLInputElement).value.trim(),
+        tasa_bcv_fallback: (document.getElementById('cfg-bcv') as HTMLInputElement).value.trim(),
+      };
+
+      const res = await fetch('/api/admin/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        const indicator = document.getElementById('config-saved');
+        indicator?.classList.add('show');
+        setTimeout(() => indicator?.classList.remove('show'), 2000);
+      }
+    });
+  </script>
+</AdminLayout>

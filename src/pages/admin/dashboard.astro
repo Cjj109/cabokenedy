@@ -1,0 +1,128 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getAllCategories, getAllPromos, getAllCombos, getFlashPromo, getSiteConfig, getCategoryItemCounts } from '../../lib/db';
+
+const runtime = (Astro.locals as any).runtime;
+const db = runtime?.env?.DB as D1Database;
+
+let categories: any[] = [];
+let promos: any[] = [];
+let combos: any[] = [];
+let flashPromo: any = null;
+let config: Record<string, string> = {};
+let itemCounts: Record<string, number> = {};
+let totalItems = 0;
+
+try {
+  [categories, promos, combos, flashPromo, config, itemCounts] = await Promise.all([
+    getAllCategories(db),
+    getAllPromos(db),
+    getAllCombos(db),
+    getFlashPromo(db),
+    getSiteConfig(db),
+    getCategoryItemCounts(db),
+  ]);
+  totalItems = Object.values(itemCounts).reduce((a, b) => a + b, 0);
+} catch (e) {
+  // D1 not available
+}
+
+const themeNames: Record<string, string> = {
+  default: 'Espacio',
+  san_valentin: 'San Valentín',
+  navidad: 'Navidad',
+  carnavales: 'Carnavales',
+};
+
+const activeTheme = config['active_theme'] || 'default';
+---
+
+<AdminLayout title="Dashboard" activeSection="dashboard">
+  <div class="mb-8">
+    <h1 class="text-2xl font-heading font-bold text-text-primary">Dashboard</h1>
+    <p class="text-text-muted text-sm mt-1">Resumen general de tu sitio</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+    <div class="admin-stat">
+      <p class="text-text-muted text-xs uppercase tracking-wider mb-1">Categorías</p>
+      <p class="text-2xl font-bold text-text-primary">{categories.length}</p>
+    </div>
+    <div class="admin-stat">
+      <p class="text-text-muted text-xs uppercase tracking-wider mb-1">Platos</p>
+      <p class="text-2xl font-bold text-text-primary">{totalItems}</p>
+    </div>
+    <div class="admin-stat">
+      <p class="text-text-muted text-xs uppercase tracking-wider mb-1">Promos</p>
+      <p class="text-2xl font-bold text-text-primary">{promos.length}</p>
+    </div>
+    <div class="admin-stat">
+      <p class="text-text-muted text-xs uppercase tracking-wider mb-1">Tema Activo</p>
+      <p class="text-lg font-bold text-primary">{themeNames[activeTheme] || activeTheme}</p>
+    </div>
+  </div>
+
+  <!-- Flash Promo Status -->
+  {flashPromo && (
+    <div class={`admin-card p-4 mb-6 flex items-center justify-between ${flashPromo.active ? 'border-primary/20' : 'border-white/5'}`}>
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">☄️</span>
+        <div>
+          <p class="font-bold text-sm">{flashPromo.name}</p>
+          <p class="text-text-muted text-xs">${flashPromo.price_usd} — {flashPromo.availability}</p>
+        </div>
+      </div>
+      <span class={`px-3 py-1 rounded-full text-xs font-medium ${flashPromo.active ? 'bg-green-500/15 text-green-400 border border-green-500/20' : 'bg-red-500/15 text-red-400 border border-red-500/20'}`}>
+        {flashPromo.active ? 'Activa' : 'Inactiva'}
+      </span>
+    </div>
+  )}
+
+  <!-- Quick Actions -->
+  <h2 class="text-lg font-heading font-bold text-text-primary mb-4">Acciones Rápidas</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+    <a href="/admin/menu" class="admin-card p-5 flex items-center gap-4 group">
+      <span class="text-3xl">📋</span>
+      <div>
+        <p class="font-bold text-sm group-hover:text-primary transition-colors">Gestionar Menú</p>
+        <p class="text-text-muted text-xs">{totalItems} platos en {categories.length} categorías</p>
+      </div>
+    </a>
+    <a href="/admin/promos" class="admin-card p-5 flex items-center gap-4 group">
+      <span class="text-3xl">🔥</span>
+      <div>
+        <p class="font-bold text-sm group-hover:text-primary transition-colors">Gestionar Promos</p>
+        <p class="text-text-muted text-xs">{promos.length} promos activas</p>
+      </div>
+    </a>
+    <a href="/admin/flash" class="admin-card p-5 flex items-center gap-4 group">
+      <span class="text-3xl">☄️</span>
+      <div>
+        <p class="font-bold text-sm group-hover:text-primary transition-colors">Promo Flash</p>
+        <p class="text-text-muted text-xs">{flashPromo?.active ? 'Activa' : 'Inactiva'}</p>
+      </div>
+    </a>
+    <a href="/admin/combos" class="admin-card p-5 flex items-center gap-4 group">
+      <span class="text-3xl">⭐</span>
+      <div>
+        <p class="font-bold text-sm group-hover:text-primary transition-colors">Combos Destacados</p>
+        <p class="text-text-muted text-xs">{combos.length} combos</p>
+      </div>
+    </a>
+    <a href="/admin/theme" class="admin-card p-5 flex items-center gap-4 group">
+      <span class="text-3xl">🎨</span>
+      <div>
+        <p class="font-bold text-sm group-hover:text-primary transition-colors">Cambiar Tema</p>
+        <p class="text-text-muted text-xs">Tema actual: {themeNames[activeTheme]}</p>
+      </div>
+    </a>
+    <a href="/admin/config" class="admin-card p-5 flex items-center gap-4 group">
+      <span class="text-3xl">⚙️</span>
+      <div>
+        <p class="font-bold text-sm group-hover:text-primary transition-colors">Configuración</p>
+        <p class="text-text-muted text-xs">WhatsApp, horario, contraseña</p>
+      </div>
+    </a>
+  </div>
+</AdminLayout>

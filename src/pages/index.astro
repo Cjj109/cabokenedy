@@ -1,6 +1,75 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { promoFlash, promos, menuCategories, TASA_BCV, getWhatsAppLink, getGeneralWhatsAppMessage, formatBs } from '../data/menu';
+import {
+  promoFlash as staticFlash,
+  promos as staticPromos,
+  menuCategories as staticMenu,
+  TASA_BCV,
+  getWhatsAppLink,
+  getGeneralWhatsAppMessage,
+  formatBs
+} from '../data/menu';
+import { getPublicMenu, getPromos, getFlashPromo, getCombos, getSiteConfig } from '../lib/db';
+import type { PublicCategory } from '../lib/db';
+
+// Try D1 first, fall back to static data
+let menuCategories = staticMenu;
+let promos = staticPromos;
+let promoFlash: typeof staticFlash | null = staticFlash;
+let tasaBcvFallback = TASA_BCV;
+
+try {
+  const runtime = (Astro.locals as any).runtime;
+  const db = runtime?.env?.DB as D1Database | undefined;
+  if (db) {
+    const [dbMenu, dbPromos, dbFlash, dbConfig] = await Promise.all([
+      getPublicMenu(db),
+      getPromos(db),
+      getFlashPromo(db),
+      getSiteConfig(db),
+    ]);
+
+    if (dbMenu.length > 0) {
+      menuCategories = dbMenu as any;
+    }
+
+    if (dbPromos.length > 0) {
+      promos = dbPromos.map(p => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        priceUSD: p.price_usd,
+        icon: p.icon,
+        badge: p.badge,
+        image: p.image,
+      }));
+    }
+
+    if (dbFlash) {
+      if (dbFlash.active) {
+        promoFlash = {
+          id: 'flash',
+          name: dbFlash.name,
+          originalName: dbFlash.original_name,
+          description: dbFlash.description,
+          priceUSD: dbFlash.price_usd,
+          availability: dbFlash.availability,
+          channels: dbFlash.channels,
+          icon: dbFlash.icon,
+          image: dbFlash.image,
+        };
+      } else {
+        promoFlash = null;
+      }
+    }
+
+    if (dbConfig['tasa_bcv_fallback']) {
+      tasaBcvFallback = parseFloat(dbConfig['tasa_bcv_fallback']);
+    }
+  }
+} catch {
+  // D1 unavailable, use static data
+}
 
 const waGeneral = getWhatsAppLink(getGeneralWhatsAppMessage());
 
@@ -239,6 +308,7 @@ const sectionIcons: Record<string, string> = Object.fromEntries(
   </section>
 
   <!-- ==================== PROMO ESTRELLA FUGAZ (FLASH) ==================== -->
+  {promoFlash && (
   <section id="promo-flash" class="py-10 sm:py-14 relative overflow-hidden">
     <div class="max-w-4xl mx-auto px-4 relative z-10">
       <div class="flash-banner rounded-3xl overflow-hidden">
@@ -303,6 +373,7 @@ const sectionIcons: Record<string, string> = Object.fromEntries(
       </div>
     </div>
   </section>
+  )}
 
   <!-- ==================== PROMOCIONES ==================== -->
   <section id="combos" class="py-20 sm:py-28 relative overflow-hidden">
@@ -532,7 +603,7 @@ const sectionIcons: Record<string, string> = Object.fromEntries(
       </div>
 
       <p class="text-center text-text-muted text-xs mt-10 font-heading" id="bcv-note">
-        Precios en USD. Equivalente en Bs. a tasa BCV (<span id="bcv-rate">{TASA_BCV}</span> Bs/$).
+        Precios en USD. Equivalente en Bs. a tasa BCV (<span id="bcv-rate">{tasaBcvFallback}</span> Bs/$).
       </p>
     </div>
   </section>

@@ -1,0 +1,180 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getAllPromos } from '../../lib/db';
+
+const runtime = (Astro.locals as any).runtime;
+const db = runtime?.env?.DB as D1Database;
+
+const promos = await getAllPromos(db);
+---
+
+<AdminLayout title="Gestión de Promos" activeSection="promos">
+  <div class="mb-6">
+    <h1 class="text-2xl font-heading font-bold">Gestión de Promos</h1>
+    <p class="text-text-muted text-sm mt-1">Edita precios, descripciones y visibilidad de las promos</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {promos.map(promo => (
+      <div class="admin-card overflow-hidden" data-promo-id={promo.id}>
+        <!-- Promo Image -->
+        {promo.image && (
+          <div class="h-36 overflow-hidden bg-space-deep">
+            <img src={promo.image} alt={promo.name} class="w-full h-full object-cover" />
+          </div>
+        )}
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs px-2 py-0.5 rounded bg-primary/15 text-primary font-medium">{promo.badge}</span>
+            <div class={`admin-toggle ${promo.visible ? 'active' : ''}`}
+                 data-toggle-promo={promo.id}
+                 data-visible={promo.visible}></div>
+          </div>
+          <h3 class="font-bold text-sm mb-1">{promo.name}</h3>
+          <p class="text-text-muted text-xs mb-3 line-clamp-2">{promo.description}</p>
+
+          <!-- Editable Price -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1">
+              <span class="text-text-muted text-xs">$</span>
+              <input type="number" class="admin-input price-input w-20 text-sm py-1.5 px-2"
+                     value={promo.price_usd}
+                     data-price-promo={promo.id}
+                     min="0" max="9999" step="0.01" />
+            </div>
+            <button class="p-2 rounded-lg hover:bg-white/5 text-text-muted hover:text-primary transition-colors"
+                    data-edit-promo={promo.id}
+                    data-promo-json={JSON.stringify(promo)}
+                    aria-label="Editar">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+            </button>
+          </div>
+          <span class="save-indicator text-xs" data-save-indicator={promo.id}>Guardado</span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Edit Promo Modal -->
+  <div id="promo-modal" class="admin-modal-backdrop hidden">
+    <div class="admin-modal p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-heading font-bold text-lg">Editar Promo</h3>
+        <button id="promo-modal-close" class="p-2 rounded-lg hover:bg-white/5 text-text-muted">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <form id="promo-form" class="space-y-4">
+        <input type="hidden" id="pf-id" />
+        <div>
+          <label class="block text-text-secondary text-xs font-medium mb-1.5">Nombre</label>
+          <input type="text" id="pf-name" class="admin-input" required maxlength="200" />
+        </div>
+        <div>
+          <label class="block text-text-secondary text-xs font-medium mb-1.5">Descripción</label>
+          <textarea id="pf-desc" class="admin-input" rows="3" maxlength="500"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-text-secondary text-xs font-medium mb-1.5">Precio USD</label>
+            <input type="number" id="pf-price" class="admin-input" min="0" max="9999" step="0.01" />
+          </div>
+          <div>
+            <label class="block text-text-secondary text-xs font-medium mb-1.5">Badge</label>
+            <input type="text" id="pf-badge" class="admin-input" maxlength="50" />
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="admin-btn admin-btn-primary flex-1">Guardar</button>
+          <button type="button" id="promo-modal-cancel" class="admin-btn admin-btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Inline price edit with auto-save
+    document.querySelectorAll('[data-price-promo]').forEach(input => {
+      let timeout: any;
+      input.addEventListener('input', () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(async () => {
+          const promoId = input.getAttribute('data-price-promo');
+          const price = parseFloat((input as HTMLInputElement).value);
+          if (isNaN(price) || price < 0) return;
+
+          const res = await fetch(`/api/admin/promos/${promoId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ price_usd: price }),
+          });
+
+          if (res.ok) {
+            const indicator = document.querySelector(`[data-save-indicator="${promoId}"]`);
+            if (indicator) {
+              indicator.classList.add('show');
+              setTimeout(() => indicator.classList.remove('show'), 2000);
+            }
+          }
+        }, 600);
+      });
+    });
+
+    // Toggle visibility
+    document.querySelectorAll('[data-toggle-promo]').forEach(toggle => {
+      toggle.addEventListener('click', async () => {
+        const promoId = toggle.getAttribute('data-toggle-promo');
+        const isVisible = toggle.getAttribute('data-visible') === '1';
+        const newVisible = isVisible ? 0 : 1;
+
+        const res = await fetch(`/api/admin/promos/${promoId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visible: newVisible }),
+        });
+
+        if (res.ok) {
+          toggle.setAttribute('data-visible', String(newVisible));
+          toggle.classList.toggle('active', !!newVisible);
+        }
+      });
+    });
+
+    // Edit modal
+    const modal = document.getElementById('promo-modal')!;
+    const form = document.getElementById('promo-form') as HTMLFormElement;
+
+    function closeModal() { modal.classList.add('hidden'); }
+    document.getElementById('promo-modal-close')?.addEventListener('click', closeModal);
+    document.getElementById('promo-modal-cancel')?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    document.querySelectorAll('[data-edit-promo]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const data = JSON.parse(btn.getAttribute('data-promo-json') || '{}');
+        (document.getElementById('pf-id') as HTMLInputElement).value = data.id;
+        (document.getElementById('pf-name') as HTMLInputElement).value = data.name;
+        (document.getElementById('pf-desc') as HTMLTextAreaElement).value = data.description;
+        (document.getElementById('pf-price') as HTMLInputElement).value = data.price_usd;
+        (document.getElementById('pf-badge') as HTMLInputElement).value = data.badge || '';
+        modal.classList.remove('hidden');
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = (document.getElementById('pf-id') as HTMLInputElement).value;
+      const res = await fetch(`/api/admin/promos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: (document.getElementById('pf-name') as HTMLInputElement).value.trim(),
+          description: (document.getElementById('pf-desc') as HTMLTextAreaElement).value.trim(),
+          price_usd: parseFloat((document.getElementById('pf-price') as HTMLInputElement).value),
+          badge: (document.getElementById('pf-badge') as HTMLInputElement).value.trim(),
+        }),
+      });
+      if (res.ok) { closeModal(); location.reload(); }
+    });
+  </script>
+</AdminLayout>

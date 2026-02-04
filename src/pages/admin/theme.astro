@@ -1,0 +1,93 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getConfigValue } from '../../lib/db';
+
+const runtime = (Astro.locals as any).runtime;
+const db = runtime?.env?.DB as D1Database;
+
+const activeTheme = await getConfigValue(db, 'active_theme') || 'default';
+
+const themes = [
+  {
+    id: 'default',
+    name: 'Espacio',
+    description: 'Tema oscuro cósmico con estrellas, nebulosas y colores naranjas. La identidad original de Cabo Kenedy.',
+    colors: ['#E87A1E', '#FFB347', '#08070E', '#8B5CF6'],
+    emoji: '🌌',
+  },
+  {
+    id: 'san_valentin',
+    name: 'San Valentín',
+    description: 'Tema romántico con tonos rosas y rojos, corazones flotantes. Ideal para el 14 de febrero.',
+    colors: ['#E8456E', '#FF7DA0', '#08070E', '#D44466'],
+    emoji: '💕',
+  },
+  {
+    id: 'navidad',
+    name: 'Navidad',
+    description: 'Tema festivo con rojo, verde y dorado, partículas de nieve. Para la temporada navideña.',
+    colors: ['#C41E3A', '#FF6B6B', '#08070E', '#2E8B57'],
+    emoji: '🎄',
+  },
+  {
+    id: 'carnavales',
+    name: 'Carnavales',
+    description: 'Tema vibrante con naranja, amarillo y morado, confeti animado. Para la temporada de carnavales.',
+    colors: ['#FF6B35', '#FFD23F', '#08070E', '#8B5CF6'],
+    emoji: '🎭',
+  },
+];
+---
+
+<AdminLayout title="Temas Estacionales" activeSection="theme">
+  <div class="mb-6">
+    <h1 class="text-2xl font-heading font-bold">Temas Estacionales</h1>
+    <p class="text-text-muted text-sm mt-1">Selecciona un tema para cambiar la apariencia del sitio público. El cambio se refleja inmediatamente.</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {themes.map(theme => (
+      <div class={`theme-card ${activeTheme === theme.id ? 'active' : ''}`}
+           data-theme-id={theme.id}>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">{theme.emoji}</span>
+            <h3 class="font-bold text-lg">{theme.name}</h3>
+          </div>
+          {activeTheme === theme.id && (
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-primary/15 text-primary border border-primary/20">
+              Activo
+            </span>
+          )}
+        </div>
+        <p class="text-text-muted text-sm mb-4">{theme.description}</p>
+        <div class="flex gap-2 mb-4">
+          {theme.colors.map(color => (
+            <div class="w-8 h-8 rounded-full border border-white/10" style={`background: ${color}`}></div>
+          ))}
+        </div>
+        <button class={`admin-btn w-full ${activeTheme === theme.id ? 'admin-btn-success' : 'admin-btn-secondary'}`}
+                data-activate-theme={theme.id}
+                disabled={activeTheme === theme.id}>
+          {activeTheme === theme.id ? 'Tema Activo' : 'Activar Tema'}
+        </button>
+      </div>
+    ))}
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-activate-theme]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const themeId = btn.getAttribute('data-activate-theme');
+        const res = await fetch('/api/admin/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active_theme: themeId }),
+        });
+        if (res.ok) {
+          location.reload();
+        }
+      });
+    });
+  </script>
+</AdminLayout>

@@ -1,0 +1,111 @@
+---
+import '../../styles/global.css';
+import '../../styles/admin.css';
+
+// If already logged in, redirect to dashboard
+const runtime = (Astro.locals as any).runtime;
+const db = runtime?.env?.DB as D1Database | undefined;
+
+if (db) {
+  const cookieHeader = Astro.request.headers.get('Cookie') || '';
+  const sessionMatch = cookieHeader.match(/admin_session=([^;]+)/);
+  if (sessionMatch) {
+    const { validateSession } = await import('../../lib/auth');
+    const valid = await validateSession(db, sessionMatch[1]);
+    if (valid) return Astro.redirect('/admin/dashboard');
+  }
+}
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin Login | Cabo Kenedy</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-space-dark flex items-center justify-center p-4">
+    <div class="w-full max-w-sm">
+      <!-- Logo + Brand -->
+      <div class="text-center mb-8">
+        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-primary/25 overflow-hidden">
+          <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-contain" />
+        </div>
+        <h1 class="font-display text-2xl font-bold text-primary tracking-wider">CABO KENEDY</h1>
+        <p class="text-text-muted text-sm mt-1">Panel de Administración</p>
+      </div>
+
+      <!-- Login Form -->
+      <div class={`admin-card p-6 ${error ? 'shake' : ''}`}>
+        {error === 'wrong' && (
+          <div class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-sm text-center">
+            Contraseña incorrecta
+          </div>
+        )}
+        {error === 'blocked' && (
+          <div class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-sm text-center">
+            Demasiados intentos. Espera 15 minutos.
+          </div>
+        )}
+        {error === 'no-db' && (
+          <div class="mb-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-sm text-center">
+            Base de datos no disponible. Verifica la configuración de D1.
+          </div>
+        )}
+
+        <form method="POST" action="/api/admin/login" id="login-form">
+          <label for="password" class="block text-text-secondary text-sm font-medium mb-2">
+            Contraseña
+          </label>
+          <div class="relative mb-4">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autofocus
+              autocomplete="current-password"
+              class="admin-input pr-12"
+              placeholder="Ingresa la contraseña"
+            />
+            <button
+              type="button"
+              id="toggle-pass"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors p-1"
+              aria-label="Mostrar contraseña"
+            >
+              <svg class="w-5 h-5" id="eye-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
+          <button type="submit" class="admin-btn admin-btn-primary w-full text-base font-bold">
+            Entrar
+          </button>
+        </form>
+      </div>
+
+      <p class="text-center text-text-muted text-xs mt-6">
+        <a href="/" class="hover:text-primary transition-colors">Volver al sitio</a>
+      </p>
+    </div>
+
+    <script>
+      // Toggle password visibility
+      const toggle = document.getElementById('toggle-pass');
+      const input = document.getElementById('password') as HTMLInputElement;
+      toggle?.addEventListener('click', () => {
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+      });
+    </script>
+  </body>
+</html>

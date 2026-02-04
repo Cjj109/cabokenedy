@@ -1,0 +1,139 @@
+---
+import '../styles/global.css';
+import '../styles/admin.css';
+
+interface Props {
+  title: string;
+  activeSection?: string;
+}
+
+const { title, activeSection = '' } = Astro.props;
+
+const navItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: '📊', href: '/admin/dashboard' },
+  { id: 'menu', label: 'Menú', icon: '📋', href: '/admin/menu' },
+  { id: 'promos', label: 'Promos', icon: '🔥', href: '/admin/promos' },
+  { id: 'flash', label: 'Promo Flash', icon: '☄️', href: '/admin/flash' },
+  { id: 'combos', label: 'Combos', icon: '⭐', href: '/admin/combos' },
+  { id: 'theme', label: 'Temas', icon: '🎨', href: '/admin/theme' },
+  { id: 'config', label: 'Configuración', icon: '⚙️', href: '/admin/config' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} | Admin - Cabo Kenedy</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-space-dark text-text-primary font-body">
+
+    <!-- Mobile Top Bar -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-space-deep/95 backdrop-blur-lg border-b border-primary/10 px-4 py-3 flex items-center justify-between">
+      <button id="mobile-menu-btn" class="p-2 -ml-2 rounded-lg hover:bg-white/5" aria-label="Abrir menú">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <div class="flex items-center gap-2">
+        <img src="/logo.webp" alt="Cabo Kenedy" class="w-8 h-8 rounded-full" />
+        <span class="font-heading font-bold text-sm text-primary">ADMIN</span>
+      </div>
+      <a href="/" target="_blank" class="p-2 -mr-2 rounded-lg hover:bg-white/5 text-text-secondary text-xs">
+        Ver sitio
+      </a>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="admin-mobile-menu lg:hidden">
+      <div class="absolute inset-0 bg-black/60" id="mobile-menu-backdrop"></div>
+      <nav class="relative admin-sidebar w-72 h-full overflow-y-auto p-4">
+        <div class="flex items-center gap-3 mb-8 px-2 pt-2">
+          <img src="/logo.webp" alt="Cabo Kenedy" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-heading font-bold text-primary text-sm">CABO KENEDY</p>
+            <p class="text-text-muted text-xs">Panel de Admin</p>
+          </div>
+        </div>
+        {navItems.map(item => (
+          <a href={item.href} class={`admin-sidebar-link ${activeSection === item.id ? 'active' : ''}`}>
+            <span class="text-lg">{item.icon}</span>
+            <span>{item.label}</span>
+          </a>
+        ))}
+        <div class="mt-8 pt-4 border-t border-white/5">
+          <form action="/api/admin/logout" method="POST">
+            <button type="submit" class="admin-sidebar-link w-full text-left text-red-400 hover:text-red-300">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Cerrar Sesión</span>
+            </button>
+          </form>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:w-60 admin-sidebar flex-col z-40">
+      <div class="flex items-center gap-3 p-5 mb-2">
+        <img src="/logo.webp" alt="Cabo Kenedy" class="w-10 h-10 rounded-full" />
+        <div>
+          <p class="font-heading font-bold text-primary text-sm">CABO KENEDY</p>
+          <p class="text-text-muted text-xs">Panel de Admin</p>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 space-y-1">
+        {navItems.map(item => (
+          <a href={item.href} class={`admin-sidebar-link ${activeSection === item.id ? 'active' : ''}`}>
+            <span class="text-lg">{item.icon}</span>
+            <span>{item.label}</span>
+          </a>
+        ))}
+      </nav>
+      <div class="p-3 border-t border-white/5">
+        <a href="/" target="_blank" class="admin-sidebar-link text-text-muted hover:text-primary">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span>Ver Sitio</span>
+        </a>
+        <form action="/api/admin/logout" method="POST">
+          <button type="submit" class="admin-sidebar-link w-full text-left text-red-400 hover:text-red-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Cerrar Sesión</span>
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:pl-60 pt-16 lg:pt-0 min-h-screen">
+      <div class="p-4 sm:p-6 lg:p-8 max-w-6xl">
+        <slot />
+      </div>
+    </main>
+
+    <!-- Mobile menu script -->
+    <script>
+      const btn = document.getElementById('mobile-menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      const backdrop = document.getElementById('mobile-menu-backdrop');
+
+      function toggleMenu() {
+        menu?.classList.toggle('open');
+      }
+
+      btn?.addEventListener('click', toggleMenu);
+      backdrop?.addEventListener('click', toggleMenu);
+    </script>
+  </body>
+</html>

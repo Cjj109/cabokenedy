@@ -697,3 +697,89 @@ body {
   .logo-float { animation-duration: 10s; }
   .whatsapp-float { animation-duration: 2.5s; }
 }
+
+/* ==================== SEASONAL THEMES ==================== */
+
+/* San Valentín */
+[data-theme="san_valentin"] {
+  --color-primary: #E8456E;
+  --color-primary-light: #FF7DA0;
+  --color-primary-dark: #C42A52;
+  --color-primary-glow: #E8456E40;
+  --color-accent: #FF4D7A;
+  --color-accent-warm: #D44466;
+  --color-nebula-orange: rgba(232, 69, 110, 0.08);
+  --color-nebula-amber: rgba(255, 125, 160, 0.06);
+}
+
+/* Navidad */
+[data-theme="navidad"] {
+  --color-primary: #C41E3A;
+  --color-primary-light: #FF6B6B;
+  --color-primary-dark: #8B0000;
+  --color-primary-glow: #C41E3A40;
+  --color-accent: #2E8B57;
+  --color-accent-warm: #228B22;
+  --color-gold: #FFD700;
+  --color-nebula-orange: rgba(196, 30, 58, 0.08);
+  --color-nebula-amber: rgba(255, 215, 0, 0.06);
+  --color-nebula-purple: rgba(46, 139, 87, 0.04);
+}
+
+/* Carnavales */
+[data-theme="carnavales"] {
+  --color-primary: #FF6B35;
+  --color-primary-light: #FFD23F;
+  --color-primary-dark: #E04E1F;
+  --color-primary-glow: #FF6B3540;
+  --color-accent: #8B5CF6;
+  --color-accent-warm: #06D6A0;
+  --color-nebula-orange: rgba(255, 107, 53, 0.08);
+  --color-nebula-amber: rgba(255, 210, 63, 0.06);
+  --color-nebula-purple: rgba(139, 92, 246, 0.06);
+}
+
+/* Theme decorative particles */
+.theme-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  animation: themeFloat 8s ease-in-out infinite;
+}
+
+@keyframes themeFloat {
+  0% { opacity: 0; transform: translateY(100vh) rotate(0deg); }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(-10vh) rotate(360deg); }
+}
+
+/* San Valentín hearts */
+[data-theme="san_valentin"] .theme-particle::before {
+  content: '♥';
+  color: rgba(232, 69, 110, 0.4);
+  font-size: 14px;
+}
+
+/* Navidad snowflakes */
+[data-theme="navidad"] .theme-particle::before {
+  content: '❄';
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+}
+
+/* Carnavales confetti */
+[data-theme="carnavales"] .theme-particle {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+}
+
+[data-theme="carnavales"] .theme-particle:nth-child(odd) {
+  background: rgba(255, 107, 53, 0.4);
+}
+
+[data-theme="carnavales"] .theme-particle:nth-child(even) {
+  background: rgba(139, 92, 246, 0.4);
+}
