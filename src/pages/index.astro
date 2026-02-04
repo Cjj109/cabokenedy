@@ -340,14 +340,6 @@ const categoryIcons: Record<string, string> = {
         })}
       </div>
 
-      <div class="text-center mt-12">
-        <a href="#menu" class="inline-flex items-center gap-2 text-primary hover:text-primary-light font-medium transition-colors group font-heading">
-          Ver menú completo
-          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-          </svg>
-        </a>
-      </div>
     </div>
   </section>
 
@@ -390,13 +382,13 @@ const categoryIcons: Record<string, string> = {
       <div class="flex overflow-x-auto gap-2 sm:gap-3 mb-12 pb-2 -mx-4 px-4 scrollbar-hide" id="category-tabs">
         {menuCategories.map((cat, i) => (
           <button
-            class={`category-pill whitespace-nowrap px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-heading font-medium flex items-center gap-1.5 sm:gap-2 ${
+            class={`category-pill whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-heading font-medium flex items-center gap-1.5 sm:gap-2 ${
               i === 0 ? 'active bg-space-card text-white' : 'bg-space-card/40 text-text-secondary'
             }`}
             data-category={cat.id}
             aria-label={cat.title}
           >
-            <span class="text-sm sm:text-base">{categoryIcons[cat.id] || cat.icon}</span>
+            <span class="hidden sm:inline">{categoryIcons[cat.id] || cat.icon}</span>
             <span>{cat.title.replace('Combos de Pollo Broaster', 'Combos').replace('Milanesas y Pasapalos', 'Pasapalos').replace('Raciones y Contornos', 'Raciones').replace('Pescados y Mariscos', 'Mariscos').replace('Carnes y Parrillas', 'Parrillas')}</span>
           </button>
         ))}
@@ -567,12 +559,12 @@ const categoryIcons: Record<string, string> = {
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Delivery zones -->
-        <div class="space-card rounded-2xl p-6">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4">🛵</div>
+        <div class="space-card rounded-2xl p-6 text-center md:text-left">
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4 mx-auto md:mx-0">🛵</div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">ZONAS DE DELIVERY</h3>
           <div class="grid grid-cols-2 gap-2">
             {["La Guaira", "Catia La Mar", "Macuto", "Maiquetia", "Caraballeda"].map((zona) => (
-              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading">
+              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading justify-center md:justify-start">
                 <span class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(232,122,30,0.5)]"></span>
                 {zona}
               </span>
@@ -581,12 +573,12 @@ const categoryIcons: Record<string, string> = {
         </div>
 
         <!-- Payment -->
-        <div class="space-card rounded-2xl p-6">
-          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center text-xl leading-none mb-4">💳</div>
+        <div class="space-card rounded-2xl p-6 text-center md:text-left">
+          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center text-xl leading-none mb-4 mx-auto md:mx-0">💳</div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">FORMAS DE PAGO</h3>
           <div class="space-y-2.5">
             {["Efectivo (USD)", "Zelle", "Pago Movil", "Transferencia", "Efectivo (Bs.)"].map((pago) => (
-              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading">
+              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading justify-center md:justify-start">
                 <span class="w-1.5 h-1.5 bg-whatsapp rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(37,211,102,0.5)]"></span>
                 {pago}
               </span>
@@ -595,8 +587,8 @@ const categoryIcons: Record<string, string> = {
         </div>
 
         <!-- Location -->
-        <div class="space-card rounded-2xl p-6">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4">📍</div>
+        <div class="space-card rounded-2xl p-6 text-center md:text-left">
+          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center text-xl leading-none mb-4 mx-auto md:mx-0">📍</div>
           <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">DONDE ESTAMOS</h3>
           <p class="text-text-secondary text-sm leading-relaxed mb-4 font-heading">
             Local 01, Av. Principal de Caribe,<br />
