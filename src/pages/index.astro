@@ -131,15 +131,15 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 6. LA CHISPA ==================== -->
     <section class="escena carta" aria-label="La chispa">
       <p class="reveal">
-        Uno enciende un carbón de madrugada, con el local todavía lleno de polvo, nada más que para
-        ver si la brasa sirve. No hay clientes, no hay meseros, no hay a quién impresionar.
+        Uno llega a las once de la mañana y empieza a prender la brasa. Todavía no hay clientes, no
+        hay meseros, no hay a quién impresionar.
       </p>
 
       <p class="reveal">
         Y entonces el carbón empieza a sonar. <strong>Ese chisporroteo tiene ritmo.</strong> Lo
         tiene siempre, pero hay que estar muy callado para oírlo. Uno se queda quieto. El humo sube,
-        la grasa cae, la piel empieza a tostarse, y por unos minutos no existe el terremoto ni los
-        escombros ni la lista de todo lo que falta por arreglar.
+        la grasa cae, la piel empieza a tostarse, y por unos minutos no existe nada más: ni el
+        teléfono, ni las cuentas, ni el resto del día.
       </p>
 
       <p class="linea-brasa reveal">Existe la brasa, el pollo y uno. Nada más.</p>
@@ -197,7 +197,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       <h2 class="k-titulo reveal">Kintsugi</h2>
       <p class="k-def reveal">El arte japonés de reparar con oro</p>
 
-      <div class="carta max-w-[34rem] mx-auto mt-8">
+      <div class="carta max-w-[34rem] mx-auto mt-6">
         <p class="reveal">
           Los japoneses, cuando se les rompe algo, no lo esconden: rellenan la grieta con oro y la
           dejan a la vista, porque esa grieta también es la historia de la pieza.
@@ -262,10 +262,6 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
         <span aria-hidden="true">·</span>
         <a href={INSTAGRAM} target="_blank" rel="noopener">Instagram</a>
       </div>
-
-      <p class="pie-nota">
-        Esta página la armó Carlos Jardim, primo del dueño, con el visto bueno de la familia.
-      </p>
     </footer>
   </main>
 </Layout>
@@ -309,7 +305,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     --e2: 0.9rem;
     --e3: 1.5rem;
     --e4: 2.25rem;
-    --e5: clamp(2.75rem, 8vw, 4rem);
+    --e5: clamp(1.9rem, 5.5vw, 3rem);
 
     position: relative;
     max-width: 34rem;
@@ -319,8 +315,8 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   /* Solo la portada respira de más: es la primera pantalla */
   .escena-alta {
-    padding-top: calc(var(--e5) * 1.35);
-    padding-bottom: calc(var(--e5) * 1.35);
+    padding-top: calc(var(--e5) * 1.15);
+    padding-bottom: calc(var(--e5) * 1.15);
   }
 
   @media (min-width: 640px) {
@@ -350,7 +346,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     font-size: clamp(1.25rem, 4.6vw, 1.75rem);
     line-height: 1.5;
     color: var(--color-text-secondary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.15rem;
     text-wrap: balance;
   }
 
@@ -423,7 +419,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
      despues la brasa que se queda viva. Arranca apagada y se enciende
      cuando entra en pantalla. */
   .cierre-remate {
-    margin-top: 2rem;
+    margin-top: 1.75rem;
     font-family: var(--font-heading);
     font-size: clamp(1.6rem, 6vw, 2.4rem);
     font-weight: 700;
@@ -496,7 +492,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   /* La frase que sostiene la escena: sola, mas grande y latiendo */
   .linea-brasa {
-    margin: 2.25rem 0 !important;
+    margin: 1.9rem 0 !important;
     font-family: var(--font-heading);
     font-size: clamp(1.2rem, 4.4vw, 1.6rem);
     font-weight: 600;
@@ -515,7 +511,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     line-height: 1;
     color: transparent;
     -webkit-text-stroke: 1px rgba(232, 122, 30, 0.55);
-    margin-bottom: 2.25rem;
+    margin-bottom: 1.5rem;
     letter-spacing: 0.02em;
   }
 
@@ -526,7 +522,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   .contador {
-    margin-top: 3rem;
+    margin-top: 2.25rem;
     display: inline-flex;
     flex-direction: column;
     gap: 0.35rem;
@@ -582,7 +578,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .kintsugi-wrap {
     display: flex;
     justify-content: center;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.4rem;
   }
 
   .kintsugi-svg {
@@ -656,7 +652,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   .k-remate {
-    margin-top: 2.25rem;
+    margin-top: 1.75rem;
     font-family: var(--font-heading);
     font-size: clamp(1.35rem, 4.5vw, 1.85rem);
     font-weight: 700;
@@ -670,7 +666,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   /* ---------- Acciones ---------- */
   .acciones {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -725,8 +721,8 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   /* ---------- Firma ---------- */
   .firma {
-    margin-top: 3.25rem;
-    padding-top: 2rem;
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
@@ -747,7 +743,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .pie {
     max-width: 34rem;
     margin: 0 auto;
-    padding: 2.5rem 1.5rem 3.5rem;
+    padding: 2rem 1.5rem 3rem;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
@@ -772,13 +768,6 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   .pie-enlaces a { color: var(--color-primary); }
 
-  .pie-nota {
-    margin-top: 1.75rem;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    color: rgba(138, 127, 116, 0.75);
-  }
-
   /* ---------- Aparicion al hacer scroll ---------- */
   :global(body.js-reveal) .reveal {
     opacity: 0;
@@ -788,7 +777,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   :global(body.js-reveal) .reveal.visible {
     opacity: 1;
     transform: none;
-    transition: opacity 0.9s ease, transform 0.9s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -831,7 +820,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       // El margen positivo abajo hace que cada bloque aparezca ANTES de
       // entrar en pantalla: si no, se cruza el hueco entre escenas mirando
       // una pantalla negra y el vacio se siente el doble de largo.
-    }, { rootMargin: '0px 0px 12% 0px' });
+    }, { rootMargin: '0px 0px 25% 0px' });
     reveals.forEach((el) => io.observe(el));
   }
 </script>
