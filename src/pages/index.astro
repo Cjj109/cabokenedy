@@ -1,1620 +1,590 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import {
-  promoFlash as staticFlash,
-  promos as staticPromos,
-  menuCategories as staticMenu,
-  TASA_BCV,
-  getWhatsAppLink,
-  getGeneralWhatsAppMessage,
-  formatBs
-} from '../data/menu';
-import { getPublicMenu, getPromos, getFlashPromo, getCombos, getSiteConfig } from '../lib/db';
-import type { PublicCategory } from '../lib/db';
 
-// Try D1 first, fall back to static data
-let menuCategories = staticMenu;
-let promos = staticPromos;
-let promoFlash: typeof staticFlash | null = staticFlash;
-let tasaBcvFallback = TASA_BCV;
+/**
+ * Carta abierta a QlqComida y a la iniciativa QlQ Esta Union.
+ * El menu, las promos y el panel siguen en el repo: el home viejo quedo en
+ * _index-menu.astro (fuera de las rutas por el guion bajo).
+ *
+ * El contador de dias cerrados se calcula en cada request (output: 'server'),
+ * asi la carta sigue siendo exacta cada dia que pasa sin tener que tocarla.
+ */
+const TERREMOTO = new Date('2026-06-24T00:00:00-04:00');
+const ANO_FUNDACION = 1980;
 
-try {
-  const runtime = (Astro.locals as any).runtime;
-  const db = runtime?.env?.DB as D1Database | undefined;
-  if (db) {
-    const [dbMenu, dbPromos, dbFlash, dbConfig] = await Promise.all([
-      getPublicMenu(db),
-      getPromos(db),
-      getFlashPromo(db),
-      getSiteConfig(db),
-    ]);
+const ahora = new Date();
+const diasCerrados = Math.max(0, Math.floor((ahora.getTime() - TERREMOTO.getTime()) / 86400000));
+const anosAbiertos = ahora.getFullYear() - ANO_FUNDACION;
+const fechaHoy = ahora.toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
 
-    if (dbMenu.length > 0) {
-      menuCategories = dbMenu as any;
-    }
+const INSTAGRAM = 'https://www.instagram.com/restaurantcabokenedyoficial/';
+const MAPS = 'https://maps.app.goo.gl/9rWr5kE7a13ZtMde8?g_st=ic';
+const WHATSAPP = `https://wa.me/584142920785?text=${encodeURIComponent('Hola, leí la carta de Cabo Kenedy y quiero ayudar.')}`;
 
-    if (dbPromos.length > 0) {
-      promos = dbPromos.map(p => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        priceUSD: p.price_usd,
-        icon: p.icon,
-        badge: p.badge,
-        image: p.image,
-      }));
-    }
-
-    if (dbFlash) {
-      if (dbFlash.active) {
-        promoFlash = {
-          id: 'flash',
-          name: dbFlash.name,
-          originalName: dbFlash.original_name,
-          description: dbFlash.description,
-          priceUSD: dbFlash.price_usd,
-          availability: dbFlash.availability,
-          channels: dbFlash.channels,
-          icon: dbFlash.icon,
-          image: dbFlash.image,
-        };
-      } else {
-        promoFlash = null;
-      }
-    }
-
-    if (dbConfig['tasa_bcv_fallback']) {
-      tasaBcvFallback = parseFloat(dbConfig['tasa_bcv_fallback']);
-    }
-  }
-} catch {
-  // D1 unavailable, use static data
-}
-
-const waGeneral = getWhatsAppLink(getGeneralWhatsAppMessage());
-
-const waIcon = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
-
-const categoryIcons: Record<string, string> = {
-  combos: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 2.5c2 1 3.5 3.5 3 6.5-.5 2.5-2 4-3.5 5l-1 2h-4l-1-2C7.5 13 6 11.5 5.5 9c-.5-3 1-5.5 3-6.5"/><circle cx="12" cy="8" r="3" fill="currentColor" opacity="0.15"/><path d="M10 16h4"/><path d="M10.5 18h3"/><path d="M11 20h2"/></svg>`,
-  pollo: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="currentColor" opacity="0.15"/><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
-  hamburguesas: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11c0-4 3-7 7-7s7 3 7 7" fill="currentColor" opacity="0.15"/><path d="M5 11c0-4 3-7 7-7s7 3 7 7"/><path d="M4 11h16"/><path d="M4 15h16"/><path d="M6 19c0 1 1 2 2 2h8c1 0 2-1 2-2"/><path d="M4 15v2c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2v-2" fill="currentColor" opacity="0.1"/><path d="M7 13c1 0 1.5-.5 2.5-.5s1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5" opacity="0.6"/></svg>`,
-  pasapalos: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 7l8 5 8-5-8-5z" fill="currentColor" opacity="0.1"/><path d="M12 2L4 7l8 5 8-5-8-5z"/><path d="M4 12l8 5 8-5"/><path d="M4 17l8 5 8-5"/></svg>`,
-  raciones: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M20 12c0-4.4-3.6-8-8-8s-8 3.6-8 8" fill="currentColor" opacity="0.1"/><path d="M20 12c0-4.4-3.6-8-8-8s-8 3.6-8 8"/><path d="M4 12v1c0 3.9 3.6 7 8 7s8-3.1 8-7v-1" fill="currentColor" opacity="0.08"/><path d="M4 12v1c0 3.9 3.6 7 8 7s8-3.1 8-7v-1"/></svg>`,
-  ensaladas: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10"/><path d="M5 17h14c0 0 1-4-7-4S5 17 5 17z" fill="currentColor" opacity="0.1"/><path d="M5 17h14"/><path d="M12 3c-1 3-1 6 0 9" opacity="0.7"/><path d="M8 6c0 3 1 6 3 8" opacity="0.6"/><path d="M16 5c0 3-1 7-3 9" opacity="0.6"/><path d="M5 17c1 2 3 3 7 3s6-1 7-3"/></svg>`,
-  carnes: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 11c3-1 5-3 6-6-3 1-5 3-6 6zm0 0c-1 3-3 5-6 6 1-3 3-5 6-6z" fill="currentColor" opacity="0.1"/><path d="M15 11c3-1 5-3 6-6-3 1-5 3-6 6zm0 0c-1 3-3 5-6 6 1-3 3-5 6-6z"/><path d="M3 21l6-6"/><path d="M9 15l-3 3"/><circle cx="6" cy="18" r="2" fill="currentColor" opacity="0.1"/></svg>`,
-  mariscos: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 5 2.54 5 5 0 .88-.28 1.7-.76 2.38" /><path d="M3 19.5c1-2 3-3.5 6-3.5 4 0 6 2 8 2s3.5-1 4.5-2.5"/><path d="M2 22c1-2 3-3 5.5-3 4 0 5.5 2 8 2s4-1.5 5.5-3" opacity="0.5"/><circle cx="16" cy="9.5" r="0.8" fill="currentColor"/></svg>`,
-};
-
-const sectionIcons: Record<string, string> = Object.fromEntries(
-  Object.entries(categoryIcons).map(([k, v]) => [k, v.replace(/w-4 h-4/g, 'w-7 h-7')])
-);
+const title = 'Carta abierta a QlqComida | Cabo Kenedy, La Guaira';
+const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días con el carbón apagado desde el terremoto del 24 de junio. Esta es nuestra carta a QlQ Esta Unión.`;
 ---
 
-<Layout>
-  <!-- ==================== AMBIENT NEBULAS ==================== -->
-  <div class="nebula nebula-orange fixed top-[5%] left-[-10%] w-[600px] h-[600px] z-0"></div>
-  <div class="nebula nebula-amber fixed top-[45%] right-[-5%] w-[500px] h-[500px] z-0"></div>
-  <div class="nebula nebula-purple fixed bottom-[15%] left-[15%] w-[350px] h-[350px] z-0"></div>
+<Layout title={title} description={description}>
+  <!-- Brasas de fondo -->
+  <div class="embers" aria-hidden="true">
+    {Array.from({ length: 14 }).map((_, i) => (
+      <span class="ember" style={`left:${4 + i * 7}%; animation-delay:${i * 1.7}s; animation-duration:${13 + (i % 5) * 3}s;`} />
+    ))}
+  </div>
 
-  <!-- ==================== NAVBAR ==================== -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-space-dark/80 backdrop-blur-2xl border-b border-primary/[0.06]">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="#" class="flex items-center gap-3 group">
-        <div class="h-10 w-10 rounded-lg border border-primary/20 transition-all group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(232,122,30,0.3)] overflow-hidden flex-shrink-0">
-          <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-cover" loading="eager" width="40" height="40" />
-        </div>
-        <div class="hidden sm:block">
-          <span class="font-display text-sm font-bold text-primary tracking-[0.15em]">CABO KENEDY</span>
-          <span class="block text-[9px] text-text-muted tracking-[0.2em] font-heading">POLLO A LA BRASA</span>
-        </div>
-      </a>
-      <div class="flex items-center gap-5">
-        <a href="#combos" class="text-text-secondary hover:text-primary transition-colors text-sm font-medium hidden sm:block font-heading">Promos</a>
-        <a href="#menu" class="text-text-secondary hover:text-primary transition-colors text-sm font-medium font-heading">Menu</a>
-        <a
-          href={waGeneral}
-          target="_blank"
-          rel="noopener"
-          class="rocket-btn bg-whatsapp hover:bg-whatsapp-dark text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-whatsapp/20"
-        >
-          <Fragment set:html={waIcon.replace('w-5 h-5', 'w-4 h-4')} />
-          <span class="hidden sm:inline">Pedir Ahora</span>
-          <span class="sm:hidden">Pedir</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+  <main class="relative px-5 sm:px-8 pb-24">
+    <!-- ==================== ENCABEZADO ==================== -->
+    <header class="max-w-2xl mx-auto pt-14 sm:pt-20 text-center">
+      <img
+        src="/logo.webp"
+        alt="Cabo Kenedy"
+        width="140"
+        height="140"
+        class="w-28 sm:w-32 h-auto mx-auto mb-8 opacity-90"
+      />
 
-  <main>
-  <!-- ==================== HERO ==================== -->
-  <section class="relative min-h-[100svh] flex items-center justify-center pt-16 overflow-hidden">
-    <!-- Warm nebula glow -->
-    <div class="absolute top-1/4 left-1/3 w-[500px] h-[500px] nebula nebula-orange z-0"></div>
-    <div class="absolute bottom-1/3 right-1/4 w-[350px] h-[350px] nebula nebula-amber z-0"></div>
+      <p class="font-display text-[10px] sm:text-xs tracking-[0.35em] text-primary/80 mb-6">
+        CARTA ABIERTA
+      </p>
 
-    <!-- Orbit decoration (subtle) -->
-    <div class="orbit-ring orbit-slow absolute w-[500px] h-[500px] sm:w-[650px] sm:h-[650px] opacity-15"></div>
-
-    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-      <!-- Logo floating with decorative stars -->
-      <div class="mb-8 relative inline-block">
-        <div class="logo-float">
-          <div class="inline-block p-1 relative">
-            <div class="w-52 sm:w-72">
-              <img
-                src="/logo.webp"
-                alt="Cabo Kenedy - Pollo a la Brasa"
-                width="350"
-                height="200"
-                class="w-full h-auto drop-shadow-[0_0_25px_rgba(232,122,30,0.3)]"
-                loading="eager"
-                fetchpriority="high"
-              />
-            </div>
-            <!-- Decorative stars matching original logo -->
-            <span class="logo-star" style="top: 5%; left: -8%; font-size: 14px;">✦</span>
-            <span class="logo-star" style="top: -5%; left: 25%; font-size: 10px;">✦</span>
-            <span class="logo-star" style="top: 15%; right: -12%; font-size: 18px;">✦</span>
-            <span class="logo-star" style="bottom: 20%; right: -6%; font-size: 8px;">✦</span>
-            <span class="logo-star" style="bottom: 5%; left: -5%; font-size: 12px;">✦</span>
-            <span class="logo-star-dot" style="top: 30%; right: -3%;"></span>
-          </div>
-        </div>
+      <div class="inline-flex flex-col gap-1 text-sm text-text-muted font-heading mb-10">
+        <span><span class="text-text-secondary">Para:</span> QlqComida y la gente de QlQ Esta Unión</span>
+        <span><span class="text-text-secondary">De:</span> la familia de Cabo Kenedy, Caraballeda</span>
+        <span><span class="text-text-secondary">Fecha:</span> {fechaHoy}</span>
       </div>
 
-      <!-- Brand name -->
-      <h1 class="font-display text-4xl sm:text-6xl md:text-7xl font-black mb-2 tracking-[0.08em] leading-none">
-        <span class="text-cosmic-wide">CABO</span>
-        <span class="text-text-primary"> KENEDY</span>
+      <h1 class="font-heading text-3xl sm:text-5xl font-bold leading-[1.15] text-text-primary text-balance">
+        Hace <span class="text-primary">{diasCerrados} días</span> que no encendemos el carbón.
       </h1>
 
-      <!-- THE key identity: Pollo a la Brasa -->
-      <p class="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-primary-light/90 mb-3 tracking-wide">
-        Pollo a la Brasa
+      <p class="mt-6 text-lg sm:text-xl text-text-secondary leading-relaxed text-balance">
+        Antes de eso, llevábamos {anosAbiertos} años sin fallar un domingo.
       </p>
+    </header>
 
-      <p class="font-display text-[10px] sm:text-[11px] text-text-muted tracking-[0.3em] uppercase mb-8">
-        Un Espacio Para Ti
-      </p>
-
-      <!-- Warm description -->
-      <p class="font-heading text-base sm:text-lg text-text-secondary max-w-lg mx-auto mb-4 leading-relaxed">
-        Más de <span class="text-primary font-semibold">40 años</span> cocinando al carbón con receta familiar.
-        El sabor de siempre en La Guaira.
-      </p>
-
-      <!-- Trust badges - food-centric -->
-      <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 mb-10 text-text-muted text-sm font-heading">
-        <span class="flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-          <span>Al carbón</span>
-        </span>
-        <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
-        <span class="flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
-          <span>Todos los días</span>
-        </span>
-        <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
-        <span class="flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L8 8h8l-4-6z"/><rect x="9" y="8" width="6" height="7" rx="1"/><path d="M8 15l-2 4h12l-2-4"/></svg>
-          <span>Delivery</span>
-        </span>
-        <span class="w-1 h-1 bg-primary/30 rounded-full"></span>
-        <span class="flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="5"/><circle cx="15" cy="15" r="5"/></svg>
-          <span>USD / Bs</span>
-        </span>
+    <!-- ==================== EL CONTADOR ==================== -->
+    <section class="max-w-2xl mx-auto mt-14 reveal" aria-label="Situación actual">
+      <div class="grid grid-cols-3 gap-px bg-white/8 rounded-2xl overflow-hidden border border-white/8">
+        <div class="bg-space-card px-3 py-6 text-center">
+          <div class="font-display text-2xl sm:text-4xl font-bold text-primary">{diasCerrados}</div>
+          <div class="text-[11px] sm:text-xs text-text-muted mt-2 font-heading">días cerrados</div>
+        </div>
+        <div class="bg-space-card px-3 py-6 text-center">
+          <div class="font-display text-2xl sm:text-4xl font-bold text-text-primary">{anosAbiertos}</div>
+          <div class="text-[11px] sm:text-xs text-text-muted mt-2 font-heading">años de historia</div>
+        </div>
+        <div class="bg-space-card px-3 py-6 text-center">
+          <div class="font-display text-2xl sm:text-4xl font-bold text-text-primary">24-J</div>
+          <div class="text-[11px] sm:text-xs text-text-muted mt-2 font-heading">el día que tembló</div>
+        </div>
       </div>
+    </section>
 
-      <!-- CTA buttons -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a
-          href={waGeneral}
-          target="_blank"
-          rel="noopener"
-          class="rocket-btn glow-green bg-whatsapp hover:bg-whatsapp-dark text-white font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105 flex items-center gap-3 w-full sm:w-auto justify-center shadow-2xl shadow-whatsapp/30"
-        >
-          <Fragment set:html={waIcon.replace('w-5 h-5', 'w-6 h-6')} />
-          Pedir por WhatsApp
-        </a>
-        <a
-          href="#combos"
-          class="cta-secondary border border-primary/15 hover:border-primary/35 text-primary/90 hover:text-primary hover:bg-primary/5 font-semibold text-lg px-10 py-4 rounded-full transition-all w-full sm:w-auto text-center backdrop-blur-sm"
-        >
-          Ver Promos <svg class="w-5 h-5 inline-block ml-1 -mt-0.5" viewBox="0 0 24 24" fill="currentColor" opacity="0.9"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-        </a>
-      </div>
+    <!-- ==================== LA CARTA ==================== -->
+    <article class="carta max-w-[38rem] mx-auto mt-20">
+      <p class="reveal">Queridos QlqComida:</p>
 
-      <!-- Scroll -->
-      <div class="mt-14 animate-bounce opacity-25">
-        <svg class="w-5 h-5 mx-auto text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      <p class="reveal">
+        Les escribimos desde el Local 01 de la avenida principal de Caribe, en el C.C. Houston,
+        en Caraballeda. O más bien, desde lo que el 24 de junio dejó de él.
+      </p>
+
+      <p class="reveal">
+        <strong>Cabo Kenedy abrió en 1980.</strong> Pollo a la brasa sobre carbón natural, un adobo
+        que no está escrito en ningún papel porque se aprende mirando, arepitas, y esa ensalada
+        rallada de repollo y zanahoria que la gente termina pidiendo aparte porque nunca le alcanza.
+        {anosAbiertos} años haciendo casi exactamente lo mismo, todos los días, sin inventar mucho.
+      </p>
+
+      <p class="reveal">
+        Durante {anosAbiertos} años, a las once de la mañana la avenida olía a nosotros. Ese olor
+        era nuestra manera de dar los buenos días. La gente que pasaba en carro bajaba el vidrio
+        sin pensarlo. Eso no se pone en un menú, pero era lo que vendíamos.
+      </p>
+
+      <p class="reveal">
+        Y en este pueblo hay una escena que se repite sola. Alguien llega, se sienta, y al tiempo
+        aparece con un hijo. Años después ese hijo vuelve, y trae al suyo. Nosotros no hemos hecho
+        gran cosa: pusimos las sillas y mantuvimos la brasa prendida mientras eso pasaba.
+      </p>
+
+      <blockquote class="reveal">
+        A mi papá lo trajo mi abuelo. A mí me trajo mi papá.
+        Y yo tenía la idea más normal del mundo: traer un día a mis hijos, sentarlos ahí y decirles
+        <em>aquí comía tu bisabuelo, y sabe igual que hace cuarenta años.</em>
+      </blockquote>
+
+      <p class="reveal">
+        Todavía no se lo he podido decir a nadie.
+      </p>
+
+      <div class="grieta reveal" aria-hidden="true"></div>
+
+      <p class="reveal">
+        El 24 de junio tembló en La Guaira y nuestro local quedó fuera de servicio. Desde entonces
+        no hemos vuelto a abrir. Llevamos <strong>{diasCerrados} días</strong> con las santamarías
+        abajo: el silencio más largo en {anosAbiertos} años. Más largo que cualquier vaguada,
+        cualquier apagón y cualquier cuarentena que nos haya tocado aguantar.
+      </p>
+
+      <p class="reveal">
+        Lo duro de un restaurante cerrado no es la puerta cerrada. Es todo lo que se apaga detrás:
+        el señor que venía los jueves y ya no tiene jueves. La familia que celebraba ahí los
+        cumpleaños porque salía más a cuenta que un salón. Los muchachos que llegaban tarde en la
+        noche. La gente que trabaja con nosotros, que no cocina por hobby sino porque de ahí come
+        su casa. Cuando un negocio de barrio cierra, no cierra un negocio: se le apaga una costumbre
+        a un pueblo entero.
+      </p>
+
+      <p class="reveal">
+        Y este pueblo ya sabe lo que es rehacerse. Lo hizo en el 99, cuando bajó el cerro y La
+        Guaira tuvo que aprender a levantarse encima de lo que quedó. Sabemos empezar otra vez.
+        Lo que no sabemos es hacerlo solos.
+      </p>
+
+      <div class="grieta reveal" aria-hidden="true"></div>
+
+      <p class="reveal">
+        Hay una idea que nos ha dado vueltas estos meses: que cada persona tiene una chispa, eso
+        que la enciende, lo que hace que valga la pena levantarse temprano. Nosotros creemos que
+        los pueblos también tienen la suya, y que casi nunca está en un monumento ni en una plaza,
+        sino en un local pequeño donde alguien lleva media vida haciendo una sola cosa, bien hecha.
+      </p>
+
+      <p class="reveal">
+        La nuestra fue literal durante {anosAbiertos} años: <strong>una brasa encendida</strong>.
+        No se apagó porque nos cansamos, ni porque la comida dejó de gustar, ni porque la gente
+        dejó de venir. Se apagó porque tembló.
+      </p>
+
+      <p class="reveal">
+        Vimos lo que están haciendo con <strong>QlQ Esta Unión</strong> y llenamos el formulario,
+        como tantos otros negocios de aquí. Pero en un formulario no cabe el olor del carbón a las
+        once de la mañana, ni la cara de mi abuelo, ni la cuenta de las familias que dependen de
+        que esa cocina vuelva a prender. Por eso hicimos esta página: es lo que no cabía en el
+        formulario.
+      </p>
+    </article>
+
+    <!-- ==================== KINTSUGI ==================== -->
+    <section class="kintsugi-section" aria-label="Kintsugi: reparar con oro">
+      <div class="kintsugi-wrap reveal">
+        <svg class="kintsugi-svg" viewBox="0 0 220 220" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="oro" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#bf953f" />
+              <stop offset="25%" stop-color="#fcf6ba" />
+              <stop offset="50%" stop-color="#b38728" />
+              <stop offset="75%" stop-color="#fbf5b7" />
+              <stop offset="100%" stop-color="#aa771c" />
+            </linearGradient>
+            <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(240,176,0,0.10)" />
+              <stop offset="100%" stop-color="rgba(240,176,0,0)" />
+            </radialGradient>
+          </defs>
+
+          <!-- Halo -->
+          <circle cx="110" cy="110" r="105" fill="url(#halo)" class="k-aura" />
+
+          <!-- El plato: borde y fondo -->
+          <circle cx="110" cy="110" r="88" class="k-plato" />
+          <circle cx="110" cy="110" r="62" class="k-plato k-plato-hondo" />
+
+          <!-- Grietas de oro: se dibujan solas al entrar en pantalla -->
+          <path class="k-grieta" style="--d:0.0s" d="M110 22 C 106 52, 118 70, 112 92 C 108 108, 116 124, 110 148 C 106 168, 114 186, 110 198" />
+          <path class="k-grieta" style="--d:0.5s" d="M112 92 C 92 88, 74 78, 52 62" />
+          <path class="k-grieta" style="--d:0.9s" d="M110 148 C 132 146, 152 154, 176 168" />
+          <path class="k-grieta" style="--d:1.2s" d="M112 92 C 130 84, 148 72, 162 54" />
+          <path class="k-grieta" style="--d:1.5s" d="M110 148 C 90 158, 72 170, 58 184" />
+          <path class="k-grieta k-fina" style="--d:1.8s" d="M52 62 C 44 74, 38 84, 30 92" />
+          <path class="k-grieta k-fina" style="--d:2.0s" d="M176 168 C 182 176, 186 182, 190 190" />
+
+          <!-- Nodos en las uniones -->
+          <circle cx="112" cy="92" r="2.6" class="k-nodo" style="--d:2.2s" />
+          <circle cx="110" cy="148" r="2.6" class="k-nodo" style="--d:2.35s" />
         </svg>
       </div>
-    </div>
-  </section>
 
-  <!-- ==================== LA TRADICION BAR ==================== -->
-  <section class="py-5 border-y border-primary/[0.06] bg-space-deep/60 backdrop-blur-lg relative scanlines">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-text-primary font-heading font-semibold text-sm">Al Carbón</p>
-            <p class="text-text-muted text-[11px]">Cocción tradicional</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9" opacity="0.2" fill="currentColor"/>
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 6v6l4 2"/>
-              <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-              <circle cx="19" cy="5" r="1" fill="currentColor" opacity="0.4"/>
-              <circle cx="5" cy="19" r="0.7" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-text-primary font-heading font-semibold text-sm">11:00 AM — 00:00</p>
-            <p class="text-text-muted text-[11px]">Todos los días</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L8 8h8l-4-6z" fill="currentColor" opacity="0.2"/>
-              <path d="M12 2L8 8h8l-4-6z"/>
-              <rect x="9" y="8" width="6" height="8" rx="1" fill="currentColor" opacity="0.15"/>
-              <rect x="9" y="8" width="6" height="8" rx="1"/>
-              <path d="M8 16l-2 4h12l-2-4"/>
-              <path d="M10 20l-1 2"/>
-              <path d="M14 20l1 2"/>
-              <circle cx="4" cy="6" r="0.7" fill="currentColor" opacity="0.4"/>
-              <circle cx="20" cy="10" r="0.5" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-text-primary font-heading font-semibold text-sm">Delivery</p>
-            <p class="text-text-muted text-[11px]">Toda La Guaira</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 justify-center py-2">
-          <div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="9" r="6" fill="currentColor" opacity="0.15"/>
-              <circle cx="9" cy="9" r="6"/>
-              <text x="9" y="11.5" text-anchor="middle" font-size="7" font-weight="bold" fill="currentColor" stroke="none" font-family="sans-serif">$</text>
-              <circle cx="15" cy="15" r="6" fill="currentColor" opacity="0.1"/>
-              <circle cx="15" cy="15" r="6"/>
-              <text x="15" y="17.5" text-anchor="middle" font-size="6" font-weight="bold" fill="currentColor" stroke="none" font-family="sans-serif">Bs</text>
-              <path d="M13.5 7.5l3-3" opacity="0.4"/>
-              <circle cx="17.5" cy="3.5" r="0.7" fill="currentColor" opacity="0.4"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-text-primary font-heading font-semibold text-sm">USD / Bs</p>
-            <p class="text-text-muted text-[11px]">Pago Movil, Efectivo</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      <p class="k-kanji reveal">金継ぎ</p>
+      <h2 class="k-titulo reveal">Kintsugi</h2>
+      <p class="k-def reveal">El arte japonés de reparar con oro</p>
+      <div class="k-regla reveal" aria-hidden="true"></div>
 
-  <!-- ==================== PROMO ESTRELLA FUGAZ (FLASH) ==================== -->
-  {promoFlash && (
-  <section id="promo-flash" class="py-10 sm:py-14 relative overflow-hidden">
-    <div class="max-w-4xl mx-auto px-4 relative z-10">
-      <div class="flash-banner rounded-3xl overflow-hidden">
-        <div class="flex flex-col md:flex-row">
-          <!-- Food image -->
-          <div class="relative md:w-2/5 h-48 md:h-auto flex-shrink-0">
-            <img
-              src={promoFlash.image}
-              alt="Promo Estrella Fugaz"
-              width="800"
-              height="533"
-              class="w-full h-full object-cover"
-              loading="eager"
-            />
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-space-dark/90 hidden md:block"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-space-dark/90 md:hidden"></div>
-            <div class="absolute top-3 left-3">
-              <div class="availability-badge inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full">
-                <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-                <span class="text-primary text-[11px] font-heading font-bold tracking-wider uppercase">{promoFlash.availability}</span>
-              </div>
-            </div>
-          </div>
+      <div class="carta max-w-[38rem] mx-auto text-center">
+        <p class="reveal">
+          Cuando un plato se rompe hay dos maneras de responder: esconderlo, o unir los pedazos con
+          oro y dejar la grieta a la vista, porque la grieta también es parte de la historia de la
+          pieza.
+        </p>
 
-          <!-- Content -->
-          <div class="flex-grow p-6 sm:p-8 flex flex-col md:flex-row items-center gap-5 md:gap-8">
-            <div class="flex-grow text-center md:text-left">
-              <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
-                <span class="text-2xl">☄️</span>
-                <p class="text-primary text-[10px] font-heading font-bold tracking-[0.25em] uppercase">Promo Especial</p>
-              </div>
-              <h2 class="font-display text-2xl sm:text-3xl font-black tracking-wider text-text-primary mb-2">
-                ESTRELLA <span class="text-cosmic">FUGAZ</span>
-              </h2>
-              <p class="text-text-secondary font-heading text-sm leading-relaxed mb-1">
-                {promoFlash.description}
-              </p>
-              <p class="text-text-muted text-xs font-heading">
-                {promoFlash.channels}
-              </p>
-            </div>
+        <p class="k-cierre reveal">
+          No les estamos pidiendo que Cabo Kenedy vuelva a ser exactamente lo que era el 23 de junio.
+          Un sitio que se cae y se levanta no vuelve igual: vuelve con una historia más que contar,
+          y esa historia se la contamos a todo el que se siente en una de nuestras mesas.
+        </p>
 
-            <div class="flex flex-col items-center flex-shrink-0 gap-3">
-              <div class="text-center">
-                <span class="flash-price font-display text-4xl sm:text-5xl font-black">${promoFlash.priceUSD}</span>
-                <span class="block text-primary-light/90 text-sm mt-1 font-heading bs-price" data-usd={promoFlash.priceUSD}>{formatBs(promoFlash.priceUSD)}</span>
-              </div>
-              <button
-                data-cart-add
-                data-name={promoFlash.name}
-                data-price={promoFlash.priceUSD}
-                data-desc={promoFlash.description}
-                data-item-category="promos"
-                class="rocket-btn bg-primary hover:bg-primary-dark text-white font-bold text-sm px-8 py-3.5 rounded-full transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-primary/25 font-heading whitespace-nowrap"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                Agregar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  )}
-
-  <!-- ==================== PROMOCIONES ==================== -->
-  <section id="combos" class="py-20 sm:py-28 relative overflow-hidden">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] nebula nebula-orange z-0"></div>
-
-    <div class="max-w-6xl mx-auto px-4 relative z-10">
-      <div class="text-center mb-14">
-        <div class="inline-flex items-center gap-2 bg-primary/8 border border-primary/12 rounded-full px-5 py-2 mb-5">
-          <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-          <span class="text-primary text-xs font-heading font-semibold tracking-[0.15em] uppercase">Lo Más Pedido</span>
-        </div>
-        <h2 class="font-display text-3xl sm:text-5xl md:text-6xl font-black tracking-wider">
-          NUESTRAS <span class="text-cosmic">PROMOS</span>
-        </h2>
-        <p class="text-text-secondary mt-4 max-w-lg mx-auto font-heading text-base sm:text-lg">
-          Los combos que más pide La Guaira. Pollo asado, broaster, hamburguesas y más.
+        <p class="k-remate reveal">
+          Los pedazos están todos.<br />
+          <span>Lo único que nos falta es el oro.</span>
         </p>
       </div>
+    </section>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 stagger-children">
-        {promos.map((promo) => {
-          const bsPrice = formatBs(promo.priceUSD);
-          return (
-            <div class="promo-card rounded-2xl overflow-hidden flex flex-col group">
-              <!-- Food photo -->
-              <div class="relative h-44 sm:h-48 overflow-hidden">
-                <img
-                  src={promo.image}
-                  alt={promo.name}
-                  width="400"
-                  height="267"
-                  class="promo-photo w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-space-dark via-space-dark/30 to-transparent"></div>
-                <div class="absolute top-3 left-3">
-                  <span class="badge-shimmer text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider font-heading">
-                    {promo.badge}
-                  </span>
-                </div>
-                <div class="absolute top-3 right-3 text-right">
-                  <span class="font-display text-3xl font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">${promo.priceUSD}</span>
-                  <span class="block text-white/90 text-xs font-heading font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)] bs-price" data-usd={promo.priceUSD}>{bsPrice}</span>
-                </div>
-              </div>
-
-              <!-- Content -->
-              <div class="p-5 flex flex-col flex-grow">
-                <h3 class="font-display text-base sm:text-lg font-bold text-text-primary tracking-wider leading-tight mb-2">{promo.name}</h3>
-                <p class="promo-desc text-text-secondary text-sm leading-relaxed flex-grow mb-4 font-heading">{promo.description}</p>
-
-                <div class="flex gap-2">
-                  <button
-                    class="cart-add-btn flex-grow bg-primary/90 hover:bg-primary text-white font-bold py-3 rounded-xl text-center transition-all hover:scale-[1.03] flex items-center justify-center gap-2 text-sm font-heading"
-                    data-cart-add
-                    data-name={promo.name}
-                    data-price={promo.priceUSD}
-                    data-desc={promo.description}
-                    data-item-category="promos"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                    Agregar
-                  </button>
-                  <a
-                    class="wa-item-btn w-12 flex items-center justify-center bg-whatsapp/90 hover:bg-whatsapp text-white rounded-xl transition-all hover:scale-[1.03] flex-shrink-0"
-                    data-wa-item={promo.name}
-                    href="javascript:void(0)"
-                    aria-label={`Pedir ${promo.name} por WhatsApp`}
-                  >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <!-- Arma tu Combo -->
-      <div class="mt-10">
-        <div class="space-card rounded-2xl p-6 sm:p-8 max-w-2xl mx-auto">
-          <div class="text-center mb-6">
-            <span class="text-3xl mb-2 block">🛠️</span>
-            <h3 class="font-display text-xl sm:text-2xl font-bold tracking-wider">ARMA TU <span class="text-cosmic">COMBO</span></h3>
-            <p class="text-text-secondary text-sm font-heading mt-2">Elige tu base + contornos favoritos</p>
-          </div>
-
-          <!-- Base selection -->
-          <div class="mb-5">
-            <p class="text-text-muted text-xs font-heading font-semibold tracking-wider uppercase mb-3">1. Elige tu base</p>
-            <div class="grid grid-cols-2 gap-2" id="combo-bases">
-              <button data-combo-base="1/4 Pollo a la Brasa" data-combo-price="5" class="combo-option px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-text-secondary text-sm font-heading font-medium transition-all hover:border-primary/30 hover:text-text-primary text-left">
-                <span class="block font-semibold">1/4 Pollo Brasa</span>
-                <span class="text-primary text-xs font-display font-bold">$5.00</span>
-              </button>
-              <button data-combo-base="1/2 Pollo a la Brasa" data-combo-price="8" class="combo-option px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-text-secondary text-sm font-heading font-medium transition-all hover:border-primary/30 hover:text-text-primary text-left">
-                <span class="block font-semibold">1/2 Pollo Brasa</span>
-                <span class="text-primary text-xs font-display font-bold">$8.00</span>
-              </button>
-              <button data-combo-base="1/4 Pollo Broaster" data-combo-price="5" class="combo-option px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-text-secondary text-sm font-heading font-medium transition-all hover:border-primary/30 hover:text-text-primary text-left">
-                <span class="block font-semibold">1/4 Pollo Broaster</span>
-                <span class="text-primary text-xs font-display font-bold">$5.00</span>
-              </button>
-              <button data-combo-base="1/2 Pollo Broaster" data-combo-price="8" class="combo-option px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-text-secondary text-sm font-heading font-medium transition-all hover:border-primary/30 hover:text-text-primary text-left">
-                <span class="block font-semibold">1/2 Pollo Broaster</span>
-                <span class="text-primary text-xs font-display font-bold">$8.00</span>
-              </button>
-              <button data-combo-base="Hamburguesa Sencilla" data-combo-price="5" class="combo-option px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-text-secondary text-sm font-heading font-medium transition-all hover:border-primary/30 hover:text-text-primary text-left">
-                <span class="block font-semibold">Hamburguesa Sencilla</span>
-                <span class="text-primary text-xs font-display font-bold">$5.00</span>
-              </button>
-              <button data-combo-base="Hamburguesa Doble" data-combo-price="7" class="combo-option px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-text-secondary text-sm font-heading font-medium transition-all hover:border-primary/30 hover:text-text-primary text-left">
-                <span class="block font-semibold">Hamburguesa Doble</span>
-                <span class="text-primary text-xs font-display font-bold">$7.00</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Extras selection -->
-          <div class="mb-5">
-            <p class="text-text-muted text-xs font-heading font-semibold tracking-wider uppercase mb-3">2. Agrega contornos <span class="text-text-muted/60">(opcional)</span></p>
-            <div class="flex flex-wrap gap-2" id="combo-extras">
-              <button data-combo-extra="Papas Fritas" data-extra-price="5" class="combo-extra-chip px-3 py-2 rounded-full border border-white/10 bg-white/5 text-text-secondary text-xs font-heading font-medium transition-all hover:border-primary/30">Papas Fritas +$5</button>
-              <button data-combo-extra="Yuca Frita" data-extra-price="5" class="combo-extra-chip px-3 py-2 rounded-full border border-white/10 bg-white/5 text-text-secondary text-xs font-heading font-medium transition-all hover:border-primary/30">Yuca Frita +$5</button>
-              <button data-combo-extra="Tostones" data-extra-price="5" class="combo-extra-chip px-3 py-2 rounded-full border border-white/10 bg-white/5 text-text-secondary text-xs font-heading font-medium transition-all hover:border-primary/30">Tostones +$5</button>
-              <button data-combo-extra="Arepitas" data-extra-price="3" class="combo-extra-chip px-3 py-2 rounded-full border border-white/10 bg-white/5 text-text-secondary text-xs font-heading font-medium transition-all hover:border-primary/30">Arepitas +$3</button>
-              <button data-combo-extra="Ensalada Mixta" data-extra-price="6" class="combo-extra-chip px-3 py-2 rounded-full border border-white/10 bg-white/5 text-text-secondary text-xs font-heading font-medium transition-all hover:border-primary/30">Ensalada Mixta +$6</button>
-              <button data-combo-extra="Ensalada Repollo" data-extra-price="3" class="combo-extra-chip px-3 py-2 rounded-full border border-white/10 bg-white/5 text-text-secondary text-xs font-heading font-medium transition-all hover:border-primary/30">Ensalada Repollo +$3</button>
-            </div>
-          </div>
-
-          <!-- Combo total + add -->
-          <div id="combo-summary" class="hidden">
-            <div class="border-t border-white/10 pt-4 flex items-center justify-between">
-              <div>
-                <p class="text-text-muted text-xs font-heading">Tu combo personalizado</p>
-                <p id="combo-total-price" class="font-display text-2xl font-bold text-primary">$0</p>
-              </div>
-              <button id="combo-add-btn" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-xl text-sm font-heading transition-all hover:scale-105 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                Agregar al Pedido
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Section Divider -->
-  <div class="section-divider mx-auto max-w-2xl"></div>
-
-  <!-- ==================== MENU COMPLETO ==================== -->
-  <section id="menu" class="py-24 sm:py-32 relative">
-    <div class="absolute top-1/3 right-0 w-[400px] h-[400px] nebula nebula-purple z-0"></div>
-
-    <div class="max-w-6xl mx-auto px-4 relative z-10">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center gap-2 bg-primary/8 border border-primary/12 rounded-full px-5 py-2 mb-5">
-          <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" fill="currentColor" opacity="0.15"/><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
-          <span class="text-primary text-xs font-heading font-semibold tracking-[0.15em] uppercase">Toda Nuestra Carta</span>
-        </div>
-        <h2 class="font-display text-3xl sm:text-5xl md:text-6xl font-black tracking-wider">
-          MENU <span class="text-cosmic">COMPLETO</span>
-        </h2>
-      </div>
-
-      <!-- Search Bar -->
-      <div class="max-w-xl mx-auto mb-8">
-        <div class="relative">
-          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <input
-            type="text"
-            id="menu-search"
-            placeholder="Buscar en el menú... (papas, pollo, ensalada...)"
-            class="w-full bg-space-card/60 border border-white/10 rounded-2xl pl-12 pr-10 py-3.5 text-text-primary text-sm font-heading placeholder:text-text-muted/50 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
-          />
-          <button id="menu-search-clear" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-text-muted hover:text-text-primary rounded-full hover:bg-white/5 transition-all hidden" aria-label="Limpiar búsqueda">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <p id="search-results-count" class="text-text-muted text-xs font-heading mt-2 text-center hidden"></p>
-      </div>
-
-      <!-- Category Pills -->
-      <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 pb-2" id="category-tabs">
-        {menuCategories.map((cat, i) => (
-          <button
-            class={`category-pill whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-heading font-medium flex items-center gap-1.5 sm:gap-2 ${
-              i === 0 ? 'active bg-space-card text-white' : 'bg-space-card/40 text-text-secondary'
-            }`}
-            data-category={cat.id}
-            aria-label={cat.title}
-          >
-            <span class="hidden sm:inline" set:html={categoryIcons[cat.id] || cat.icon} />
-            <span>{cat.title.replace('Combos de Pollo Broaster', 'Combos').replace('Milanesas y Pasapalos', 'Pasapalos').replace('Raciones y Contornos', 'Raciones').replace('Pescados y Mariscos', 'Mariscos').replace('Carnes y Parrillas', 'Parrillas')}</span>
-          </button>
-        ))}
-      </div>
-
-      <!-- Menu Sections -->
-      <div id="menu-content">
-        {menuCategories.map((cat, catIndex) => (
-          <div class={`menu-section ${catIndex === 0 ? 'active' : ''}`} data-section={cat.id}>
-            <div class="flex items-center gap-3 mb-6">
-              <span class="text-primary" set:html={sectionIcons[cat.id] || cat.icon} />
-              <h3 class="font-display text-base sm:text-lg font-bold text-text-primary tracking-wider">{cat.title}</h3>
-              <div class="flex-grow h-px bg-gradient-to-r from-primary/10 to-transparent"></div>
-            </div>
-
-            <div class="space-y-1">
-              {cat.items.map((item) => (
-                  <div class="menu-item-card rounded-xl px-4 sm:px-5 py-4 group" data-menu-item data-item-name={item.name.toLowerCase()} data-item-cat={cat.title.toLowerCase()}>
-                    {/* Non-variant items */}
-                    {!item.variants ? (
-                      <div class="flex items-center justify-between gap-3">
-                        <div class="flex-grow min-w-0">
-                          <div class="flex items-center gap-2">
-                            <h4 class="font-heading font-semibold text-text-primary text-base sm:text-lg leading-tight">{item.name}</h4>
-                            {item.popular && (
-                              <span class="text-[9px] bg-primary/12 text-primary-light px-2 py-0.5 rounded-full font-bold font-heading uppercase tracking-wider flex-shrink-0">Popular</span>
-                            )}
-                          </div>
-                          {item.description && (
-                            <p class="text-text-secondary text-sm leading-relaxed mt-1">{item.description}</p>
-                          )}
-                        </div>
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                          <div class="text-right">
-                            <span class="font-display text-xl sm:text-2xl font-bold text-primary leading-none">${item.priceUSD}</span>
-                            <span class="block text-xs text-primary-light/90 mt-0.5 font-heading bs-price" data-usd={item.priceUSD}>{formatBs(item.priceUSD)}</span>
-                          </div>
-                          <button
-                            class="cart-add-circle w-10 h-10 flex items-center justify-center bg-primary/15 hover:bg-primary text-primary hover:text-white rounded-full transition-all hover:scale-110 flex-shrink-0 border border-primary/20 hover:border-primary"
-                            data-cart-add
-                            data-name={item.name}
-                            data-price={item.priceUSD}
-                            data-desc={item.description || ''}
-                            data-item-category={cat.id}
-                            aria-label={`Agregar ${item.name}`}
-                          >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                          </button>
-                          <a
-                            class="wa-item-btn w-10 h-10 flex items-center justify-center bg-whatsapp/15 hover:bg-whatsapp text-whatsapp hover:text-white rounded-full transition-all hover:scale-110 flex-shrink-0 border border-whatsapp/20 hover:border-whatsapp"
-                            data-wa-item={item.name}
-                            href="javascript:void(0)"
-                            aria-label={`Pedir ${item.name} por WhatsApp`}
-                          >
-                            <svg class="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      /* Variant items: name + description top, variant rows below */
-                      <div>
-                        <div class="flex items-center gap-2 mb-1">
-                          <h4 class="font-heading font-semibold text-text-primary text-base sm:text-lg leading-tight">{item.name}</h4>
-                        </div>
-                        {item.description && (
-                          <p class="text-text-secondary text-sm leading-relaxed mb-2">{item.description}</p>
-                        )}
-                        <div class="mt-2 rounded-xl border border-white/8 overflow-hidden divide-y divide-white/5">
-                          {item.variants.map((v) => (
-                            <div class="flex items-center justify-between px-4 py-3 hover:bg-primary/5 transition-colors">
-                              <span class="text-sm text-text-primary font-heading font-medium">{v.label}</span>
-                              <div class="flex items-center gap-3">
-                                <div class="text-right">
-                                  <span class="font-display text-lg sm:text-xl font-bold text-primary">${v.priceUSD}</span>
-                                  <span class="block text-[11px] text-primary-light/80 font-heading bs-price" data-usd={v.priceUSD}>{formatBs(v.priceUSD)}</span>
-                                </div>
-                                <button
-                                  class="cart-add-circle w-9 h-9 flex items-center justify-center bg-primary/15 hover:bg-primary text-primary hover:text-white rounded-full transition-all hover:scale-110 flex-shrink-0 border border-primary/20 hover:border-primary"
-                                  data-cart-add
-                                  data-name={`${item.name} (${v.label})`}
-                                  data-price={v.priceUSD}
-                                  data-desc={item.description || ''}
-                                  data-item-category={cat.id}
-                                  aria-label={`Agregar ${item.name} ${v.label}`}
-                                >
-                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <p class="text-center text-text-muted text-xs mt-10 font-heading" id="bcv-note">
-        Precios en USD. Equivalente en Bs. a tasa BCV (<span id="bcv-rate">{tasaBcvFallback}</span> Bs/$).
+    <!-- ==================== FIRMA ==================== -->
+    <div class="max-w-[38rem] mx-auto mt-16 carta">
+      <p class="reveal">
+        Si algo de esto les llega, aquí estamos. Y si no, gracias igual por estar preguntando quién
+        quedó abajo en La Guaira. Que alguien pregunte, después de {diasCerrados} días, ya es
+        bastante.
       </p>
-    </div>
-  </section>
 
-  <!-- Orbit Divider -->
-  <div class="orbit-divider mx-auto max-w-2xl overflow-hidden"></div>
-
-  <!-- ==================== NUESTRA TRADICION ==================== -->
-  <section class="py-16 sm:py-20 relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-[400px] h-[400px] nebula nebula-amber z-0"></div>
-
-    <div class="max-w-4xl mx-auto px-4 relative z-10">
-      <div class="space-card rounded-3xl p-8 sm:p-12 text-center">
-        <div class="mb-4 flex justify-center">
-          <svg class="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" opacity="0.9"/>
-          </svg>
-        </div>
-        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary mb-4">
-          MÁS DE 40 AÑOS <span class="text-cosmic">AL CARBÓN</span>
-        </h2>
-        <p class="text-text-secondary font-heading text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-3">
-          Desde 1980, en Cabo Kenedy cocinamos nuestro pollo a la brasa sobre carbón natural, con una receta familiar que ha pasado de generación en generación. Cada pieza se marina con nuestro adobo secreto y se asa lentamente hasta quedar crujiente por fuera y jugosa por dentro.
-        </p>
-        <p class="text-text-muted font-heading text-sm">
-          Acompañado de arepitas, ensalada rallada de repollo y zanahoria, y todo el sabor de la tradición venezolana.
+      <div class="firma reveal">
+        <p class="font-heading text-text-primary text-lg font-semibold">La familia de Cabo Kenedy</p>
+        <p class="text-sm text-text-muted mt-1">Caraballeda, La Guaira · desde 1980</p>
+        <p class="text-xs text-text-muted/80 mt-4 leading-relaxed">
+          Esta página la armó Carlos Jardim, primo del dueño, con el visto bueno de la familia.
         </p>
       </div>
     </div>
-  </section>
 
-  <!-- ==================== PEDIR CTA ==================== -->
-  <section class="py-20 sm:py-28 relative overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] nebula nebula-orange"></div>
-    </div>
-
-    <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
-      <div class="mb-5 flex justify-center">
-        <svg class="w-14 h-14 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15.5 2.5c2 1 3.5 3.5 3 6.5-.5 2.5-2 4-3.5 5l-1 2h-4l-1-2C7.5 13 6 11.5 5.5 9c-.5-3 1-5.5 3-6.5" fill="currentColor" opacity="0.15"/>
-          <path d="M15.5 2.5c2 1 3.5 3.5 3 6.5-.5 2.5-2 4-3.5 5l-1 2h-4l-1-2C7.5 13 6 11.5 5.5 9c-.5-3 1-5.5 3-6.5"/>
-          <circle cx="12" cy="8" r="3" fill="currentColor" opacity="0.15"/>
-          <path d="M10 16h4"/>
-          <path d="M10.5 18h3"/>
-          <path d="M11 20h2"/>
-        </svg>
-      </div>
-      <h2 class="font-display text-2xl sm:text-4xl md:text-5xl font-black tracking-wider mb-4">
-        ¿SE TE ANTOJA <span class="text-cosmic">UN POLLO?</span>
+    <!-- ==================== SOMOS REALES ==================== -->
+    <section class="max-w-[38rem] mx-auto mt-20 reveal" aria-label="Cómo verificar que existimos">
+      <h2 class="font-display text-xs tracking-[0.25em] text-primary/80 text-center mb-8">
+        PARA QUIEN REVISE ESTO
       </h2>
-      <p class="text-text-secondary mb-10 max-w-md mx-auto font-heading text-base sm:text-lg">
-        Escríbenos por WhatsApp y te lo llevamos a tu puerta. Pollo a la brasa recién salido del carbón.
+
+      <div class="space-y-3">
+        <a href={MAPS} target="_blank" rel="noopener" class="dato">
+          <span class="dato-label">Dónde estamos</span>
+          <span class="dato-valor">Local 01, Av. Principal de Caribe, C.C. Houston PB, Caraballeda 1165, La Guaira</span>
+          <span class="dato-accion">Ver en Google Maps</span>
+        </a>
+
+        <a href={INSTAGRAM} target="_blank" rel="noopener" class="dato">
+          <span class="dato-label">Nuestro Instagram</span>
+          <span class="dato-valor">@restaurantcabokenedyoficial</span>
+          <span class="dato-accion">Ahí está el antes: las fotos, la gente, los {anosAbiertos} años</span>
+        </a>
+
+        <a href={WHATSAPP} target="_blank" rel="noopener" class="dato">
+          <span class="dato-label">Hablar con nosotros</span>
+          <span class="dato-valor">0414-292-0785</span>
+          <span class="dato-accion">Escríbenos por WhatsApp</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ==================== CIERRE ==================== -->
+    <footer class="max-w-[38rem] mx-auto mt-20 text-center">
+      <p class="font-heading text-xl sm:text-2xl text-text-primary leading-snug text-balance reveal">
+        {anosAbiertos} años encendido.<br />
+        <span class="text-primary">{diasCerrados} días apagado.</span><br />
+        Nos falta una chispa.
       </p>
-      <a
-        href={waGeneral}
-        target="_blank"
-        rel="noopener"
-        class="rocket-btn glow-green inline-flex items-center gap-3 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold text-lg px-12 py-5 rounded-full transition-all hover:scale-105 shadow-2xl shadow-whatsapp/25 font-heading"
-      >
-        <Fragment set:html={waIcon.replace('w-5 h-5', 'w-6 h-6')} />
-        Pedir por WhatsApp
-      </a>
-      <p class="text-text-muted text-xs mt-5 font-heading">+58 414-292-0785</p>
-    </div>
-  </section>
 
-  <!-- ==================== INFO ==================== -->
-  <section class="py-20 sm:py-28 bg-space-deep/40 border-t border-primary/[0.06] relative">
-    <div class="absolute top-0 right-0 w-[300px] h-[300px] nebula nebula-amber z-0"></div>
-
-    <div class="max-w-6xl mx-auto px-4 relative z-10">
-      <div class="text-center mb-14">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-text-primary">
-          VISITA <span class="text-cosmic">CABO KENEDY</span>
-        </h2>
-        <p class="text-text-muted text-sm mt-2 font-heading">Tu pollera de confianza en La Guaira</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Delivery zones -->
-        <div class="space-card rounded-2xl p-6 text-center md:text-left">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
-            <svg class="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L8 8h8l-4-6z" fill="currentColor" opacity="0.2"/>
-              <path d="M12 2L8 8h8l-4-6z"/>
-              <rect x="9" y="8" width="6" height="8" rx="1" fill="currentColor" opacity="0.15"/>
-              <rect x="9" y="8" width="6" height="8" rx="1"/>
-              <path d="M8 16l-2 4h12l-2-4"/>
-              <path d="M10 20l-1 2"/>
-              <path d="M14 20l1 2"/>
-              <circle cx="4" cy="6" r="0.7" fill="currentColor" opacity="0.4"/>
-              <circle cx="20" cy="10" r="0.5" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </div>
-          <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">ZONAS DE DELIVERY</h3>
-          <div class="grid grid-cols-2 gap-2">
-            {["La Guaira", "Catia La Mar", "Macuto", "Maiquetia", "Caraballeda"].map((zona) => (
-              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading justify-center md:justify-start">
-                <span class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(232,122,30,0.5)]"></span>
-                {zona}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <!-- Payment -->
-        <div class="space-card rounded-2xl p-6 text-center md:text-left">
-          <div class="w-11 h-11 rounded-xl bg-whatsapp/8 border border-whatsapp/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
-            <svg class="w-6 h-6 text-whatsapp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="5" width="20" height="14" rx="2.5" fill="currentColor" opacity="0.12"/>
-              <rect x="2" y="5" width="20" height="14" rx="2.5"/>
-              <path d="M2 10h20" stroke-width="2"/>
-              <path d="M6 15h4"/>
-              <path d="M14 15h4"/>
-              <circle cx="20" cy="7" r="0.6" fill="currentColor" opacity="0.4"/>
-              <circle cx="3" cy="18" r="0.5" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </div>
-          <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">FORMAS DE PAGO</h3>
-          <div class="space-y-2.5">
-            {["Efectivo (USD)", "Pago Movil", "Transferencia", "Efectivo (Bs.)", "Punto de Venta"].map((pago) => (
-              <span class="flex items-center gap-2 text-text-secondary text-sm font-heading justify-center md:justify-start">
-                <span class="w-1.5 h-1.5 bg-whatsapp rounded-full flex-shrink-0 shadow-[0_0_6px_rgba(37,211,102,0.5)]"></span>
-                {pago}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <!-- Location -->
-        <div class="space-card rounded-2xl p-6 text-center md:text-left">
-          <div class="w-11 h-11 rounded-xl bg-primary/8 border border-primary/10 flex items-center justify-center mb-4 mx-auto md:mx-0">
-            <svg class="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor" opacity="0.15"/>
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              <circle cx="12" cy="9" r="2.5"/>
-              <circle cx="12" cy="9" r="1" fill="currentColor" opacity="0.4"/>
-              <circle cx="18" cy="4" r="0.6" fill="currentColor" opacity="0.4"/>
-              <circle cx="6" cy="17" r="0.5" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </div>
-          <h3 class="font-display text-sm font-bold text-text-primary mb-4 tracking-wider">DONDE ESTAMOS</h3>
-          <p class="text-text-secondary text-sm leading-relaxed mb-4 font-heading">
-            Local 01, Av. Principal de Caribe,<br />
-            C.C. Houston PB, Caraballeda 1165,<br />
-            La Guaira, Venezuela
-          </p>
-          <a
-            href="https://maps.app.goo.gl/9rWr5kE7a13ZtMde8?g_st=ic"
-            target="_blank"
-            rel="noopener"
-            class="inline-flex items-center gap-2 bg-space-dark/60 hover:bg-primary/10 border border-white/8 hover:border-primary/25 text-primary text-sm font-medium px-4 py-2 rounded-xl transition-all font-heading"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            Ver en Google Maps
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== SPOTIFY ==================== -->
-  <section class="py-14 sm:py-18 relative overflow-hidden">
-    <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
-      <div class="inline-flex items-center gap-2 bg-[#1DB954]/8 border border-[#1DB954]/15 rounded-full px-5 py-2 mb-5">
-        <svg class="w-4 h-4 text-[#1DB954]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="3" fill="currentColor" opacity="0.2"/><circle cx="6" cy="18" r="3"/><path d="M9 18V4l12-2v14"/><circle cx="18" cy="16" r="3" fill="currentColor" opacity="0.2"/><circle cx="18" cy="16" r="3"/><path d="M9 10l12-2"/></svg>
-        <span class="text-[#1DB954] text-xs font-heading font-semibold tracking-[0.15em] uppercase">Ambiente Cabo Kenedy</span>
-      </div>
-      <h2 class="font-display text-xl sm:text-2xl font-bold tracking-wider text-text-primary mb-3">
-        SIENTE EL <span class="text-cosmic">AMBIENTE</span>
-      </h2>
-      <p class="text-text-secondary font-heading text-sm mb-6">
-        Escucha nuestra playlist y siéntete como en el local.
+      <img
+        src="/logo.webp"
+        alt=""
+        width="64"
+        height="64"
+        class="w-14 h-auto mx-auto mt-12 opacity-40"
+        aria-hidden="true"
+      />
+      <p class="text-xs text-text-muted mt-4 font-heading">
+        Cabo Kenedy · Pollo a la brasa · Caraballeda, La Guaira
       </p>
-      <div class="rounded-2xl overflow-hidden max-w-md mx-auto">
-        <iframe
-          style="border-radius:12px"
-          src="https://open.spotify.com/embed/playlist/0CqLFEwbmP2LC67YormORK?utm_source=generator&theme=0"
-          width="100%"
-          height="152"
-          frameBorder="0"
-          allowfullscreen=""
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-          title="Playlist de Cabo Kenedy en Spotify"
-        ></iframe>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== FOOTER ==================== -->
-  <footer class="border-t border-primary/[0.06] bg-space-dark py-12">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-        <div class="text-center md:text-left">
-          <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
-            <div class="h-12 w-12 rounded-lg border border-primary/15 overflow-hidden flex-shrink-0">
-              <img src="/logo.webp" alt="Cabo Kenedy" class="w-full h-full object-cover" loading="lazy" width="48" height="48" />
-            </div>
-            <div>
-              <span class="font-display text-lg font-bold text-primary tracking-[0.1em]">CABO KENEDY</span>
-              <p class="text-[10px] text-text-muted tracking-[0.2em] font-heading">POLLO A LA BRASA</p>
-            </div>
-          </div>
-          <p class="text-text-muted text-xs font-heading">Tradición de más de 40 años en La Guaira</p>
-
-          <!-- Social Media Links -->
-          <div class="flex items-center justify-center md:justify-start gap-3 mt-3">
-            <a href="https://www.instagram.com/restaurantcabokenedyoficial/" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-space-card border border-white/8 hover:border-primary/30 flex items-center justify-center text-text-secondary hover:text-primary transition-all hover:scale-110" aria-label="Instagram">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-            <a href="https://www.tiktok.com/@restaurantcabokenedy" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-space-card border border-white/8 hover:border-primary/30 flex items-center justify-center text-text-secondary hover:text-primary transition-all hover:scale-110" aria-label="TikTok">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.16 8.16 0 004.77 1.52V6.84a4.85 4.85 0 01-1-.15z"/></svg>
-            </a>
-            <a href="https://open.spotify.com/playlist/0CqLFEwbmP2LC67YormORK" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-space-card border border-white/8 hover:border-[#1DB954]/30 flex items-center justify-center text-text-secondary hover:text-[#1DB954] transition-all hover:scale-110" aria-label="Spotify">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="text-center">
-          <p class="font-display text-[10px] text-text-muted tracking-[0.2em] uppercase mb-1">Horario</p>
-          <p class="text-text-primary font-display font-bold text-xl tracking-wider">11:00 AM — 00:00</p>
-          <p class="text-text-muted text-xs font-heading mt-1">Todos los días</p>
-        </div>
-
-        <div class="text-center md:text-right">
-          <a
-            href={waGeneral}
-            target="_blank"
-            rel="noopener"
-            class="rocket-btn inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-semibold text-sm px-6 py-3 rounded-full transition-all hover:scale-105 shadow-lg shadow-whatsapp/20 font-heading"
-          >
-            <Fragment set:html={waIcon.replace('w-5 h-5', 'w-4 h-4')} />
-            Haz tu pedido
-          </a>
-          <p class="text-text-muted text-xs mt-2 font-heading">+58 414-292-0785</p>
-        </div>
-      </div>
-
-      <div class="mt-10 pt-6 border-t border-primary/[0.04] text-center">
-        <p class="text-text-muted text-xs font-heading">&copy; {new Date().getFullYear()} Cabo Kenedy. Todos los derechos reservados.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ==================== FLOATING WHATSAPP ==================== -->
-  <a
-    href={waGeneral}
-    target="_blank"
-    rel="noopener"
-    class="whatsapp-float fixed bottom-6 right-6 z-50 bg-whatsapp hover:bg-whatsapp-dark text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl shadow-whatsapp/30 transition-all hover:scale-110"
-    aria-label="Pedir por WhatsApp"
-  >
-    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-  </a>
+    </footer>
   </main>
-
-  <!-- ==================== CART BAR ==================== -->
-  <div id="cart-bar" class="cart-bar fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300">
-    <div class="max-w-2xl mx-auto px-4 py-3">
-      <button id="cart-bar-btn" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-between shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] font-heading">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-            <span id="cart-bar-count" class="text-sm font-bold">0</span>
-          </div>
-          <span class="text-sm sm:text-base">Ver Pedido</span>
-        </div>
-        <span id="cart-bar-total" class="font-display text-lg font-bold">$0</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- ==================== CART DRAWER ==================== -->
-  <div id="cart-drawer" class="fixed inset-0 z-[60] pointer-events-none opacity-0 transition-opacity duration-300">
-    <div id="cart-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-    <div id="cart-panel" class="absolute bottom-0 left-0 right-0 max-h-[90vh] sm:max-h-[85vh] bg-space-deep border-t border-primary/20 rounded-t-3xl overflow-hidden translate-y-full transition-transform duration-300">
-      <div class="overflow-y-auto max-h-[calc(90vh-130px)] sm:max-h-[calc(85vh-120px)] p-4 sm:p-6">
-        <div class="w-12 h-1.5 bg-white/15 rounded-full mx-auto mb-5"></div>
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="font-display text-lg font-bold text-text-primary tracking-wider">TU PEDIDO</h3>
-          <button id="cart-close" class="w-8 h-8 flex items-center justify-center text-text-muted hover:text-text-primary rounded-full hover:bg-white/5 transition-all" aria-label="Cerrar pedido">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div id="cart-items-list" class="space-y-3 mb-4"></div>
-        <div id="cart-notes-section" class="hidden mb-4">
-          <button type="button" id="cart-notes-toggle" class="w-full flex items-center justify-between text-text-muted text-xs font-heading font-semibold tracking-wider uppercase py-2">
-            <span class="flex items-center gap-2">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-              Notas del pedido
-            </span>
-            <svg id="cart-notes-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div id="cart-notes-body" class="hidden">
-            <textarea id="cart-notes" rows="2" placeholder="Ej: Sin aguacate, extra salsa, sin picante..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-text-primary text-sm font-heading placeholder:text-text-muted/40 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 resize-none transition-all"></textarea>
-          </div>
-        </div>
-        <div id="cart-empty" class="text-center py-10">
-          <span class="text-4xl mb-3 block">🛒</span>
-          <p class="text-text-muted font-heading">Tu pedido esta vacio</p>
-          <p class="text-text-muted text-sm font-heading mt-1">Agrega productos del menu</p>
-        </div>
-        <div id="cart-suggestions" class="hidden mb-4">
-          <p class="text-text-muted text-xs font-heading font-semibold tracking-wider uppercase mb-3">¿Quieres agregar algo mas?</p>
-          <div id="suggestion-chips" class="flex flex-wrap gap-2"></div>
-        </div>
-        <div class="h-32"></div>
-      </div>
-      <div id="cart-footer" class="absolute bottom-0 left-0 right-0 bg-space-deep/95 backdrop-blur-xl border-t border-white/8 p-5 hidden">
-        <div class="flex justify-between items-center mb-4">
-          <span class="text-text-secondary font-heading">Total</span>
-          <div class="text-right">
-            <span id="cart-total-usd" class="font-display text-2xl font-bold text-primary">$0</span>
-            <span id="cart-total-bs" class="block text-text-muted text-xs font-heading">Bs. 0</span>
-          </div>
-        </div>
-        <button id="cart-send" class="w-full bg-whatsapp hover:bg-whatsapp-dark text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all hover:scale-[1.02] shadow-lg shadow-whatsapp/20 font-heading text-base">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Enviar Pedido por WhatsApp
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Data bridge for scripts (Astro doesn't interpolate vars in <script>) -->
-  <div id="page-data" data-bcv-rate={tasaBcvFallback} class="hidden"></div>
-
-  <!-- ==================== SCRIPTS ==================== -->
-  <script>
-    // ============ STARFIELD CANVAS ============
-    (function() {
-      const canvas = document.getElementById('starfield') as HTMLCanvasElement;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      let W: number, H: number;
-      let stars: { x: number; y: number; r: number; a: number; s: number; o: number }[] = [];
-      let shoots: { x: number; y: number; l: number; v: number; a: number; angle: number }[] = [];
-
-      let resizeTimer: any;
-      function resize() {
-        W = canvas.width = document.documentElement.clientWidth;
-        H = canvas.height = Math.max(document.body.scrollHeight, window.innerHeight);
-        initStars();
-      }
-
-      function initStars() {
-        const count = Math.min(250, Math.floor((W * H) / 10000));
-        stars = Array.from({ length: count }, () => ({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: Math.random() * 1.5 + 0.3,
-          a: Math.random() * 0.6 + 0.2,
-          s: Math.random() * 0.01 + 0.002,
-          o: Math.random() * Math.PI * 2,
-        }));
-      }
-
-      function frame(t: number) {
-        ctx!.clearRect(0, 0, W, H);
-
-        for (const s of stars) {
-          const twinkle = (Math.sin(t * s.s + s.o) + 1) / 2;
-          const alpha = 0.1 + twinkle * s.a * 0.7;
-          ctx!.beginPath();
-          ctx!.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          // Warmer star colors - slight amber tint for some
-          const warmth = s.o > Math.PI ? 0.95 : 1;
-          ctx!.fillStyle = `rgba(255,${Math.floor(245 * warmth)},${Math.floor(220 * warmth)},${alpha})`;
-          ctx!.fill();
-
-          if (s.r > 1.2) {
-            ctx!.beginPath();
-            ctx!.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
-            ctx!.fillStyle = `rgba(255,${Math.floor(240 * warmth)},${Math.floor(210 * warmth)},${alpha * 0.06})`;
-            ctx!.fill();
-          }
-        }
-
-        // Shooting stars with warm orange trail
-        if (Math.random() < 0.002 && shoots.length < 2) {
-          shoots.push({
-            x: Math.random() * W * 0.8 + W * 0.1,
-            y: Math.random() * H * 0.4,
-            l: 50 + Math.random() * 80,
-            v: 5 + Math.random() * 4,
-            a: 1,
-            angle: Math.PI / 5 + Math.random() * 0.4,
-          });
-        }
-
-        shoots = shoots.filter(s => s.a > 0);
-        for (const s of shoots) {
-          const ex = s.x + Math.cos(s.angle) * s.l;
-          const ey = s.y - Math.sin(s.angle) * s.l;
-          const grad = ctx!.createLinearGradient(s.x, s.y, ex, ey);
-          grad.addColorStop(0, `rgba(255,220,180,${s.a})`);
-          grad.addColorStop(0.4, `rgba(232,122,30,${s.a * 0.5})`);
-          grad.addColorStop(1, 'rgba(232,122,30,0)');
-          ctx!.beginPath();
-          ctx!.moveTo(s.x, s.y);
-          ctx!.lineTo(ex, ey);
-          ctx!.strokeStyle = grad;
-          ctx!.lineWidth = 1.5;
-          ctx!.stroke();
-          s.x -= Math.cos(s.angle) * s.v;
-          s.y += Math.sin(s.angle) * s.v;
-          s.a -= 0.018;
-        }
-
-        requestAnimationFrame(frame);
-      }
-
-      resize();
-      window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 200); });
-      requestAnimationFrame(frame);
-    })();
-
-    // ============ MENU TAB SWITCHING ============
-    document.addEventListener('DOMContentLoaded', () => {
-      const tabs = document.querySelectorAll('#category-tabs [data-category]');
-      const sections = document.querySelectorAll('[data-section]');
-
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          const category = tab.getAttribute('data-category');
-
-          tabs.forEach(t => {
-            t.classList.remove('active', 'text-white', 'bg-space-card');
-            t.classList.add('text-text-secondary', 'bg-space-card/40');
-          });
-          tab.classList.add('active', 'text-white', 'bg-space-card');
-          tab.classList.remove('text-text-secondary', 'bg-space-card/40');
-
-          sections.forEach(s => {
-            if (s.getAttribute('data-section') === category) {
-              s.classList.add('active');
-            } else {
-              s.classList.remove('active');
-            }
-          });
-        });
-      });
-    });
-
-    // ============ BCV RATE API ============
-    (function() {
-      const _fallbackRate = parseFloat(document.getElementById('page-data')?.dataset.bcvRate || '375');
-      let currentRate = _fallbackRate;
-
-      async function fetchBcvRate() {
-        // API 1 (primaria): exchangedyn - más rápida en actualizar
-        try {
-          const res = await fetch('https://api.exchangedyn.com/markets/quotes/usdves/bcv');
-          if (res.ok) {
-            const data = await res.json();
-            const quote = parseFloat(data?.sources?.BCV?.quote);
-            if (quote > 0) {
-              currentRate = quote;
-              updateAllBsPrices();
-              const rateEl = document.getElementById('bcv-rate');
-              if (rateEl) rateEl.textContent = currentRate.toFixed(2);
-              return;
-            }
-          }
-        } catch {}
-        // API 2 (fallback): bcvapi.tech
-        try {
-          const res = await fetch('https://bcvapi.tech/api/v1/dolar/public');
-          if (res.ok) {
-            const data = await res.json();
-            const tasa = parseFloat(data?.tasa);
-            if (tasa > 0) {
-              currentRate = tasa;
-              updateAllBsPrices();
-              const rateEl = document.getElementById('bcv-rate');
-              if (rateEl) rateEl.textContent = currentRate.toFixed(2);
-              return;
-            }
-          }
-        } catch {}
-      }
-
-      function updateAllBsPrices() {
-        document.querySelectorAll('.bs-price[data-usd]').forEach(el => {
-          const usd = parseFloat(el.getAttribute('data-usd') || '0');
-          const bs = usd * currentRate;
-          el.textContent = 'Bs. ' + bs.toLocaleString('es-VE', { maximumFractionDigits: 0 });
-        });
-      }
-
-      // Expose rate for cart system
-      (window as any).__bcvRate = currentRate;
-      fetchBcvRate().then(() => {
-        (window as any).__bcvRate = currentRate;
-      });
-    })();
-
-    // ============ CART SYSTEM ============
-    (function() {
-      const WA_NUMBER = '584142920785';
-      const getBcvRate = () => (window as any).__bcvRate || parseFloat(document.getElementById('page-data')?.dataset.bcvRate || '375');
-
-      type CartItem = { name: string; price: number; qty: number; category: string; desc: string };
-      let cart: CartItem[] = [];
-
-      const SUGGESTIONS = [
-        { name: 'Papas Fritas', price: 5, category: 'raciones' },
-        { name: 'Yuca Frita', price: 5, category: 'raciones' },
-        { name: 'Tostones', price: 5, category: 'raciones' },
-        { name: 'Arepitas', price: 3, category: 'raciones' },
-        { name: 'Tequeños (5 unidades)', price: 5, category: 'pasapalos' },
-        { name: 'Ensalada Mixta', price: 6, category: 'ensaladas' },
-        { name: 'Hallaquitas (por unidad)', price: 0.50, category: 'raciones' },
-        { name: 'Pan con Ajo', price: 4, category: 'raciones' },
-      ];
-
-      // DOM refs
-      const cartBar = document.getElementById('cart-bar')!;
-      const cartBarCount = document.getElementById('cart-bar-count')!;
-      const cartBarTotal = document.getElementById('cart-bar-total')!;
-      const cartBarBtn = document.getElementById('cart-bar-btn')!;
-      const cartDrawer = document.getElementById('cart-drawer')!;
-      const cartBackdrop = document.getElementById('cart-backdrop')!;
-      const cartPanel = document.getElementById('cart-panel')!;
-      const cartClose = document.getElementById('cart-close')!;
-      const cartItemsList = document.getElementById('cart-items-list')!;
-      const cartEmpty = document.getElementById('cart-empty')!;
-      const cartSuggestions = document.getElementById('cart-suggestions')!;
-      const suggestionChips = document.getElementById('suggestion-chips')!;
-      const cartFooter = document.getElementById('cart-footer')!;
-      const cartTotalUsd = document.getElementById('cart-total-usd')!;
-      const cartTotalBs = document.getElementById('cart-total-bs')!;
-      const cartSend = document.getElementById('cart-send')!;
-      const cartNotesSection = document.getElementById('cart-notes-section')!;
-      const cartNotes = document.getElementById('cart-notes') as HTMLTextAreaElement;
-      const waFloat = document.querySelector('.whatsapp-float') as HTMLElement | null;
-
-      function getCount() { return cart.reduce((s, i) => s + i.qty, 0); }
-      function getTotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
-
-      function escHtml(s: string) {
-        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-      }
-
-      function addToCart(name: string, price: number, category: string, desc: string = '') {
-        const existing = cart.find(i => i.name === name);
-        if (existing) existing.qty++;
-        else cart.push({ name, price, qty: 1, category, desc });
-        updateUI();
-        showToast();
-      }
-
-      function removeFromCart(name: string) {
-        const idx = cart.findIndex(i => i.name === name);
-        if (idx === -1) return;
-        if (cart[idx].qty > 1) cart[idx].qty--;
-        else cart.splice(idx, 1);
-        updateUI();
-      }
-
-      function showToast() {
-        const old = document.querySelector('.cart-toast');
-        if (old) old.remove();
-        const t = document.createElement('div');
-        t.className = 'cart-toast fixed top-20 left-1/2 -translate-x-1/2 z-[70] bg-space-card border border-primary/20 text-text-primary text-sm px-4 py-2.5 rounded-xl shadow-2xl font-heading flex items-center gap-2';
-        t.innerHTML = '<span class="text-primary">✓</span> Agregado al pedido';
-        document.body.appendChild(t);
-        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%, -10px)'; }, 1200);
-        setTimeout(() => t.remove(), 1600);
-      }
-
-      function updateUI() {
-        const count = getCount();
-        const total = getTotal();
-
-        // Cart bar visibility
-        if (count > 0) {
-          cartBar.classList.remove('translate-y-full');
-          cartBarCount.textContent = String(count);
-          cartBarTotal.textContent = '$' + total.toFixed(2);
-          if (waFloat) waFloat.style.bottom = '90px';
-        } else {
-          cartBar.classList.add('translate-y-full');
-          if (waFloat) waFloat.style.bottom = '';
-        }
-
-        // Drawer content
-        renderCartItems();
-        renderSuggestions();
-
-        if (count > 0) {
-          cartEmpty.classList.add('hidden');
-          cartFooter.classList.remove('hidden');
-          cartNotesSection.classList.remove('hidden');
-          cartTotalUsd.textContent = '$' + total.toFixed(2);
-          cartTotalBs.textContent = 'Bs. ' + (total * getBcvRate()).toFixed(0);
-        } else {
-          cartEmpty.classList.remove('hidden');
-          cartFooter.classList.add('hidden');
-          cartNotesSection.classList.add('hidden');
-          closeCart();
-        }
-
-        updateInlineButtons();
-      }
-
-      function renderCartItems() {
-        cartItemsList.innerHTML = cart.map(item => `
-          <div class="flex items-center gap-3 bg-space-card/60 rounded-xl p-3 border border-white/5">
-            <div class="flex-grow min-w-0">
-              <p class="text-text-primary text-sm font-heading font-medium truncate">${escHtml(item.name)}</p>
-              ${item.desc ? `<p class="text-text-muted text-[11px] font-heading leading-snug mt-0.5 line-clamp-2">${escHtml(item.desc)}</p>` : ''}
-              <p class="text-primary text-xs font-display font-bold mt-0.5">$${item.price} c/u</p>
-            </div>
-            <div class="flex items-center gap-1 flex-shrink-0">
-              <button class="w-7 h-7 flex items-center justify-center rounded-full bg-white/8 hover:bg-primary/20 text-text-secondary hover:text-primary transition-all" data-cart-minus="${escHtml(item.name)}" aria-label="Quitar ${escHtml(item.name)}">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
-              </button>
-              <span class="w-8 text-center text-text-primary font-heading font-bold text-sm">${item.qty}</span>
-              <button class="w-7 h-7 flex items-center justify-center rounded-full bg-primary/15 hover:bg-primary/30 text-primary transition-all" data-cart-plus="${escHtml(item.name)}" aria-label="Agregar otro ${escHtml(item.name)}">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-              </button>
-            </div>
-            <span class="text-text-primary font-display font-bold text-sm min-w-[50px] text-right">$${(item.price * item.qty).toFixed(2)}</span>
-          </div>
-        `).join('');
-      }
-
-      function renderSuggestions() {
-        const names = new Set(cart.map(i => i.name));
-        const available = SUGGESTIONS.filter(s => !names.has(s.name));
-        if (cart.length > 0 && available.length > 0) {
-          cartSuggestions.classList.remove('hidden');
-          suggestionChips.innerHTML = available.slice(0, 4).map(s => `
-            <button class="flex items-center gap-2 bg-space-card/60 border border-white/8 hover:border-primary/25 rounded-xl px-3 py-2 text-sm font-heading text-text-secondary hover:text-text-primary transition-all" data-suggest-name="${escHtml(s.name)}" data-suggest-price="${s.price}" data-suggest-cat="${s.category}" aria-label="Agregar ${escHtml(s.name)} $${s.price}">
-              <span class="text-primary/60">+</span>
-              <span>${escHtml(s.name)}</span>
-              <span class="text-primary font-display font-bold">$${s.price}</span>
-            </button>
-          `).join('');
-        } else {
-          cartSuggestions.classList.add('hidden');
-        }
-      }
-
-      function updateInlineButtons() {
-        document.querySelectorAll('.cart-add-circle[data-cart-add]').forEach(btn => {
-          const name = btn.getAttribute('data-name') || '';
-          const item = cart.find(i => i.name === name);
-          let badge = btn.querySelector('.inline-qty') as HTMLElement | null;
-          if (item) {
-            if (!badge) {
-              badge = document.createElement('span');
-              badge.className = 'inline-qty absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center font-heading';
-              (btn as HTMLElement).style.position = 'relative';
-              btn.appendChild(badge);
-            }
-            badge.textContent = String(item.qty);
-            btn.classList.add('bg-primary', 'text-white', 'border-primary');
-            btn.classList.remove('bg-primary/15', 'text-primary', 'border-primary/20');
-          } else {
-            if (badge) badge.remove();
-            btn.classList.remove('bg-primary', 'text-white', 'border-primary');
-            btn.classList.add('bg-primary/15', 'text-primary', 'border-primary/20');
-          }
-        });
-      }
-
-      function openCart() {
-        document.body.dataset.scrollY = String(window.scrollY);
-        cartDrawer.classList.remove('pointer-events-none', 'opacity-0');
-        cartDrawer.classList.add('pointer-events-auto', 'opacity-100');
-        setTimeout(() => cartPanel.classList.remove('translate-y-full'), 10);
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${window.scrollY}px`;
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeCart() {
-        cartPanel.classList.add('translate-y-full');
-        setTimeout(() => {
-          cartDrawer.classList.add('pointer-events-none', 'opacity-0');
-          cartDrawer.classList.remove('pointer-events-auto', 'opacity-100');
-          document.body.style.overflow = '';
-          document.body.style.position = '';
-          document.body.style.width = '';
-          document.body.style.top = '';
-          window.scrollTo(0, parseInt(document.body.dataset.scrollY || '0'));
-        }, 300);
-      }
-
-      function sendOrder() {
-        if (cart.length === 0) return;
-        let msg = '¡Hola! 🍗 Quiero hacer un pedido en Cabo Kenedy:\n\n';
-        for (const item of cart) {
-          msg += '• ' + item.qty + 'x ' + item.name + ' — $' + (item.price * item.qty).toFixed(2) + '\n';
-        }
-        const total = getTotal();
-        msg += '\n*Total: $' + total.toFixed(2) + '* (Bs. ' + (total * getBcvRate()).toFixed(0) + ')\n';
-        const notes = cartNotes.value.trim();
-        if (notes) {
-          msg += '\n*Notas:* ' + notes + '\n';
-        }
-        msg += '\n*Mis datos:*\n• Cedula:\n• Nombre y Apellido:\n• Telefono:\n• Correo electronico:\n• Zona donde vivo:\n• Ubicacion Google Maps: ';
-        window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
-      }
-
-      // Event delegation
-      document.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
-
-        const addBtn = target.closest('[data-cart-add]') as HTMLElement | null;
-        if (addBtn) {
-          addToCart(
-            addBtn.dataset.name || '',
-            parseFloat(addBtn.dataset.price || '0'),
-            addBtn.dataset.itemCategory || '',
-            addBtn.dataset.desc || ''
-          );
-          e.preventDefault();
-          return;
-        }
-
-        const minusBtn = target.closest('[data-cart-minus]') as HTMLElement | null;
-        if (minusBtn) {
-          removeFromCart(minusBtn.getAttribute('data-cart-minus') || '');
-          return;
-        }
-
-        const plusBtn = target.closest('[data-cart-plus]') as HTMLElement | null;
-        if (plusBtn) {
-          const name = plusBtn.getAttribute('data-cart-plus') || '';
-          const item = cart.find(i => i.name === name);
-          if (item) addToCart(item.name, item.price, item.category, item.desc);
-          return;
-        }
-
-        const suggestBtn = target.closest('[data-suggest-name]') as HTMLElement | null;
-        if (suggestBtn) {
-          addToCart(
-            suggestBtn.dataset.suggestName || '',
-            parseFloat(suggestBtn.dataset.suggestPrice || '0'),
-            suggestBtn.dataset.suggestCat || ''
-          );
-          return;
-        }
-
-        const waBtn = target.closest('[data-wa-item]') as HTMLElement | null;
-        if (waBtn) {
-          e.preventDefault();
-          const itemName = waBtn.getAttribute('data-wa-item') || '';
-          const msg = '¡Hola! 🍗 Me interesa pedir *' + itemName + '* de Cabo Kenedy.\n\n*Mis datos:*\n• Cedula:\n• Nombre y Apellido:\n• Telefono:\n• Correo electronico:\n• Zona donde vivo:\n• Ubicacion Google Maps: ';
-          window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
-          return;
-        }
-      });
-
-      cartBarBtn.addEventListener('click', openCart);
-      cartClose.addEventListener('click', closeCart);
-      cartBackdrop.addEventListener('click', closeCart);
-      cartSend.addEventListener('click', sendOrder);
-
-      // Notes toggle
-      const notesToggle = document.getElementById('cart-notes-toggle');
-      const notesBody = document.getElementById('cart-notes-body');
-      const notesChevron = document.getElementById('cart-notes-chevron');
-      notesToggle?.addEventListener('click', () => {
-        const isHidden = notesBody?.classList.toggle('hidden');
-        if (!isHidden) notesChevron?.classList.add('rotate-180');
-        else notesChevron?.classList.remove('rotate-180');
-      });
-
-      // ============ ARMA TU COMBO ============
-      let selectedBase: { name: string; price: number } | null = null;
-      let selectedExtras: Map<string, number> = new Map();
-
-      function updateComboUI() {
-        const summary = document.getElementById('combo-summary')!;
-        const totalEl = document.getElementById('combo-total-price')!;
-
-        if (!selectedBase) {
-          summary.classList.add('hidden');
-          return;
-        }
-
-        let total = selectedBase.price;
-        selectedExtras.forEach(p => total += p);
-
-        summary.classList.remove('hidden');
-        totalEl.textContent = '$' + total.toFixed(2);
-      }
-
-      document.querySelectorAll('[data-combo-base]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('[data-combo-base]').forEach(b => {
-            b.classList.remove('border-primary', 'bg-primary/15', 'text-text-primary');
-            b.classList.add('border-white/10', 'bg-white/5', 'text-text-secondary');
-          });
-          btn.classList.add('border-primary', 'bg-primary/15', 'text-text-primary');
-          btn.classList.remove('border-white/10', 'bg-white/5', 'text-text-secondary');
-          selectedBase = {
-            name: btn.getAttribute('data-combo-base') || '',
-            price: parseFloat(btn.getAttribute('data-combo-price') || '0'),
-          };
-          updateComboUI();
-        });
-      });
-
-      document.querySelectorAll('[data-combo-extra]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const name = btn.getAttribute('data-combo-extra') || '';
-          const price = parseFloat(btn.getAttribute('data-extra-price') || '0');
-          if (selectedExtras.has(name)) {
-            selectedExtras.delete(name);
-            btn.classList.remove('border-primary', 'bg-primary/15', 'text-primary');
-            btn.classList.add('border-white/10', 'bg-white/5', 'text-text-secondary');
-          } else {
-            selectedExtras.set(name, price);
-            btn.classList.add('border-primary', 'bg-primary/15', 'text-primary');
-            btn.classList.remove('border-white/10', 'bg-white/5', 'text-text-secondary');
-          }
-          updateComboUI();
-        });
-      });
-
-      document.getElementById('combo-add-btn')?.addEventListener('click', () => {
-        if (!selectedBase) return;
-        const extras = Array.from(selectedExtras.keys());
-        let total = selectedBase.price;
-        selectedExtras.forEach(p => total += p);
-        const desc = extras.length > 0 ? 'Con: ' + extras.join(', ') : '';
-        addToCart('Combo ' + selectedBase.name, total, 'combos', desc);
-
-        // Reset UI
-        selectedBase = null;
-        selectedExtras.clear();
-        document.querySelectorAll('[data-combo-base]').forEach(b => {
-          b.classList.remove('border-primary', 'bg-primary/15', 'text-text-primary');
-          b.classList.add('border-white/10', 'bg-white/5', 'text-text-secondary');
-        });
-        document.querySelectorAll('[data-combo-extra]').forEach(b => {
-          b.classList.remove('border-primary', 'bg-primary/15', 'text-primary');
-          b.classList.add('border-white/10', 'bg-white/5', 'text-text-secondary');
-        });
-        updateComboUI();
-      });
-
-      updateUI();
-    })();
-
-    // ============ MENU SEARCH ============
-    (function() {
-      const searchInput = document.getElementById('menu-search') as HTMLInputElement;
-      const searchClear = document.getElementById('menu-search-clear')!;
-      const searchCount = document.getElementById('search-results-count')!;
-      const tabs = document.querySelectorAll('#category-tabs [data-category]');
-      const sections = document.querySelectorAll('[data-section]');
-      const menuItems = document.querySelectorAll('[data-menu-item]');
-
-      if (!searchInput) return;
-
-      function doSearch(query: string) {
-        const q = query.toLowerCase().trim();
-        searchClear.classList.toggle('hidden', !q);
-
-        if (!q) {
-          // Reset: show active tab's section, show all items
-          menuItems.forEach(item => (item as HTMLElement).style.display = '');
-          searchCount.classList.add('hidden');
-          // Restore tab view
-          const activeTab = document.querySelector('#category-tabs [data-category].active');
-          const activeCat = activeTab?.getAttribute('data-category');
-          sections.forEach(s => {
-            if (s.getAttribute('data-section') === activeCat) {
-              s.classList.add('active');
-            } else {
-              s.classList.remove('active');
-            }
-          });
-          return;
-        }
-
-        // Show all sections during search
-        sections.forEach(s => s.classList.add('active'));
-
-        // Normalize: strip trailing 's' for basic singular/plural
-        const qNorm = q.endsWith('s') ? q.slice(0, -1) : q;
-
-        let found = 0;
-        menuItems.forEach(item => {
-          const el = item as HTMLElement;
-          const name = el.getAttribute('data-item-name') || '';
-          const cat = el.getAttribute('data-item-cat') || '';
-          const text = el.textContent?.toLowerCase() || '';
-          const match = name.includes(q) || name.includes(qNorm) || text.includes(q) || text.includes(qNorm) || cat.includes(q) || cat.includes(qNorm);
-          el.style.display = match ? '' : 'none';
-          if (match) found++;
-        });
-
-        // Hide empty sections
-        sections.forEach(s => {
-          const visibleItems = s.querySelectorAll('[data-menu-item]');
-          let hasVisible = false;
-          visibleItems.forEach(item => {
-            if ((item as HTMLElement).style.display !== 'none') hasVisible = true;
-          });
-          if (!hasVisible) s.classList.remove('active');
-        });
-
-        searchCount.classList.remove('hidden');
-        if (found > 0) {
-          searchCount.innerHTML = found + ' resultado' + (found !== 1 ? 's' : '') + ' encontrado' + (found !== 1 ? 's' : '');
-        } else {
-          searchCount.innerHTML = '<span class="block text-2xl mb-1">🚀</span>Houston, tenemos un problema...<br><span class="text-text-muted">No encontramos resultados para "' + q.replace(/</g, '&lt;') + '"</span>';
-        }
-      }
-
-      searchInput.addEventListener('input', () => doSearch(searchInput.value));
-
-      searchClear.addEventListener('click', () => {
-        searchInput.value = '';
-        doSearch('');
-        searchInput.focus();
-      });
-
-      // When clicking a tab while searching, clear search
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          if (searchInput.value) {
-            searchInput.value = '';
-            doSearch('');
-          }
-        });
-      });
-    })();
-  </script>
 </Layout>
+
+<style>
+  /* ---------- Brasas que suben ---------- */
+  .embers {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .ember {
+    position: absolute;
+    bottom: -10px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    box-shadow: 0 0 8px 2px rgba(232, 122, 30, 0.5);
+    opacity: 0;
+    animation-name: emberRise;
+    animation-timing-function: ease-in;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes emberRise {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    12%  { opacity: 0.7; }
+    70%  { opacity: 0.35; }
+    100% { transform: translateY(-100vh) translateX(28px) scale(0.3); opacity: 0; }
+  }
+
+  /* ---------- Cuerpo de la carta ---------- */
+  .carta {
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    color: var(--color-text-secondary);
+  }
+
+  .carta :global(p) {
+    margin-bottom: 1.6rem;
+  }
+
+  .carta :global(strong) {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .carta :global(blockquote) {
+    margin: 2.5rem 0;
+    padding: 1.5rem 0 1.5rem 1.5rem;
+    border-left: 2px solid var(--color-primary);
+    color: var(--color-text-primary);
+    font-size: 1.1875rem;
+    line-height: 1.7;
+  }
+
+  .carta :global(blockquote em) {
+    color: var(--color-primary-light);
+    font-style: italic;
+  }
+
+  /* Separador: una grieta fina con luz de oro en el centro */
+  .grieta {
+    height: 1px;
+    margin: 3rem auto;
+    width: 70%;
+    background: linear-gradient(90deg, transparent, rgba(191, 149, 63, 0.15) 20%, rgba(252, 246, 186, 0.55) 50%, rgba(191, 149, 63, 0.15) 80%, transparent);
+  }
+
+  .firma {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* ---------- Kintsugi ---------- */
+  .kintsugi-section {
+    margin-top: 6rem;
+    padding: 4rem 0 1rem;
+    text-align: center;
+    background: radial-gradient(ellipse 55% 45% at 50% 45%, rgba(240, 176, 0, 0.05), transparent 70%);
+  }
+
+  .kintsugi-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .kintsugi-svg {
+    width: clamp(180px, 42vw, 260px);
+    height: auto;
+    overflow: visible;
+  }
+
+  .k-plato {
+    fill: none;
+    stroke: rgba(240, 176, 0, 0.18);
+    stroke-width: 1;
+  }
+
+  .k-plato-hondo {
+    stroke: rgba(240, 176, 0, 0.10);
+  }
+
+  .k-grieta {
+    fill: none;
+    stroke: url(#oro);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    filter: drop-shadow(0 0 4px rgba(240, 176, 0, 0.55));
+  }
+
+  .k-fina { stroke-width: 1.4; }
+
+  .k-nodo {
+    fill: url(#oro);
+    opacity: 0;
+    filter: drop-shadow(0 0 5px rgba(240, 176, 0, 0.8));
+  }
+
+  /* Las grietas se dibujan cuando el plato entra en pantalla */
+  :global(.kintsugi-wrap.visible) .k-grieta {
+    animation: dibujarGrieta 1.8s ease-out forwards;
+    animation-delay: var(--d, 0s);
+  }
+
+  :global(.kintsugi-wrap.visible) .k-nodo {
+    animation: aparecerNodo 0.8s ease-out forwards;
+    animation-delay: var(--d, 0s);
+  }
+
+  @keyframes dibujarGrieta {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes aparecerNodo {
+    to { opacity: 0.9; }
+  }
+
+  .k-aura {
+    animation: auraPulso 6s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes auraPulso {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.05); }
+  }
+
+  .k-kanji {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: rgba(240, 176, 0, 0.55);
+    margin-bottom: 1rem;
+  }
+
+  .k-titulo {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.5rem;
+  }
+
+  .k-def {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+
+  .k-regla {
+    width: 60px;
+    height: 1px;
+    margin: 2.5rem auto 3rem;
+    background: linear-gradient(90deg, transparent, rgba(252, 246, 186, 0.6), transparent);
+  }
+
+  .k-cierre {
+    color: var(--color-text-primary);
+  }
+
+  .k-remate {
+    margin-top: 2.5rem;
+    font-family: var(--font-heading);
+    font-size: clamp(1.25rem, 3.5vw, 1.6rem);
+    line-height: 1.5;
+    color: var(--color-text-primary);
+  }
+
+  .k-remate span {
+    /* Gradiente mas claro que el del titulo: en una linea larga los tonos
+       oscuros del oro se vuelven ilegibles sobre el fondo negro. */
+    background: linear-gradient(135deg, #e8c66a, #fcf6ba, #f0d878, #fbf5b7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+
+  /* ---------- Datos verificables ---------- */
+  .dato {
+    display: block;
+    padding: 1.125rem 1.25rem;
+    border-radius: 1rem;
+    background: var(--color-space-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+  }
+
+  .dato:hover {
+    border-color: rgba(232, 122, 30, 0.35);
+    background: var(--color-space-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .dato-label {
+    display: block;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .dato-valor {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .dato-accion {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-primary);
+  }
+
+  /* ---------- Aparicion al hacer scroll ----------
+     Solo se oculta si el JS llego a correr: sin JS todo se ve igual. */
+  :global(body.js-reveal) .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  :global(body.js-reveal) .reveal.visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ember { display: none; }
+    .k-aura { animation: none; }
+    .k-grieta { stroke-dashoffset: 0; }
+    .k-nodo { opacity: 0.9; }
+    :global(body.js-reveal) .reveal,
+    :global(body.js-reveal) .reveal.visible {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  if (reveals.length && 'IntersectionObserver' in window) {
+    document.body.classList.add('js-reveal');
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        // Tambien se muestra lo que ya quedo por encima de la pantalla: si
+        // alguien entra con el scroll a mitad de pagina, esos bloques nunca
+        // llegarian a "entrar" y se quedarian invisibles para siempre.
+        const yaPaso = entry.boundingClientRect.top < 0;
+        if (entry.isIntersecting || yaPaso) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      }
+    }, { rootMargin: '0px 0px -12% 0px' });
+    reveals.forEach((el) => io.observe(el));
+  }
+</script>
