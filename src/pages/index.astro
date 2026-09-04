@@ -750,6 +750,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   .pie-dir {
     display: block;
+    padding: 0.5rem 0;
     font-size: 0.875rem;
     line-height: 1.7;
     color: var(--color-text-muted);
@@ -758,15 +759,26 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .pie-dir:hover { color: var(--color-text-secondary); }
 
   .pie-enlaces {
-    margin-top: 1.25rem;
+    margin-top: 0.5rem;
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     font-size: 0.875rem;
     color: var(--color-text-muted);
   }
 
-  .pie-enlaces a { color: var(--color-primary); }
+  /* 44px de alto minimo: con 21px el dedo falla el toque y el enlace parece
+     roto aunque el destino sea correcto. */
+  .pie-enlaces a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.5rem;
+    color: var(--color-primary);
+  }
+
+  .pie-enlaces a:hover { color: var(--color-primary-light); }
 
   /* ---------- Aparicion al hacer scroll ---------- */
   :global(body.js-reveal) .reveal {
