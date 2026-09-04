@@ -10,11 +10,14 @@ import Layout from '../layouts/Layout.astro';
  * asi la carta sigue siendo exacta cada dia que pasa sin tener que tocarla.
  */
 const TERREMOTO = new Date('2026-06-24T00:00:00-04:00');
-const ANO_FUNDACION = 1980;
+const ANO_FUNDACION = 1973;
 
 const ahora = new Date();
 const diasCerrados = Math.max(0, Math.floor((ahora.getTime() - TERREMOTO.getTime()) / 86400000));
 const anosAbiertos = ahora.getFullYear() - ANO_FUNDACION;
+// La familia no tiene la fecha exacta del comienzo, así que en el texto se
+// dice "más de X" en decenas y no una cifra al año, que sería inventada.
+const anosRedondos = Math.floor(anosAbiertos / 10) * 10;
 const fechaHoy = ahora.toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
 
 /**
@@ -35,7 +38,7 @@ const MAPS = 'https://maps.app.goo.gl/9rWr5kE7a13ZtMde8?g_st=ic';
 const WHATSAPP = `https://wa.me/584142920785?text=${encodeURIComponent('Hola, leí la carta de Cabo Kenedy.')}`;
 
 const title = 'Carta abierta a QlqComida | Cabo Kenedy, La Guaira';
-const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días con el carbón apagado desde el terremoto del 24 de junio. Esta es nuestra carta a QlQ Esta Unión.`;
+const description = `Más de ${anosRedondos} años en Caraballeda. Llevamos ${diasCerrados} días con el carbón apagado desde el terremoto del 24 de junio. Esta es nuestra carta a QlQ Esta Unión.`;
 ---
 
 <Layout title={title} description={description}>
@@ -74,7 +77,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 3. QUIÉNES SOMOS ==================== -->
     <section class="escena carta" aria-label="Quiénes somos">
       <p class="reveal">
-        Buenas, QlqComida. Somos <strong>Cabo Kenedy</strong>, de Caraballeda. Abrimos en 1980 y desde
+        Buenas, QlqComida. Somos <strong>Cabo Kenedy</strong>, de Caraballeda. Abrimos en {ANO_FUNDACION} y desde
         entonces hacemos una sola cosa: pollo a la brasa, al carbón, dando vueltas.
       </p>
 
@@ -85,7 +88,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       </p>
 
       <p class="reveal">
-        {anosAbiertos} años. Lo mismo, todos los días. A las once de la mañana la avenida olía a
+        Más de {anosRedondos} años. Lo mismo, todos los días. A las once de la mañana la avenida olía a
         nosotros y uno sabía qué hora era por el olor.
       </p>
     </section>
@@ -262,7 +265,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
       <div class="firma reveal">
         <p class="firma-nombre">La familia de Cabo Kenedy</p>
-        <p class="firma-lugar">Caraballeda, La Guaira · desde 1980 · {fechaHoy}</p>
+        <p class="firma-lugar">Caraballeda, La Guaira · desde {ANO_FUNDACION} · {fechaHoy}</p>
       </div>
     </section>
 
