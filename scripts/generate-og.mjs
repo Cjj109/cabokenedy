@@ -48,7 +48,7 @@ const fondo = `
 
   <text x="${W / 2}" y="592" text-anchor="middle"
         font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="24"
-        fill="#8A7F74">Cabo Kenedy · Caraballeda, La Guaira · desde 1973</text>
+        fill="#8A7F74">Cabo Kenedy · Caraballeda, La Guaira · más de 46 años</text>
 </svg>`;
 
 const logo = await sharp(join(rootDir, 'public', 'logo-trim.webp'))
