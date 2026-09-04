@@ -35,7 +35,7 @@ const fondo = `
 
   <text x="${W / 2}" y="368" text-anchor="middle"
         font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="26"
-        letter-spacing="7" fill="#E87A1E" opacity="0.85">CARTA ABIERTA A QLQCOMIDA</text>
+        letter-spacing="7" fill="#E87A1E" opacity="0.85">CARTA ABIERTA A QLQESTACOMIDA</text>
 
   <text x="${W / 2}" y="446" text-anchor="middle"
         font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="52"
