@@ -11,7 +11,11 @@ const {
   description = "Más de 40 años de tradición. Pollo a la brasa y broaster, combos familiares, parrillas y más. Pide por WhatsApp. Delivery en La Guaira, Catia La Mar, Macuto y Maiquetía."
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Contra el origen real de la peticion y no contra Astro.site: hoy la
+// pagina vive en pages.dev y cabokenedy.com todavia no resuelve, asi que un
+// canonical hacia alli manda a Google (y a los lectores de enlaces) a una
+// direccion muerta.
+const canonicalURL = new URL(Astro.url.pathname, Astro.url.origin);
 // Se sirve desde el mismo dominio que atiende la peticion (hoy
 // cabokenedy.pages.dev, mañana cabokenedy.com) y no desde Astro.site: si
 // apunta a un dominio que todavia no resuelve, WhatsApp no muestra imagen.
@@ -69,10 +73,6 @@ const ogImage = new URL('/og.png', Astro.url.origin).href;
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
     </noscript>
 
-    <!-- Preconnect BCV APIs -->
-    <link rel="preconnect" href="https://api.exchangedyn.com" />
-    <link rel="preconnect" href="https://bcvapi.tech" />
-
     <!-- DNS prefetch WhatsApp -->
     <link rel="dns-prefetch" href="https://wa.me" />
 
@@ -84,7 +84,7 @@ const ogImage = new URL('/og.png', Astro.url.origin).href;
       "@type": "Restaurant",
       "name": "Cabo Kenedy",
       "description": description,
-      "url": "https://cabokenedy.com",
+      "url": Astro.url.origin,
       "telephone": "+584142920785",
       "servesCuisine": ["Pollo a la Brasa", "Pollo Broaster", "Comida Venezolana", "Parrilla"],
       "priceRange": "$$",
@@ -101,15 +101,9 @@ const ogImage = new URL('/og.png', Astro.url.origin).href;
         "latitude": 10.6134,
         "longitude": -66.8600
       },
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-        "opens": "11:00",
-        "closes": "22:00"
-      },
-      "image": "https://cabokenedy.com/logo.webp",
+      "image": ogImage,
       "sameAs": [
-        "https://www.instagram.com/cabokenedy"
+        "https://www.instagram.com/restaurantcabokenedyoficial"
       ]
     })} />
   </head>
