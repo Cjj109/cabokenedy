@@ -59,7 +59,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       <p class="kicker">CARTA ABIERTA A QLQCOMIDA</p>
 
       <h1 class="titular">
-        Hace <span class="text-primary">{diasCerrados} días</span><br />
+        Hace <span class="hero-num">{diasCerrados} días</span><br />
         que no encendemos el carbón.
       </h1>
     </header>
@@ -354,6 +354,45 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     line-height: 1.18;
     color: var(--color-text-primary);
     text-wrap: balance;
+  }
+
+  /* El numero llega encendido y se apaga en cuanto el lector baja: la pagina
+     apaga la brasa delante de el. Al final, la ultima linea la vuelve a
+     encender. */
+  .hero-num {
+    color: var(--color-primary);
+    text-shadow: 0 0 26px rgba(232, 122, 30, 0.45), 0 0 62px rgba(232, 122, 30, 0.18);
+  }
+
+  .hero-num.apagado {
+    animation: apagarse 1.8s ease-out forwards;
+  }
+
+  @keyframes apagarse {
+    0% {
+      color: #E87A1E;
+      text-shadow: 0 0 26px rgba(232, 122, 30, 0.45), 0 0 62px rgba(232, 122, 30, 0.18);
+    }
+    12% {
+      color: #FFB347;
+      text-shadow: 0 0 32px rgba(255, 179, 71, 0.6), 0 0 70px rgba(232, 122, 30, 0.22);
+    }
+    32% {
+      color: #9c8a7c;
+      text-shadow: 0 0 8px rgba(232, 122, 30, 0.18);
+    }
+    48% {
+      color: #D08A3C;
+      text-shadow: 0 0 18px rgba(232, 122, 30, 0.35);
+    }
+    70% {
+      color: #8f8177;
+      text-shadow: 0 0 5px rgba(232, 122, 30, 0.12);
+    }
+    100% {
+      color: #8A7F74;
+      text-shadow: none;
+    }
   }
 
   /* ---------- Versos: una linea por respiracion ---------- */
@@ -818,6 +857,11 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     .k-aura { animation: none; }
     .brasa,
     .linea-brasa { animation: none; }
+    .hero-num.apagado {
+      animation: none;
+      color: #8A7F74;
+      text-shadow: none;
+    }
     .k-grieta { stroke-dashoffset: 0; }
     .k-nodo { opacity: 0.9; }
     .cierre-remate,
@@ -836,6 +880,20 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 </style>
 
 <script>
+  // La brasa del titular se apaga al primer scroll y ya no vuelve.
+  const heroNum = document.querySelector('.hero-num');
+  if (heroNum) {
+    const apagar = () => {
+      if (window.scrollY <= 8) return;
+      heroNum.classList.add('apagado');
+      window.removeEventListener('scroll', apagar);
+    };
+    window.addEventListener('scroll', apagar, { passive: true });
+    // Por si se entra con la página ya bajada (scroll restaurado o un enlace
+    // con ancla): en ese caso el momento ya pasó y aparece apagada.
+    apagar();
+  }
+
   const reveals = document.querySelectorAll('.reveal');
   if (reveals.length && 'IntersectionObserver' in window) {
     document.body.classList.add('js-reveal');
