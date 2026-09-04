@@ -161,11 +161,12 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
         La señalan.
       </p>
 
-      <p class="linea-brasa reveal">Del otro lado del mundo le pusieron nombre a esa idea.</p>
     </section>
 
     <!-- ==================== 7. KINTSUGI ==================== -->
     <section class="escena kintsugi-section text-center" aria-label="Kintsugi">
+      <p class="linea-brasa puente reveal">Del otro lado del mundo le pusieron nombre a esa idea.</p>
+
       <div class="kintsugi-wrap reveal">
         <svg class="kintsugi-svg" viewBox="0 0 220 220" fill="none" aria-hidden="true">
           <defs>
@@ -325,13 +326,13 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     position: relative;
     max-width: 34rem;
     margin: 0 auto;
-    padding: var(--e5) 1.5rem;
+    padding: calc(var(--e5) / 2) 1.5rem;
   }
 
   /* Solo la portada respira de más: es la primera pantalla */
   .escena-alta {
-    padding-top: calc(var(--e5) * 1.15);
-    padding-bottom: calc(var(--e5) * 1.15);
+    padding-top: var(--e5);
+    padding-bottom: var(--e5);
   }
 
   @media (min-width: 640px) {
@@ -506,6 +507,11 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   /* La frase que sostiene la escena: sola, mas grande y latiendo */
+  .puente {
+    margin-top: 0 !important;
+    margin-bottom: 2.5rem !important;
+  }
+
   .linea-brasa {
     margin: 1.9rem 0 !important;
     font-family: var(--font-heading);
