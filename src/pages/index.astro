@@ -36,12 +36,14 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   <main class="relative px-5 sm:px-8 pb-24">
     <!-- ==================== ENCABEZADO ==================== -->
     <header class="max-w-2xl mx-auto pt-14 sm:pt-20 text-center">
+      <!-- logo-trim: el logo.webp original trae el arte (484x369) dentro de un
+           lienzo de 600x600, o sea 40% de aire que lo hacia verse diminuto. -->
       <img
-        src="/logo.webp"
+        src="/logo-trim.webp"
         alt="Cabo Kenedy"
-        width="140"
-        height="140"
-        class="w-28 sm:w-32 h-auto mx-auto mb-8 opacity-90"
+        width="484"
+        height="369"
+        class="w-44 sm:w-52 h-auto mx-auto mb-8"
       />
 
       <p class="font-display text-[10px] sm:text-xs tracking-[0.35em] text-primary/80 mb-6">
@@ -285,11 +287,11 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       </p>
 
       <img
-        src="/logo.webp"
+        src="/logo-trim.webp"
         alt=""
-        width="64"
-        height="64"
-        class="w-14 h-auto mx-auto mt-12 opacity-40"
+        width="484"
+        height="369"
+        class="w-20 h-auto mx-auto mt-12 opacity-40"
         aria-hidden="true"
       />
       <p class="text-xs text-text-muted mt-4 font-heading">
