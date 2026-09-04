@@ -74,14 +74,19 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 3. QUIÉNES SOMOS ==================== -->
     <section class="escena carta" aria-label="Quiénes somos">
       <p class="reveal">
-        <strong>Cabo Kenedy abrió en 1980</strong>, en el Local 01 de la avenida principal de
-        Caribe, en Caraballeda. Pollo a la brasa sobre carbón, un adobo que no está escrito en
-        ningún papel porque se aprende mirando, arepitas y la ensalada rallada de repollo y
-        zanahoria. {anosAbiertos} años haciendo lo mismo todos los días.
+        Epa, QlqComida. Somos <strong>Cabo Kenedy</strong>, de Caraballeda. Abrimos en 1980 y desde
+        entonces hacemos una sola cosa: pollo a la brasa, al carbón, dando vueltas.
       </p>
 
       <p class="reveal">
-        Durante {anosAbiertos} años, a las once de la mañana la avenida olía a nosotros.
+        El adobo no está escrito en ningún papel. Eso se aprende parado al lado del que lo está
+        haciendo. Y va con sus arepitas y su ensalada rallada de repollo y zanahoria, esa que la
+        gente termina pidiendo aparte porque nunca le alcanza.
+      </p>
+
+      <p class="reveal">
+        {anosAbiertos} años. Lo mismo, todos los días. A las once de la mañana la avenida olía a
+        nosotros y uno sabía qué hora era por el olor.
       </p>
     </section>
 
@@ -113,12 +118,12 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 5. LO QUE SE APAGÓ ==================== -->
     <section class="escena carta" aria-label="Lo que se apagó">
       <p class="reveal">
-        El señor que venía los jueves. Los cumpleaños que se celebraban aquí porque salía más a
-        cuenta que un salón. Los muchachos que llegaban de madrugada.
+        El señor de los jueves. Las familias que hacían aquí los cumpleaños porque salía más a
+        cuenta que alquilar un salón. Los muchachos que caían de madrugada muertos de hambre.
       </p>
 
       <p class="reveal">
-        Y la gente que trabaja con nosotros, que no cocina por gusto: de esa cocina come su casa.
+        Y la gente que trabaja aquí, que no está en esa cocina por gusto: de ahí come su casa.
         Llevan {diasCerrados} días esperando, igual que nosotros.
       </p>
     </section>
@@ -126,13 +131,13 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 6. LA CHISPA ==================== -->
     <section class="escena carta" aria-label="La chispa">
       <p class="reveal">
-        Dicen que cada persona tiene una chispa: eso que la enciende, lo que hace que valga la pena
-        levantarse temprano. Los pueblos también tienen la suya, y casi nunca está en una plaza.
+        Dicen que cada quien tiene una chispa: eso que lo prende, lo que hace que valga la pena
+        pararse temprano. Los pueblos también tienen la suya, y casi nunca está en una plaza.
       </p>
 
       <p class="reveal">
-        La nuestra fue literal durante {anosAbiertos} años: una brasa. No se apagó porque nos
-        cansamos. Se apagó porque tembló.
+        La de nosotros no era metáfora, era de verdad: una brasa. Y no se apagó porque nos
+        cansamos, ni porque el pollo dejó de gustar. Se apagó porque tembló.
       </p>
     </section>
 
@@ -177,13 +182,13 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
       <div class="carta max-w-[34rem] mx-auto mt-8">
         <p class="reveal">
-          Los japoneses no esconden la grieta: la rellenan de oro y la dejan a la vista, porque
-          también es parte de la pieza.
+          Los japoneses, cuando se les rompe algo, no lo esconden: rellenan la grieta con oro y la
+          dejan a la vista, porque esa grieta también es la historia de la pieza.
         </p>
         <p class="reveal">
-          No pedimos volver a ser lo que éramos el 23 de junio. Los pedazos están todos. Y el oro
-          también: es la gente que trabaja aquí, la que va a poner el pecho el día que esto vuelva
-          a abrir.
+          Nosotros no queremos volver a ser exactamente lo que éramos el 23 de junio. Los pedazos
+          están completos. Y el oro también: es la gente que trabaja aquí, la que va a poner el
+          pecho el día que esto abra otra vez.
         </p>
       </div>
 
@@ -193,13 +198,13 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 8. LA PETICIÓN ==================== -->
     <section class="escena carta" aria-label="Lo que les pedimos">
       <p class="reveal">
-        Así que esto es lo que les pedimos, sin rodeos: <strong>vengan a Caraballeda</strong>.
-        Siéntense donde se sentó mi abuelo, prueben el pollo y, si les parece que esto vale la
-        pena, cuéntenlo.
+        Así que lo que les pedimos es esto, sin adornos: <strong>dense la vuelta por
+        Caraballeda</strong>. Siéntense donde se sentaba mi abuelo, prueben el pollo, y si les
+        parece que esto vale la pena, cuéntenlo.
       </p>
 
       <p class="reveal">
-        No estamos pidiendo plata. Estamos pidiendo que se sepa que Cabo Kenedy sigue aquí y quiere
+        No estamos pidiendo real. Estamos pidiendo que se sepa que Cabo Kenedy sigue aquí y quiere
         volver a abrir.
       </p>
     </section>
@@ -416,17 +421,21 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     gap: 0.35rem;
   }
 
+  /* Del mismo tamaño que la fecha de arriba: la fecha va en contorno (lo que
+     pasó) y el contador macizo y encendido (lo que cuesta). Con tamaños
+     distintos el segundo parecía una nota al pie del primero. */
   .contador-num {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 11vw, 4rem);
+    font-size: clamp(3.5rem, 16vw, 6rem);
     font-weight: 800;
     color: var(--color-primary);
     line-height: 1;
+    text-shadow: 0 0 30px rgba(232, 122, 30, 0.35);
   }
 
   .contador-txt {
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
+    font-size: 0.8125rem;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--color-text-muted);
   }
