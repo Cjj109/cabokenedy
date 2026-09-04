@@ -12,7 +12,10 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL('/og.png', Astro.site).href;
+// Se sirve desde el mismo dominio que atiende la peticion (hoy
+// cabokenedy.pages.dev, mañana cabokenedy.com) y no desde Astro.site: si
+// apunta a un dominio que todavia no resuelve, WhatsApp no muestra imagen.
+const ogImage = new URL('/og.png', Astro.url.origin).href;
 
 // El sitio usa solo el tema estandar: los temas de temporada (San Valentin,
 // Navidad, Carnavales) quedaron fuera porque no tienen sentido sobre la carta.
