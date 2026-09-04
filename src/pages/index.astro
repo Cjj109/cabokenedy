@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 
 /**
- * Carta abierta a QlqComida y a la iniciativa QlQ Esta Union.
+ * V2 de la carta abierta a QlqComida y a la iniciativa QlQ Esta Union.
  * El menu, las promos y el panel siguen en el repo: el home viejo quedo en
  * _index-menu.astro (fuera de las rutas por el guion bajo).
  *
@@ -17,160 +17,127 @@ const diasCerrados = Math.max(0, Math.floor((ahora.getTime() - TERREMOTO.getTime
 const anosAbiertos = ahora.getFullYear() - ANO_FUNDACION;
 const fechaHoy = ahora.toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
 
+/**
+ * Fotos reales, en orden narrativo: antes -> generaciones -> el restaurante
+ * -> el cierre -> la esperanza. La seccion no aparece mientras este vacio.
+ * Para activarla: poner los archivos en public/fotos/ y descomentar.
+ */
+const fotos: { src: string; pie: string }[] = [
+  // { src: '/fotos/1-antes.webp',        pie: 'El local cuando abrió, en los ochenta.' },
+  // { src: '/fotos/2-generaciones.webp', pie: 'Mi abuelo, mi papá y yo.' },
+  // { src: '/fotos/3-brasa.webp',        pie: 'El carbón, todos los días a las once de la mañana.' },
+  // { src: '/fotos/4-cerrado.webp',      pie: 'El 24 de junio.' },
+  // { src: '/fotos/5-esperanza.webp',    pie: 'La cocina, esperando.' },
+];
+
 const INSTAGRAM = 'https://www.instagram.com/restaurantcabokenedyoficial/';
 const MAPS = 'https://maps.app.goo.gl/9rWr5kE7a13ZtMde8?g_st=ic';
-const WHATSAPP = `https://wa.me/584142920785?text=${encodeURIComponent('Hola, leí la carta de Cabo Kenedy y quiero ayudar.')}`;
+const WHATSAPP = `https://wa.me/584142920785?text=${encodeURIComponent('Hola, leí la carta de Cabo Kenedy.')}`;
 
 const title = 'Carta abierta a QlqComida | Cabo Kenedy, La Guaira';
 const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días con el carbón apagado desde el terremoto del 24 de junio. Esta es nuestra carta a QlQ Esta Unión.`;
 ---
 
 <Layout title={title} description={description}>
-  <!-- Brasas de fondo -->
   <div class="embers" aria-hidden="true">
     {Array.from({ length: 14 }).map((_, i) => (
       <span class="ember" style={`left:${4 + i * 7}%; animation-delay:${i * 1.7}s; animation-duration:${13 + (i % 5) * 3}s;`} />
     ))}
   </div>
 
-  <main class="relative px-5 sm:px-8 pb-24">
-    <!-- ==================== ENCABEZADO ==================== -->
-    <header class="max-w-2xl mx-auto pt-14 sm:pt-20 text-center">
-      <!-- logo-trim: el logo.webp original trae el arte (484x369) dentro de un
-           lienzo de 600x600, o sea 40% de aire que lo hacia verse diminuto. -->
+  <main class="relative">
+    <!-- ==================== 1. APERTURA ==================== -->
+    <header class="escena escena-alta text-center">
       <img
         src="/logo-trim.webp"
         alt="Cabo Kenedy"
         width="484"
         height="369"
-        class="w-44 sm:w-52 h-auto mx-auto mb-8"
+        class="w-44 sm:w-52 h-auto mx-auto mb-10"
       />
 
-      <p class="font-display text-[10px] sm:text-xs tracking-[0.35em] text-primary/80 mb-6">
-        CARTA ABIERTA
-      </p>
+      <p class="kicker">CARTA ABIERTA A QLQCOMIDA</p>
 
-      <div class="inline-flex flex-col gap-1 text-sm text-text-muted font-heading mb-10">
-        <span><span class="text-text-secondary">Para:</span> QlqComida y la gente de QlQ Esta Unión</span>
-        <span><span class="text-text-secondary">De:</span> la familia de Cabo Kenedy, Caraballeda</span>
-        <span><span class="text-text-secondary">Fecha:</span> {fechaHoy}</span>
-      </div>
-
-      <h1 class="font-heading text-3xl sm:text-5xl font-bold leading-[1.15] text-text-primary text-balance">
-        Hace <span class="text-primary">{diasCerrados} días</span> que no encendemos el carbón.
+      <h1 class="titular">
+        Hace <span class="text-primary">{diasCerrados} días</span><br />
+        que no encendemos el carbón.
       </h1>
-
-      <p class="mt-6 text-lg sm:text-xl text-text-secondary leading-relaxed text-balance">
-        Antes de eso, llevábamos {anosAbiertos} años sin fallar un domingo.
-      </p>
     </header>
 
-    <!-- ==================== EL CONTADOR ==================== -->
-    <section class="max-w-2xl mx-auto mt-14 reveal" aria-label="Situación actual">
-      <div class="grid grid-cols-3 gap-px bg-white/8 rounded-2xl overflow-hidden border border-white/8">
-        <div class="bg-space-card px-3 py-6 text-center">
-          <div class="font-display text-2xl sm:text-4xl font-bold text-primary">{diasCerrados}</div>
-          <div class="text-[11px] sm:text-xs text-text-muted mt-2 font-heading">días cerrados</div>
+    <!-- ==================== 2. LAS GENERACIONES ==================== -->
+    <section class="escena escena-alta text-center" aria-label="Tres generaciones">
+      <p class="verso reveal">A mi papá lo trajo mi abuelo.</p>
+      <p class="verso reveal">A mí me trajo mi papá.</p>
+      <p class="verso verso-final reveal">A mis hijos todavía no he podido traerlos.</p>
+    </section>
+
+    <!-- ==================== 3. QUIÉNES SOMOS ==================== -->
+    <section class="escena carta" aria-label="Quiénes somos">
+      <p class="reveal">
+        <strong>Cabo Kenedy abrió en 1980</strong>, en el Local 01 de la avenida principal de
+        Caribe, en Caraballeda. Pollo a la brasa sobre carbón, un adobo que no está escrito en
+        ningún papel porque se aprende mirando, arepitas y la ensalada rallada de repollo y
+        zanahoria. {anosAbiertos} años haciendo lo mismo todos los días.
+      </p>
+
+      <p class="reveal">
+        Durante {anosAbiertos} años, a las once de la mañana la avenida olía a nosotros.
+      </p>
+    </section>
+
+    {fotos.length > 0 && (
+      <section class="escena" aria-label="Fotos">
+        <div class="tira">
+          {fotos.map((foto) => (
+            <figure class="foto reveal">
+              <img src={foto.src} alt={foto.pie} loading="lazy" />
+              <figcaption>{foto.pie}</figcaption>
+            </figure>
+          ))}
         </div>
-        <div class="bg-space-card px-3 py-6 text-center">
-          <div class="font-display text-2xl sm:text-4xl font-bold text-text-primary">{anosAbiertos}</div>
-          <div class="text-[11px] sm:text-xs text-text-muted mt-2 font-heading">años de historia</div>
-        </div>
-        <div class="bg-space-card px-3 py-6 text-center">
-          <div class="font-display text-2xl sm:text-4xl font-bold text-text-primary">24-J</div>
-          <div class="text-[11px] sm:text-xs text-text-muted mt-2 font-heading">el día que tembló</div>
-        </div>
+      </section>
+    )}
+
+    <!-- ==================== 4. EL 24 DE JUNIO ==================== -->
+    <section class="escena escena-alta text-center" aria-label="El 24 de junio">
+      <p class="fecha-grande reveal" aria-hidden="true">24<span>·</span>06</p>
+      <p class="verso reveal">Tembló.</p>
+      <p class="verso verso-final reveal">No hemos vuelto a abrir.</p>
+
+      <div class="contador reveal">
+        <span class="contador-num">{diasCerrados}</span>
+        <span class="contador-txt">días cerrados</span>
       </div>
     </section>
 
-    <!-- ==================== LA CARTA ==================== -->
-    <article class="carta max-w-[38rem] mx-auto mt-20">
-      <p class="reveal">Queridos QlqComida:</p>
-
+    <!-- ==================== 5. LO QUE SE APAGÓ ==================== -->
+    <section class="escena carta" aria-label="Lo que se apagó">
       <p class="reveal">
-        Les escribimos desde el Local 01 de la avenida principal de Caribe, en el C.C. Houston,
-        en Caraballeda. O más bien, desde lo que el 24 de junio dejó de él.
+        El señor que venía los jueves. Los cumpleaños que se celebraban aquí porque salía más a
+        cuenta que un salón. Los muchachos que llegaban de madrugada.
       </p>
 
       <p class="reveal">
-        <strong>Cabo Kenedy abrió en 1980.</strong> Pollo a la brasa sobre carbón natural, un adobo
-        que no está escrito en ningún papel porque se aprende mirando, arepitas y esa ensalada
-        rallada de repollo y zanahoria que la gente termina pidiendo aparte porque nunca le alcanza.
-        {anosAbiertos} años haciendo casi exactamente lo mismo, todos los días, sin inventar mucho.
+        Y la gente que trabaja con nosotros, que no cocina por gusto: de esa cocina come su casa.
+        Llevan {diasCerrados} días esperando, igual que nosotros.
+      </p>
+    </section>
+
+    <!-- ==================== 6. LA CHISPA ==================== -->
+    <section class="escena carta" aria-label="La chispa">
+      <p class="reveal">
+        Dicen que cada persona tiene una chispa: eso que la enciende, lo que hace que valga la pena
+        levantarse temprano. Los pueblos también tienen la suya, y casi nunca está en una plaza.
       </p>
 
       <p class="reveal">
-        Durante {anosAbiertos} años, a las once de la mañana la avenida olía a nosotros. Ese olor
-        era nuestra manera de dar los buenos días. La gente que pasaba en carro bajaba el vidrio
-        sin pensarlo. Eso no se pone en un menú, pero era lo que vendíamos.
+        La nuestra fue literal durante {anosAbiertos} años: una brasa. No se apagó porque nos
+        cansamos. Se apagó porque tembló.
       </p>
+    </section>
 
-      <p class="reveal">
-        Y en este pueblo hay una escena que se repite sola. Alguien llega, se sienta y al tiempo
-        aparece con un hijo. Años después ese hijo vuelve y trae al suyo. Nosotros no hemos hecho
-        gran cosa: pusimos las sillas y mantuvimos la brasa prendida mientras eso pasaba.
-      </p>
-
-      <blockquote class="reveal">
-        A mi papá lo trajo mi abuelo. A mí me trajo mi papá.
-        Y yo tenía la idea más normal del mundo: traer un día a mis hijos, sentarlos ahí y decirles
-        <em>aquí comía tu bisabuelo y sabe igual que hace cuarenta años.</em>
-      </blockquote>
-
-      <p class="reveal">
-        Todavía no se lo he podido decir a nadie.
-      </p>
-
-      <div class="grieta reveal" aria-hidden="true"></div>
-
-      <p class="reveal">
-        El 24 de junio tembló en La Guaira y nuestro local quedó fuera de servicio. Desde entonces
-        no hemos vuelto a abrir. Llevamos <strong>{diasCerrados} días</strong> con las santamarías
-        abajo: el silencio más largo en {anosAbiertos} años. Más largo que cualquier vaguada,
-        cualquier apagón y cualquier cuarentena que nos haya tocado aguantar.
-      </p>
-
-      <p class="reveal">
-        Lo duro de un restaurante cerrado no es la puerta cerrada. Es todo lo que se apaga detrás:
-        el señor que venía los jueves y ya no tiene jueves. La familia que celebraba ahí los
-        cumpleaños porque salía más a cuenta que un salón. Los muchachos que llegaban tarde en la
-        noche. La gente que trabaja con nosotros, que no cocina por hobby sino porque de ahí come
-        su casa. Cuando un negocio de barrio cierra, no cierra un negocio: se le apaga una costumbre
-        a un pueblo entero.
-      </p>
-
-      <p class="reveal">
-        Y este pueblo ya sabe lo que es rehacerse. Lo hizo en el 99, cuando bajó el cerro y La
-        Guaira tuvo que aprender a levantarse encima de lo que quedó. Sabemos empezar otra vez.
-        Lo que no sabemos es hacerlo solos.
-      </p>
-
-      <div class="grieta reveal" aria-hidden="true"></div>
-
-      <p class="reveal">
-        Hay una idea que nos ha dado vueltas estos meses: que cada persona tiene una chispa, eso
-        que la enciende, lo que hace que valga la pena levantarse temprano. Nosotros creemos que
-        los pueblos también tienen la suya y que casi nunca está en un monumento ni en una plaza,
-        sino en un local pequeño donde alguien lleva media vida haciendo una sola cosa, bien hecha.
-      </p>
-
-      <p class="reveal">
-        La nuestra fue literal durante {anosAbiertos} años: <strong>una brasa encendida</strong>.
-        No se apagó porque nos cansamos, ni porque la comida dejó de gustar, ni porque la gente
-        dejó de venir. Se apagó porque tembló.
-      </p>
-
-      <p class="reveal">
-        Vimos lo que están haciendo con <strong>QlQ Esta Unión</strong> y llenamos el formulario,
-        como tantos otros negocios de aquí. Pero en un formulario no cabe el olor del carbón a las
-        once de la mañana, ni la cara de mi abuelo, ni la cuenta de las familias que dependen de
-        que esa cocina vuelva a prender. Por eso hicimos esta página: es lo que no cabía en el
-        formulario.
-      </p>
-    </article>
-
-    <!-- ==================== KINTSUGI ==================== -->
-    <section class="kintsugi-section" aria-label="Kintsugi: reparar con oro">
+    <!-- ==================== 7. KINTSUGI ==================== -->
+    <section class="escena kintsugi-section text-center" aria-label="Kintsugi">
       <div class="kintsugi-wrap reveal">
         <svg class="kintsugi-svg" viewBox="0 0 220 220" fill="none" aria-hidden="true">
           <defs>
@@ -187,14 +154,10 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
             </radialGradient>
           </defs>
 
-          <!-- Halo -->
           <circle cx="110" cy="110" r="105" fill="url(#halo)" class="k-aura" />
-
-          <!-- El plato: borde y fondo -->
           <circle cx="110" cy="110" r="88" class="k-plato" />
           <circle cx="110" cy="110" r="62" class="k-plato k-plato-hondo" />
 
-          <!-- Grietas de oro: se dibujan solas al entrar en pantalla -->
           <path class="k-grieta" style="--d:0.0s" d="M110 22 C 106 52, 118 70, 112 92 C 108 108, 116 124, 110 148 C 106 168, 114 186, 110 198" />
           <path class="k-grieta" style="--d:0.5s" d="M112 92 C 92 88, 74 78, 52 62" />
           <path class="k-grieta" style="--d:0.9s" d="M110 148 C 132 146, 152 154, 176 168" />
@@ -203,7 +166,6 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
           <path class="k-grieta k-fina" style="--d:1.8s" d="M52 62 C 44 74, 38 84, 30 92" />
           <path class="k-grieta k-fina" style="--d:2.0s" d="M176 168 C 182 176, 186 182, 190 190" />
 
-          <!-- Nodos en las uniones -->
           <circle cx="112" cy="92" r="2.6" class="k-nodo" style="--d:2.2s" />
           <circle cx="110" cy="148" r="2.6" class="k-nodo" style="--d:2.35s" />
         </svg>
@@ -212,97 +174,78 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       <p class="k-kanji reveal">金継ぎ</p>
       <h2 class="k-titulo reveal">Kintsugi</h2>
       <p class="k-def reveal">El arte japonés de reparar con oro</p>
-      <div class="k-regla reveal" aria-hidden="true"></div>
 
-      <div class="carta max-w-[38rem] mx-auto text-center">
+      <div class="carta max-w-[34rem] mx-auto mt-12">
         <p class="reveal">
-          Cuando un plato se rompe hay dos maneras de responder: esconderlo o unir los pedazos con
-          oro y dejar la grieta a la vista, porque la grieta también es parte de la historia de la
-          pieza.
+          Los japoneses no esconden la grieta: la rellenan de oro y la dejan a la vista, porque
+          también es parte de la pieza.
         </p>
+        <p class="reveal">
+          No pedimos volver a ser lo que éramos el 23 de junio. Los pedazos están todos.
+        </p>
+      </div>
 
-        <p class="k-cierre reveal">
-          No les estamos pidiendo que Cabo Kenedy vuelva a ser exactamente lo que era el 23 de junio.
-          Un sitio que se cae y se levanta no vuelve igual: vuelve con una historia más que contar,
-          y esa historia se la contamos a todo el que se siente en una de nuestras mesas.
-        </p>
+      <p class="k-remate reveal">Lo único que falta es el oro.</p>
+    </section>
 
-        <p class="k-remate reveal">
-          Los pedazos están todos.<br />
-          <span>Lo único que nos falta es el oro.</span>
-        </p>
+    <!-- ==================== 8. LA PETICIÓN ==================== -->
+    <section class="escena carta" aria-label="Lo que les pedimos">
+      <p class="reveal">
+        Así que esto es lo que les pedimos, sin rodeos: <strong>vengan a Caraballeda</strong>.
+        Siéntense donde se sentó mi abuelo, prueben el pollo y, si les parece que esto vale la
+        pena, cuéntenlo.
+      </p>
+
+      <p class="reveal">
+        No estamos pidiendo plata. Estamos pidiendo que se sepa que Cabo Kenedy sigue aquí y quiere
+        volver a abrir.
+      </p>
+
+      <div class="acciones reveal">
+        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-wa">
+          Escríbenos por WhatsApp
+        </a>
+        <a href={INSTAGRAM} target="_blank" rel="noopener" class="btn btn-ig">
+          @restaurantcabokenedyoficial
+        </a>
       </div>
     </section>
 
-    <!-- ==================== FIRMA ==================== -->
-    <div class="max-w-[38rem] mx-auto mt-16 carta">
-      <p class="reveal">
-        Si algo de esto les llega, aquí estamos. Y si no, gracias igual por estar preguntando quién
-        quedó abajo en La Guaira. Que alguien pregunte, después de {diasCerrados} días, ya es
-        bastante.
-      </p>
+    <!-- ==================== 9. CIERRE ==================== -->
+    <section class="escena escena-alta text-center" aria-label="Cierre">
+      <p class="verso reveal">El carbón está ahí.</p>
+      <p class="verso reveal">La receta está ahí.</p>
+      <p class="verso reveal">Nosotros estamos aquí.</p>
+      <p class="cierre-remate reveal">Solo falta encenderlo.</p>
 
       <div class="firma reveal">
-        <p class="font-heading text-text-primary text-lg font-semibold">La familia de Cabo Kenedy</p>
-        <p class="text-sm text-text-muted mt-1">Caraballeda, La Guaira · desde 1980</p>
-        <p class="text-xs text-text-muted/80 mt-4 leading-relaxed">
-          Esta página la armó Carlos Jardim, primo del dueño, con el visto bueno de la familia.
-        </p>
-      </div>
-    </div>
-
-    <!-- ==================== SOMOS REALES ==================== -->
-    <section class="max-w-[38rem] mx-auto mt-20 reveal" aria-label="Cómo verificar que existimos">
-      <h2 class="font-display text-xs tracking-[0.25em] text-primary/80 text-center mb-8">
-        PARA QUIEN REVISE ESTO
-      </h2>
-
-      <div class="space-y-3">
-        <a href={MAPS} target="_blank" rel="noopener" class="dato">
-          <span class="dato-label">Dónde estamos</span>
-          <span class="dato-valor">Local 01, Av. Principal de Caribe, C.C. Houston PB, Caraballeda 1165, La Guaira</span>
-          <span class="dato-accion">Ver en Google Maps</span>
-        </a>
-
-        <a href={INSTAGRAM} target="_blank" rel="noopener" class="dato">
-          <span class="dato-label">Nuestro Instagram</span>
-          <span class="dato-valor">@restaurantcabokenedyoficial</span>
-          <span class="dato-accion">Ahí está el antes: las fotos, la gente, los {anosAbiertos} años</span>
-        </a>
-
-        <a href={WHATSAPP} target="_blank" rel="noopener" class="dato">
-          <span class="dato-label">Hablar con nosotros</span>
-          <span class="dato-valor">0414-292-0785</span>
-          <span class="dato-accion">Escríbenos por WhatsApp</span>
-        </a>
+        <p class="firma-nombre">La familia de Cabo Kenedy</p>
+        <p class="firma-lugar">Caraballeda, La Guaira · desde 1980 · {fechaHoy}</p>
       </div>
     </section>
 
-    <!-- ==================== CIERRE ==================== -->
-    <footer class="max-w-[38rem] mx-auto mt-20 text-center">
-      <p class="font-heading text-xl sm:text-2xl text-text-primary leading-snug text-balance reveal">
-        {anosAbiertos} años encendido.<br />
-        <span class="text-primary">{diasCerrados} días apagado.</span><br />
-        Nos falta una chispa.
-      </p>
+    <!-- ==================== PIE ==================== -->
+    <footer class="pie">
+      <a href={MAPS} target="_blank" rel="noopener" class="pie-dir">
+        Local 01, Av. Principal de Caribe, C.C. Houston PB<br />
+        Caraballeda 1165, La Guaira
+      </a>
 
-      <img
-        src="/logo-trim.webp"
-        alt=""
-        width="484"
-        height="369"
-        class="w-20 h-auto mx-auto mt-12 opacity-40"
-        aria-hidden="true"
-      />
-      <p class="text-xs text-text-muted mt-4 font-heading">
-        Cabo Kenedy · Pollo a la brasa · Caraballeda, La Guaira
+      <div class="pie-enlaces">
+        <a href={WHATSAPP} target="_blank" rel="noopener">0414-292-0785</a>
+        <span aria-hidden="true">·</span>
+        <a href={INSTAGRAM} target="_blank" rel="noopener">Instagram</a>
+      </div>
+
+      <p class="pie-nota">
+        Esta página la armó Carlos Jardim, primo del dueño, con el visto bueno de la familia.
       </p>
     </footer>
   </main>
 </Layout>
 
 <style>
-  /* ---------- Brasas que suben ---------- */
+  /* ---------- Brasas ---------- */
   .embers {
     position: fixed;
     inset: 0;
@@ -332,7 +275,66 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     100% { transform: translateY(-100vh) translateX(28px) scale(0.3); opacity: 0; }
   }
 
-  /* ---------- Cuerpo de la carta ---------- */
+  /* ---------- Escenas: el aire entre bloques es parte del mensaje ---------- */
+  .escena {
+    position: relative;
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 5.5rem 1.5rem;
+  }
+
+  .escena-alta {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+
+  @media (min-width: 640px) {
+    .escena { padding: 7rem 2rem; }
+    .escena-alta { padding-top: 11rem; padding-bottom: 11rem; }
+  }
+
+  .kicker {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.32em;
+    color: rgba(232, 122, 30, 0.8);
+    margin-bottom: 2rem;
+  }
+
+  .titular {
+    font-family: var(--font-heading);
+    font-size: clamp(1.9rem, 7.5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.18;
+    color: var(--color-text-primary);
+    text-wrap: balance;
+  }
+
+  /* ---------- Versos: una linea por respiracion ---------- */
+  .verso {
+    font-family: var(--font-heading);
+    font-size: clamp(1.25rem, 4.6vw, 1.75rem);
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+  }
+
+  .verso-final {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .cierre-remate {
+    margin-top: 2.5rem;
+    font-family: var(--font-heading);
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    text-wrap: balance;
+  }
+
+  /* ---------- Parrafos ---------- */
   .carta {
     font-size: 1.0625rem;
     line-height: 1.85;
@@ -343,44 +345,80 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     margin-bottom: 1.6rem;
   }
 
+  .carta :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
   .carta :global(strong) {
     color: var(--color-text-primary);
     font-weight: 600;
   }
 
-  .carta :global(blockquote) {
-    margin: 2.5rem 0;
-    padding: 1.5rem 0 1.5rem 1.5rem;
-    border-left: 2px solid var(--color-primary);
-    color: var(--color-text-primary);
-    font-size: 1.1875rem;
-    line-height: 1.7;
+  /* ---------- El 24 de junio ---------- */
+  .fecha-grande {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 16vw, 6rem);
+    font-weight: 800;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(232, 122, 30, 0.55);
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.02em;
   }
 
-  .carta :global(blockquote em) {
-    color: var(--color-primary-light);
-    font-style: italic;
+  .fecha-grande span {
+    -webkit-text-stroke: 0;
+    color: rgba(232, 122, 30, 0.55);
+    margin: 0 0.15em;
   }
 
-  /* Separador: una grieta fina con luz de oro en el centro */
-  .grieta {
-    height: 1px;
-    margin: 3rem auto;
-    width: 70%;
-    background: linear-gradient(90deg, transparent, rgba(191, 149, 63, 0.15) 20%, rgba(252, 246, 186, 0.55) 50%, rgba(191, 149, 63, 0.15) 80%, transparent);
+  .contador {
+    margin-top: 3rem;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.35rem;
   }
 
-  .firma {
-    margin-top: 3.5rem;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  .contador-num {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 11vw, 4rem);
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1;
+  }
+
+  .contador-txt {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* ---------- Fotos ---------- */
+  .tira {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .foto img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: block;
+  }
+
+  .foto figcaption {
+    margin-top: 0.85rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    text-align: center;
   }
 
   /* ---------- Kintsugi ---------- */
   .kintsugi-section {
-    margin-top: 6rem;
-    padding: 4rem 0 1rem;
-    text-align: center;
+    max-width: 40rem;
     background: radial-gradient(ellipse 55% 45% at 50% 45%, rgba(240, 176, 0, 0.05), transparent 70%);
   }
 
@@ -391,20 +429,13 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   .kintsugi-svg {
-    width: clamp(180px, 42vw, 260px);
+    width: clamp(170px, 40vw, 240px);
     height: auto;
     overflow: visible;
   }
 
-  .k-plato {
-    fill: none;
-    stroke: rgba(240, 176, 0, 0.18);
-    stroke-width: 1;
-  }
-
-  .k-plato-hondo {
-    stroke: rgba(240, 176, 0, 0.10);
-  }
+  .k-plato { fill: none; stroke: rgba(240, 176, 0, 0.18); stroke-width: 1; }
+  .k-plato-hondo { stroke: rgba(240, 176, 0, 0.10); }
 
   .k-grieta {
     fill: none;
@@ -424,7 +455,6 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     filter: drop-shadow(0 0 5px rgba(240, 176, 0, 0.8));
   }
 
-  /* Las grietas se dibujan cuando el plato entra en pantalla */
   :global(.kintsugi-wrap.visible) .k-grieta {
     animation: dibujarGrieta 1.8s ease-out forwards;
     animation-delay: var(--d, 0s);
@@ -435,18 +465,10 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     animation-delay: var(--d, 0s);
   }
 
-  @keyframes dibujarGrieta {
-    to { stroke-dashoffset: 0; }
-  }
+  @keyframes dibujarGrieta { to { stroke-dashoffset: 0; } }
+  @keyframes aparecerNodo { to { opacity: 0.9; } }
 
-  @keyframes aparecerNodo {
-    to { opacity: 0.9; }
-  }
-
-  .k-aura {
-    animation: auraPulso 6s ease-in-out infinite;
-    transform-origin: center;
-  }
+  .k-aura { animation: auraPulso 6s ease-in-out infinite; transform-origin: center; }
 
   @keyframes auraPulso {
     0%, 100% { opacity: 0.5; transform: scale(1); }
@@ -457,18 +479,18 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     font-size: 0.7rem;
     letter-spacing: 0.4em;
     color: rgba(240, 176, 0, 0.55);
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
   }
 
   .k-titulo {
     font-family: var(--font-heading);
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-size: clamp(1.6rem, 5vw, 2.25rem);
     font-weight: 700;
     background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
 
   .k-def {
@@ -476,76 +498,120 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     color: var(--color-text-muted);
   }
 
-  .k-regla {
-    width: 60px;
-    height: 1px;
-    margin: 2.5rem auto 3rem;
-    background: linear-gradient(90deg, transparent, rgba(252, 246, 186, 0.6), transparent);
-  }
-
-  .k-cierre {
-    color: var(--color-text-primary);
-  }
-
   .k-remate {
-    margin-top: 2.5rem;
+    margin-top: 3rem;
     font-family: var(--font-heading);
-    font-size: clamp(1.25rem, 3.5vw, 1.6rem);
-    line-height: 1.5;
-    color: var(--color-text-primary);
-  }
-
-  .k-remate span {
-    /* Gradiente mas claro que el del titulo: en una linea larga los tonos
-       oscuros del oro se vuelven ilegibles sobre el fondo negro. */
+    font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+    font-weight: 700;
+    line-height: 1.4;
     background: linear-gradient(135deg, #e8c66a, #fcf6ba, #f0d878, #fbf5b7);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    font-weight: 700;
+    text-wrap: balance;
   }
 
-  /* ---------- Datos verificables ---------- */
-  .dato {
+  /* ---------- Acciones ---------- */
+  .acciones {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .btn {
     display: block;
-    padding: 1.125rem 1.25rem;
-    border-radius: 1rem;
-    background: var(--color-space-card);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+    text-align: center;
+    padding: 1.05rem 1.5rem;
+    border-radius: 999px;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
   }
 
-  .dato:hover {
-    border-color: rgba(232, 122, 30, 0.35);
-    background: var(--color-space-card-hover);
-    transform: translateY(-2px);
+  .btn:active { transform: scale(0.98); }
+
+  .btn-wa {
+    background: var(--color-whatsapp);
+    color: #05300f;
   }
 
-  .dato-label {
-    display: block;
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin-bottom: 0.4rem;
-  }
+  .btn-wa:hover { background: #34e07a; }
 
-  .dato-valor {
-    display: block;
-    color: var(--color-text-primary);
+  .btn-ig {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--color-text-secondary);
     font-size: 0.9375rem;
-    line-height: 1.5;
   }
 
-  .dato-accion {
-    display: block;
-    margin-top: 0.5rem;
+  .btn-ig:hover {
+    border-color: rgba(232, 122, 30, 0.4);
+    color: var(--color-text-primary);
+  }
+
+  @media (min-width: 640px) {
+    .acciones { flex-direction: row; justify-content: center; }
+    .btn { padding: 1rem 2rem; }
+  }
+
+  /* ---------- Firma ---------- */
+  .firma {
+    margin-top: 5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .firma-nombre {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .firma-lugar {
+    margin-top: 0.4rem;
     font-size: 0.8125rem;
-    color: var(--color-primary);
+    color: var(--color-text-muted);
   }
 
-  /* ---------- Aparicion al hacer scroll ----------
-     Solo se oculta si el JS llego a correr: sin JS todo se ve igual. */
+  /* ---------- Pie ---------- */
+  .pie {
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .pie-dir {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+  }
+
+  .pie-dir:hover { color: var(--color-text-secondary); }
+
+  .pie-enlaces {
+    margin-top: 1.25rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .pie-enlaces a { color: var(--color-primary); }
+
+  .pie-nota {
+    margin-top: 2.5rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: rgba(138, 127, 116, 0.75);
+  }
+
+  /* ---------- Aparicion al hacer scroll ---------- */
   :global(body.js-reveal) .reveal {
     opacity: 0;
     transform: translateY(18px);
@@ -554,7 +620,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   :global(body.js-reveal) .reveal.visible {
     opacity: 1;
     transform: none;
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transition: opacity 0.9s ease, transform 0.9s ease;
   }
 
   @media (prefers-reduced-motion: reduce) {
