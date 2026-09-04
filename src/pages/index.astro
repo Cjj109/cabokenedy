@@ -66,9 +66,9 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
     <!-- ==================== 2. LAS GENERACIONES ==================== -->
     <section class="escena escena-alta text-center" aria-label="Tres generaciones">
-      <p class="verso reveal">A mi papá lo trajo mi abuelo.</p>
-      <p class="verso reveal">A mí me trajo mi papá.</p>
-      <p class="verso verso-final reveal">A mis hijos todavía no he podido traerlos.</p>
+      <p class="verso brasa reveal" style="--i:0">A mi papá lo trajo mi abuelo.</p>
+      <p class="verso brasa reveal" style="--i:1">A mí me trajo mi papá.</p>
+      <p class="verso verso-final brasa reveal" style="--i:2">A mis hijos todavía no he podido traerlos.</p>
     </section>
 
     <!-- ==================== 3. QUIÉNES SOMOS ==================== -->
@@ -79,8 +79,8 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       </p>
 
       <p class="reveal">
-        El adobo no está escrito en ningún papel. Eso se aprende parado al lado del que lo está
-        haciendo. Y va con sus arepitas y su ensalada rallada de repollo y zanahoria, esa que la
+        El adobo no está escrito en ningún papel. <span class="destaca">Eso se aprende parado al lado del que lo
+        está haciendo.</span> Y va con sus arepitas y su ensalada rallada de repollo y zanahoria, esa que la
         gente termina pidiendo aparte porque nunca le alcanza.
       </p>
 
@@ -131,13 +131,28 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     <!-- ==================== 6. LA CHISPA ==================== -->
     <section class="escena carta" aria-label="La chispa">
       <p class="reveal">
-        Dicen que cada quien tiene una chispa: eso que lo prende, lo que hace que valga la pena
-        levantarse temprano. Los pueblos también tienen la suya y casi nunca está en una plaza.
+        Uno enciende un carbón de madrugada, con el local todavía lleno de polvo, nada más que para
+        ver si la brasa sirve. No hay clientes, no hay meseros, no hay a quién impresionar.
       </p>
 
       <p class="reveal">
-        La de nosotros no era metáfora, era de verdad: una brasa. Y no se apagó porque nos
-        cansamos, ni porque el pollo dejó de gustar. Se apagó porque tembló.
+        Y entonces el carbón empieza a sonar. <strong>Ese chisporroteo tiene ritmo.</strong> Lo
+        tiene siempre, pero hay que estar muy callado para oírlo. Uno se queda quieto. El humo sube,
+        la grasa cae, la piel empieza a tostarse, y por unos minutos no existe el terremoto ni los
+        escombros ni la lista de todo lo que falta por arreglar.
+      </p>
+
+      <p class="linea-brasa reveal">Existe la brasa, el pollo y uno. Nada más.</p>
+
+      <p class="reveal">
+        Eso no se aprende en ningún curso. Te agarra en el sitio más común del mundo —una parrilla,
+        un mesón, un saco de carbón— y de repente entiendes para qué estás ahí. Cocinar deja de ser
+        un oficio y pasa a ser <span class="destaca">la manera que uno tiene de decir algo</span>.
+      </p>
+
+      <p class="parrafo-alto reveal">
+        Eso es lo que está apagado. Y no se apagó porque nos cansamos ni porque el pollo dejó de
+        gustar. Se apagó porque tembló.
       </p>
     </section>
 
@@ -203,7 +218,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
         que esto vale la pena, cuéntenlo.
       </p>
 
-      <p class="reveal">
+      <p class="parrafo-alto reveal">
         No estamos pidiendo plata. Estamos pidiendo que se sepa que Cabo Kenedy sigue aquí y quiere
         volver a abrir.
       </p>
@@ -284,22 +299,30 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     100% { transform: translateY(-100vh) translateX(28px) scale(0.3); opacity: 0; }
   }
 
-  /* ---------- Escenas: el aire entre bloques es parte del mensaje ---------- */
+  /* ---------- Escala de espacio ----------
+     Una sola serie para todo el documento. Antes cada bloque tenia su
+     numero suelto y el salto entre el ritmo interno (14px) y el de las
+     escenas (144px) era de 1 a 10: por eso los huecos chocaban. */
   .escena {
+    --e2: 0.9rem;
+    --e3: 1.5rem;
+    --e4: 2.25rem;
+    --e5: clamp(2.75rem, 8vw, 4rem);
+
     position: relative;
     max-width: 34rem;
     margin: 0 auto;
-    padding: 3.25rem 1.5rem;
+    padding: var(--e5) 1.5rem;
   }
 
+  /* Solo la portada respira de más: es la primera pantalla */
   .escena-alta {
-    padding-top: 4.5rem;
-    padding-bottom: 4.5rem;
+    padding-top: calc(var(--e5) * 1.35);
+    padding-bottom: calc(var(--e5) * 1.35);
   }
 
   @media (min-width: 640px) {
-    .escena { padding: 4rem 2rem; }
-    .escena-alta { padding-top: 6rem; padding-bottom: 6rem; }
+    .escena { padding-left: 2rem; padding-right: 2rem; }
   }
 
   .kicker {
@@ -325,13 +348,47 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     font-size: clamp(1.25rem, 4.6vw, 1.75rem);
     line-height: 1.5;
     color: var(--color-text-secondary);
-    margin-bottom: 0.9rem;
+    margin-bottom: 1.5rem;
     text-wrap: balance;
   }
 
   .verso-final {
     color: var(--color-text-primary);
     font-weight: 600;
+  }
+
+  /* Las tres lineas laten como brasas: la misma respiracion, pero cada una
+     entra en su turno, como cuando el carbon se va prendiendo por partes. */
+  .brasa {
+    animation: latirBrasa 6s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 1.4s);
+  }
+
+  @keyframes latirBrasa {
+    0%, 100% {
+      color: var(--color-text-secondary);
+      text-shadow: none;
+    }
+    42% {
+      color: #F0E4D4;
+      text-shadow: 0 0 16px rgba(232, 122, 30, 0.35), 0 0 42px rgba(232, 122, 30, 0.12);
+    }
+  }
+
+  /* La ultima nunca se apaga del todo: es la que duele */
+  .verso-final.brasa {
+    animation-name: latirBrasaFinal;
+  }
+
+  @keyframes latirBrasaFinal {
+    0%, 100% {
+      color: var(--color-text-primary);
+      text-shadow: 0 0 12px rgba(232, 122, 30, 0.18);
+    }
+    42% {
+      color: #FFF3E4;
+      text-shadow: 0 0 22px rgba(232, 122, 30, 0.5), 0 0 55px rgba(232, 122, 30, 0.18);
+    }
   }
 
   /* La ultima linea prende como prende un carbon: chispazo, titubeo, y
@@ -397,15 +454,40 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     font-weight: 600;
   }
 
+  /* Frase encendida dentro del parrafo */
+  .carta :global(.destaca) {
+    color: var(--color-primary-light);
+    font-weight: 600;
+  }
+
+  /* Parrafo entero en tono alto: sube el brillo sin gritar */
+  .parrafo-alto {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+
+  /* La frase que sostiene la escena: sola, mas grande y latiendo */
+  .linea-brasa {
+    margin: 2.25rem 0 !important;
+    font-family: var(--font-heading);
+    font-size: clamp(1.2rem, 4.4vw, 1.6rem);
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--color-text-primary);
+    text-wrap: balance;
+    animation: latirBrasaFinal 6s ease-in-out infinite;
+  }
+
   /* ---------- El 24 de junio ---------- */
   .fecha-grande {
     font-family: var(--font-display);
-    font-size: clamp(3.5rem, 16vw, 6rem);
+    font-size: clamp(3rem, 14vw, 5rem);
     font-weight: 800;
     line-height: 1;
     color: transparent;
     -webkit-text-stroke: 1px rgba(232, 122, 30, 0.55);
-    margin-bottom: 1.75rem;
+    margin-bottom: 2.25rem;
     letter-spacing: 0.02em;
   }
 
@@ -416,7 +498,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   .contador {
-    margin-top: 2.25rem;
+    margin-top: 3rem;
     display: inline-flex;
     flex-direction: column;
     gap: 0.35rem;
@@ -427,7 +509,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
      distintos el segundo parecía una nota al pie del primero. */
   .contador-num {
     font-family: var(--font-display);
-    font-size: clamp(3.5rem, 16vw, 6rem);
+    font-size: clamp(4rem, 24vw, 7rem);
     font-weight: 800;
     color: var(--color-primary);
     line-height: 1;
@@ -684,6 +766,8 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   @media (prefers-reduced-motion: reduce) {
     .ember { display: none; }
     .k-aura { animation: none; }
+    .brasa,
+    .linea-brasa { animation: none; }
     .k-grieta { stroke-dashoffset: 0; }
     .k-nodo { opacity: 0.9; }
     .cierre-remate,
@@ -716,7 +800,10 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
           io.unobserve(entry.target);
         }
       }
-    }, { rootMargin: '0px 0px -12% 0px' });
+      // El margen positivo abajo hace que cada bloque aparezca ANTES de
+      // entrar en pantalla: si no, se cruza el hueco entre escenas mirando
+      // una pantalla negra y el vacio se siente el doble de largo.
+    }, { rootMargin: '0px 0px 12% 0px' });
     reveals.forEach((el) => io.observe(el));
   }
 </script>
