@@ -200,15 +200,6 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
         No estamos pidiendo plata. Estamos pidiendo que se sepa que Cabo Kenedy sigue aquí y quiere
         volver a abrir.
       </p>
-
-      <div class="acciones reveal">
-        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-wa">
-          Escríbenos por WhatsApp
-        </a>
-        <a href={INSTAGRAM} target="_blank" rel="noopener" class="btn btn-ig">
-          @restaurantcabokenedyoficial
-        </a>
-      </div>
     </section>
 
     <!-- ==================== 9. CIERRE ==================== -->
@@ -217,6 +208,16 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       <p class="verso reveal">La receta está ahí.</p>
       <p class="verso reveal">Nosotros estamos aquí.</p>
       <p class="cierre-remate reveal">Solo falta encenderlo.</p>
+
+      <div class="acciones reveal">
+        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-wa">
+          Ayúdanos a encenderlo
+          <span>Escríbenos por WhatsApp</span>
+        </a>
+        <a href={INSTAGRAM} target="_blank" rel="noopener" class="btn btn-ig">
+          @restaurantcabokenedyoficial
+        </a>
+      </div>
 
       <div class="firma reveal">
         <p class="firma-nombre">La familia de Cabo Kenedy</p>
@@ -325,13 +326,47 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     font-weight: 600;
   }
 
+  /* La ultima linea prende como prende un carbon: chispazo, titubeo, y
+     despues la brasa que se queda viva. Arranca apagada y se enciende
+     cuando entra en pantalla. */
   .cierre-remate {
     margin-top: 2.5rem;
     font-family: var(--font-heading);
     font-size: clamp(1.6rem, 6vw, 2.4rem);
     font-weight: 700;
-    color: var(--color-primary);
+    color: #FFB347;
+    text-shadow: 0 0 24px rgba(232, 122, 30, 0.5);
     text-wrap: balance;
+  }
+
+  /* Solo se apaga si hay JS que la pueda encender: sin JS se ve encendida */
+  :global(body.js-reveal) .cierre-remate {
+    color: #6b6058;
+    text-shadow: none;
+  }
+
+  :global(body.js-reveal) .cierre-remate.visible {
+    animation:
+      encender 2.4s ease-out 0.35s both,
+      brasaViva 4.5s ease-in-out 2.8s infinite;
+  }
+
+  @keyframes encender {
+    0%   { color: #6b6058; text-shadow: none; }
+    6%   { color: #E87A1E; text-shadow: 0 0 16px rgba(232, 122, 30, 0.5); }
+    11%  { color: #6b6058; text-shadow: none; }
+    19%  { color: #FFB347; text-shadow: 0 0 26px rgba(255, 179, 71, 0.65); }
+    26%  { color: #7d6f63; text-shadow: 0 0 6px rgba(232, 122, 30, 0.2); }
+    34%  { color: #E87A1E; text-shadow: 0 0 22px rgba(232, 122, 30, 0.55); }
+    41%  { color: #9a8574; text-shadow: 0 0 10px rgba(232, 122, 30, 0.3); }
+    60%  { color: #FFB347; text-shadow: 0 0 30px rgba(232, 122, 30, 0.6), 0 0 66px rgba(232, 122, 30, 0.25); }
+    100% { color: #FFB347; text-shadow: 0 0 24px rgba(232, 122, 30, 0.55), 0 0 58px rgba(232, 122, 30, 0.22); }
+  }
+
+  /* Una vez encendida no se queda quieta: respira, como una brasa */
+  @keyframes brasaViva {
+    0%, 100% { text-shadow: 0 0 24px rgba(232, 122, 30, 0.55), 0 0 58px rgba(232, 122, 30, 0.22); }
+    50%      { text-shadow: 0 0 32px rgba(255, 179, 71, 0.7), 0 0 74px rgba(232, 122, 30, 0.3); }
   }
 
   /* ---------- Parrafos ---------- */
@@ -513,7 +548,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   /* ---------- Acciones ---------- */
   .acciones {
-    margin-top: 3rem;
+    margin-top: 4rem;
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
@@ -535,6 +570,16 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .btn-wa {
     background: var(--color-whatsapp);
     color: #05300f;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+  }
+
+  .btn-wa span {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    opacity: 0.75;
   }
 
   .btn-wa:hover { background: #34e07a; }
@@ -628,6 +673,12 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     .k-aura { animation: none; }
     .k-grieta { stroke-dashoffset: 0; }
     .k-nodo { opacity: 0.9; }
+    .cierre-remate,
+    .cierre-remate.visible {
+      animation: none;
+      color: #FFB347;
+      text-shadow: 0 0 24px rgba(232, 122, 30, 0.5);
+    }
     :global(body.js-reveal) .reveal,
     :global(body.js-reveal) .reveal.visible {
       opacity: 1;
