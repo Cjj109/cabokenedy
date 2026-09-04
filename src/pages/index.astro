@@ -175,7 +175,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       <h2 class="k-titulo reveal">Kintsugi</h2>
       <p class="k-def reveal">El arte japonés de reparar con oro</p>
 
-      <div class="carta max-w-[34rem] mx-auto mt-12">
+      <div class="carta max-w-[34rem] mx-auto mt-8">
         <p class="reveal">
           Los japoneses no esconden la grieta: la rellenan de oro y la dejan a la vista, porque
           también es parte de la pieza.
@@ -212,11 +212,11 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
       <p class="cierre-remate reveal">Solo falta encenderlo.</p>
 
       <div class="acciones reveal">
-        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-wa">
+        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn-wa">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45c6.55 0 11.89-5.34 11.89-11.89S18.6 0 12.05 0Zm0 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.27c0-5.45 4.44-9.88 9.89-9.88a9.83 9.83 0 0 1 9.88 9.89c0 5.45-4.43 9.89-9.88 9.89Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.53.15-.17.2-.3.3-.5.1-.19.05-.37-.02-.51-.08-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.03 1.01-1.03 2.48s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.7.3 1.26.48 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.58-.35Z"/></svg>
           Ayúdanos a encenderlo
-          <span>Escríbenos por WhatsApp</span>
         </a>
-        <a href={INSTAGRAM} target="_blank" rel="noopener" class="btn btn-ig">
+        <a href={INSTAGRAM} target="_blank" rel="noopener" class="enlace-ig">
           @restaurantcabokenedyoficial
         </a>
       </div>
@@ -283,17 +283,17 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     position: relative;
     max-width: 34rem;
     margin: 0 auto;
-    padding: 5.5rem 1.5rem;
+    padding: 3.25rem 1.5rem;
   }
 
   .escena-alta {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
   }
 
   @media (min-width: 640px) {
-    .escena { padding: 7rem 2rem; }
-    .escena-alta { padding-top: 11rem; padding-bottom: 11rem; }
+    .escena { padding: 4rem 2rem; }
+    .escena-alta { padding-top: 6rem; padding-bottom: 6rem; }
   }
 
   .kicker {
@@ -319,7 +319,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     font-size: clamp(1.25rem, 4.6vw, 1.75rem);
     line-height: 1.5;
     color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.9rem;
     text-wrap: balance;
   }
 
@@ -332,7 +332,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
      despues la brasa que se queda viva. Arranca apagada y se enciende
      cuando entra en pantalla. */
   .cierre-remate {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     font-family: var(--font-heading);
     font-size: clamp(1.6rem, 6vw, 2.4rem);
     font-weight: 700;
@@ -399,7 +399,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
     line-height: 1;
     color: transparent;
     -webkit-text-stroke: 1px rgba(232, 122, 30, 0.55);
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.75rem;
     letter-spacing: 0.02em;
   }
 
@@ -410,7 +410,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   .contador {
-    margin-top: 3rem;
+    margin-top: 2.25rem;
     display: inline-flex;
     flex-direction: column;
     gap: 0.35rem;
@@ -462,7 +462,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .kintsugi-wrap {
     display: flex;
     justify-content: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.75rem;
   }
 
   .kintsugi-svg {
@@ -536,7 +536,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   }
 
   .k-remate {
-    margin-top: 3rem;
+    margin-top: 2.25rem;
     font-family: var(--font-heading);
     font-size: clamp(1.35rem, 4.5vw, 1.85rem);
     font-weight: 700;
@@ -550,62 +550,50 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
 
   /* ---------- Acciones ---------- */
   .acciones {
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    align-items: center;
+    gap: 1.1rem;
   }
 
-  .btn {
-    display: block;
-    text-align: center;
-    padding: 1.05rem 1.5rem;
-    border-radius: 999px;
-    font-family: var(--font-heading);
-    font-size: 1rem;
-    font-weight: 600;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-  }
-
-  .btn:active { transform: scale(0.98); }
-
+  /* Boton unico y del ancho de su texto: ocupando toda la linea se veia
+     pesado justo donde la pagina tiene que sentirse ligera. */
   .btn-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 999px;
     background: var(--color-whatsapp);
     color: #05300f;
-    font-size: 1.0625rem;
-    line-height: 1.35;
-  }
-
-  .btn-wa span {
-    display: block;
-    margin-top: 0.15rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    opacity: 0.75;
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition: transform 0.2s ease, background 0.2s ease;
   }
 
   .btn-wa:hover { background: #34e07a; }
+  .btn-wa:active { transform: scale(0.98); }
 
-  .btn-ig {
-    border: 1px solid rgba(255, 255, 255, 0.14);
+  /* Instagram como enlace, no como boton: es la opcion secundaria */
+  .enlace-ig {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .enlace-ig:hover {
     color: var(--color-text-secondary);
-    font-size: 0.9375rem;
-  }
-
-  .btn-ig:hover {
-    border-color: rgba(232, 122, 30, 0.4);
-    color: var(--color-text-primary);
-  }
-
-  @media (min-width: 640px) {
-    .acciones { flex-direction: row; justify-content: center; }
-    .btn { padding: 1rem 2rem; }
+    border-color: rgba(232, 122, 30, 0.45);
   }
 
   /* ---------- Firma ---------- */
   .firma {
-    margin-top: 5rem;
-    padding-top: 2.5rem;
+    margin-top: 3.25rem;
+    padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
@@ -626,7 +614,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .pie {
     max-width: 34rem;
     margin: 0 auto;
-    padding: 3rem 1.5rem 5rem;
+    padding: 2.5rem 1.5rem 3.5rem;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
@@ -652,7 +640,7 @@ const description = `Desde 1980 en Caraballeda. Llevamos ${diasCerrados} días c
   .pie-enlaces a { color: var(--color-primary); }
 
   .pie-nota {
-    margin-top: 2.5rem;
+    margin-top: 1.75rem;
     font-size: 0.75rem;
     line-height: 1.6;
     color: rgba(138, 127, 116, 0.75);
