@@ -15,8 +15,26 @@ const TERREMOTO = new Date('2026-06-24T00:00:00-04:00');
 const TRAYECTORIA = 'más de 46 años';
 
 const ahora = new Date();
-const diasCerrados = Math.max(0, Math.floor((ahora.getTime() - TERREMOTO.getTime()) / 86400000));
-const fechaHoy = ahora.toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
+
+/**
+ * Todo se cuenta en hora de Caracas. El worker de Cloudflare corre en UTC, y
+ * Venezuela va cuatro horas por detrás: sin esto, a partir de las 8 de la
+ * noche la página ya daría el día por terminado y contaría uno de más.
+ */
+const ZONA = 'America/Caracas';
+const enCaracas = (fecha: Date) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: ZONA, year: 'numeric', month: '2-digit', day: '2-digit' }).format(fecha);
+
+// Se restan días de calendario en Caracas, no milisegundos entre instantes
+const diaDe = (texto: string) => Date.parse(`${texto}T00:00:00Z`);
+const diasCerrados = Math.max(0, Math.round((diaDe(enCaracas(ahora)) - diaDe(enCaracas(TERREMOTO))) / 86400000));
+
+const fechaHoy = ahora.toLocaleDateString('es-VE', {
+  timeZone: ZONA,
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 
 /**
  * Fotos reales, en orden narrativo: antes -> generaciones -> el restaurante
@@ -30,6 +48,17 @@ const fotos: { src: string; pie: string }[] = [
   // { src: '/fotos/4-cerrado.webp',      pie: 'El 24 de junio.' },
   // { src: '/fotos/5-esperanza.webp',    pie: 'La cocina, esperando.' },
 ];
+
+/**
+ * El remate se enciende letra a letra. Se parte aquí y no en el navegador
+ * para que el HTML llegue ya con las letras: sin JavaScript se ve la frase
+ * completa y encendida, no una animación a medias.
+ */
+const REMATE = 'Solo falta encenderlo.';
+let n = 0;
+const palabrasRemate = REMATE.split(' ').map((palabra) => ({
+  letras: [...palabra].map((letra) => ({ letra, i: n++ })),
+}));
 
 const INSTAGRAM = 'https://www.instagram.com/restaurantcabokenedyoficial/';
 const MAPS = 'https://maps.app.goo.gl/9rWr5kE7a13ZtMde8?g_st=ic';
@@ -248,7 +277,18 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
       <p class="verso reveal">El carbón está ahí.</p>
       <p class="verso reveal">La receta está ahí.</p>
       <p class="verso reveal">Nosotros estamos aquí.</p>
-      <p class="cierre-remate reveal">Solo falta encenderlo.</p>
+      <p class="cierre-remate reveal" aria-label={REMATE}>
+        {palabrasRemate.map((palabra, p) => (
+          <>
+            <span class="palabra" aria-hidden="true">
+              {palabra.letras.map(({ letra, i }) => (
+                <span class="letra" style={`--i:${i}`}>{letra}</span>
+              ))}
+            </span>
+            {p < palabrasRemate.length - 1 && <span aria-hidden="true"> </span>}
+          </>
+        ))}
+      </p>
 
       <div class="acciones reveal">
         <a href={WHATSAPP} target="_blank" rel="noopener" class="btn-wa">
@@ -479,39 +519,48 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
     font-family: var(--font-heading);
     font-size: clamp(1.6rem, 6vw, 2.4rem);
     font-weight: 700;
-    color: #FFB347;
-    text-shadow: 0 0 24px rgba(232, 122, 30, 0.5);
     text-wrap: balance;
+    line-height: 1.25;
   }
 
-  /* Solo se apaga si hay JS que la pueda encender: sin JS se ve encendida */
-  :global(body.js-reveal) .cierre-remate {
-    color: #6b6058;
+  /* Las palabras no se parten al final de la línea aunque cada letra sea su
+     propia caja: el salto solo puede ocurrir en los espacios. */
+  .palabra {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .letra {
+    color: #FFB347;
+    text-shadow: 0 0 20px rgba(232, 122, 30, 0.5);
+  }
+
+  /* Apagadas solo si hay JS que las pueda encender */
+  :global(body.js-reveal) .letra {
+    color: #5f554e;
     text-shadow: none;
   }
 
-  :global(body.js-reveal) .cierre-remate.visible {
+  /* Se van prendiendo de izquierda a derecha, como corre una mecha */
+  :global(body.js-reveal) .cierre-remate.visible .letra {
     animation:
-      encender 2.4s ease-out 0.35s both,
-      brasaViva 4.5s ease-in-out 2.8s infinite;
+      prenderLetra 1.2s ease-out both,
+      latirLetra 4.5s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.07s), calc(var(--i) * 0.07s + 1.2s);
   }
 
-  @keyframes encender {
-    0%   { color: #6b6058; text-shadow: none; }
-    6%   { color: #E87A1E; text-shadow: 0 0 16px rgba(232, 122, 30, 0.5); }
-    11%  { color: #6b6058; text-shadow: none; }
-    19%  { color: #FFB347; text-shadow: 0 0 26px rgba(255, 179, 71, 0.65); }
-    26%  { color: #7d6f63; text-shadow: 0 0 6px rgba(232, 122, 30, 0.2); }
-    34%  { color: #E87A1E; text-shadow: 0 0 22px rgba(232, 122, 30, 0.55); }
-    41%  { color: #9a8574; text-shadow: 0 0 10px rgba(232, 122, 30, 0.3); }
-    60%  { color: #FFB347; text-shadow: 0 0 30px rgba(232, 122, 30, 0.6), 0 0 66px rgba(232, 122, 30, 0.25); }
-    100% { color: #FFB347; text-shadow: 0 0 24px rgba(232, 122, 30, 0.55), 0 0 58px rgba(232, 122, 30, 0.22); }
+  @keyframes prenderLetra {
+    0%   { color: #5f554e; text-shadow: none; }
+    18%  { color: #FFE0B0; text-shadow: 0 0 26px rgba(255, 214, 160, 0.95), 0 0 60px rgba(232, 122, 30, 0.4); }
+    45%  { color: #E8913C; text-shadow: 0 0 12px rgba(232, 122, 30, 0.4); }
+    70%  { color: #FFC77A; text-shadow: 0 0 22px rgba(232, 122, 30, 0.6); }
+    100% { color: #FFB347; text-shadow: 0 0 20px rgba(232, 122, 30, 0.5), 0 0 48px rgba(232, 122, 30, 0.2); }
   }
 
-  /* Una vez encendida no se queda quieta: respira, como una brasa */
-  @keyframes brasaViva {
-    0%, 100% { text-shadow: 0 0 24px rgba(232, 122, 30, 0.55), 0 0 58px rgba(232, 122, 30, 0.22); }
-    50%      { text-shadow: 0 0 32px rgba(255, 179, 71, 0.7), 0 0 74px rgba(232, 122, 30, 0.3); }
+  /* Ya encendidas, respiran */
+  @keyframes latirLetra {
+    0%, 100% { text-shadow: 0 0 20px rgba(232, 122, 30, 0.5), 0 0 48px rgba(232, 122, 30, 0.2); }
+    50%      { text-shadow: 0 0 28px rgba(255, 179, 71, 0.65), 0 0 62px rgba(232, 122, 30, 0.26); }
   }
 
   /* ---------- Parrafos ---------- */
@@ -865,11 +914,11 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
     }
     .k-grieta { stroke-dashoffset: 0; }
     .k-nodo { opacity: 0.9; }
-    .cierre-remate,
-    .cierre-remate.visible {
+    :global(body.js-reveal) .letra,
+    :global(body.js-reveal) .cierre-remate.visible .letra {
       animation: none;
       color: #FFB347;
-      text-shadow: 0 0 24px rgba(232, 122, 30, 0.5);
+      text-shadow: 0 0 20px rgba(232, 122, 30, 0.5);
     }
     :global(body.js-reveal) .reveal,
     :global(body.js-reveal) .reveal.visible {
