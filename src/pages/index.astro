@@ -548,7 +548,7 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
   }
 
   /* Se van prendiendo de izquierda a derecha, como corre una mecha */
-  :global(body.js-reveal) .cierre-remate.visible .letra {
+  :global(body.js-reveal) .cierre-remate.prender .letra {
     animation:
       prenderLetra 1.2s ease-out both,
       latirLetra 4.5s ease-in-out infinite;
@@ -921,7 +921,7 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
     .k-grieta { stroke-dashoffset: 0; }
     .k-nodo { opacity: 0.9; }
     :global(body.js-reveal) .letra,
-    :global(body.js-reveal) .cierre-remate.visible .letra {
+    :global(body.js-reveal) .cierre-remate.prender .letra {
       animation: none;
       color: #FFB347;
       text-shadow: 0 0 20px rgba(232, 122, 30, 0.5);
@@ -948,6 +948,24 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
     // Por si se entra con la página ya bajada (scroll restaurado o un enlace
     // con ancla): en ese caso el momento ya pasó y aparece apagada.
     apagar();
+  }
+
+  // El remate se enciende con su propio observador, no con el de aparecer.
+  // El otro se adelanta a propósito (para que no se crucen huecos en negro),
+  // y con eso la frase prendía mientras todavía estaba fuera de pantalla: si
+  // leías la carta entera, al llegar ya estaba encendida. Este exige que la
+  // frase esté dentro y bien vista antes de correr la mecha.
+  const remate = document.querySelector('.cierre-remate');
+  if (remate && 'IntersectionObserver' in window) {
+    const ioRemate = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('prender');
+          ioRemate.unobserve(entry.target);
+        }
+      }
+    }, { rootMargin: '0px 0px -22% 0px', threshold: 0.9 });
+    ioRemate.observe(remate);
   }
 
   const reveals = document.querySelectorAll('.reveal');
