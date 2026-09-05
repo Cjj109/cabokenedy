@@ -29,7 +29,13 @@ const enCaracas = (fecha: Date) =>
 const diaDe = (texto: string) => Date.parse(`${texto}T00:00:00Z`);
 const diasCerrados = Math.max(0, Math.round((diaDe(enCaracas(ahora)) - diaDe(enCaracas(TERREMOTO))) / 86400000));
 
-const fechaHoy = ahora.toLocaleDateString('es-VE', {
+/**
+ * La fecha de la firma es el día en que se escribió la carta y no cambia:
+ * una carta lleva su fecha. Lo que sí sigue contando solo es el número de
+ * días cerrados, que es un hecho del local y no de la carta.
+ */
+const ESCRITA = new Date('2026-09-04T12:00:00-04:00');
+const fechaCarta = ESCRITA.toLocaleDateString('es-VE', {
   timeZone: ZONA,
   day: 'numeric',
   month: 'long',
@@ -303,7 +309,7 @@ const description = `${TRAYECTORIA[0].toUpperCase() + TRAYECTORIA.slice(1)} en C
 
       <div class="firma reveal">
         <p class="firma-nombre">La familia de Cabo Kenedy</p>
-        <p class="firma-lugar">Caraballeda, La Guaira · {TRAYECTORIA} · {fechaHoy}</p>
+        <p class="firma-lugar">Caraballeda, La Guaira · {TRAYECTORIA} · {fechaCarta}</p>
       </div>
     </section>
 
